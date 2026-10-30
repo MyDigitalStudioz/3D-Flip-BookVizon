@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: main (GitHub default is main).
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v1 (GitHub default is main).
 
 [![Preview](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-preview.svg?v=20261029-1)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 [![Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-pages.svg?v=20261029-1)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
@@ -13,6 +13,8 @@
 ## Live preview
 
 **https://mydigitalstudioz.github.io/3D-Flip-BookVizon/**
+
+Double-click `flipbook18.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs.
 
 ![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=20261029-1)
 
@@ -37,6 +39,7 @@ Captured from the live Pages site. Refresh these files, and the `?v=` stamp, whe
 - `flipbook18.html` — the hardcover viewer. Future tweaks start here.
 - `index.html` — opens that viewer.
 - `flipbook1/` — the book: `manifest.js` plus the page images and favicon. The HTML file loads them by relative path, so the folder stays beside it.
+- `flipbook1/pages-data.js` — those same JPGs as data URIs, loaded only when the page is opened from disk. The JPGs stay the source. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
 - `media/` — the README shots. `hero.jpg` is also the social preview.
 
 The pages are the Harlow review mocks and are marked not for print.
@@ -65,9 +68,12 @@ Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on 
 ├── .nojekyll
 ├── flipbook1/
 │   ├── manifest.js
+│   ├── pages-data.js
 │   ├── page-flip.browser.js
 │   ├── favicon.png
 │   └── 01-front.jpg … 52-back.jpg
+├── scripts/
+│   └── build-pages-data.py
 └── media/
     ├── hero.jpg
     ├── spread.jpg

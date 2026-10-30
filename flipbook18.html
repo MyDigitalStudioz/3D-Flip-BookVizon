@@ -10,6 +10,7 @@
   #tools{display:flex;align-items:center;gap:12px}
   #counter{background:rgba(20,20,20,.55);color:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap}
   #mark{white-space:nowrap}
+  #notice{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:8;background:rgba(20,20,20,.88);color:#f4f1ea;border-radius:10px;padding:8px 12px;font-size:13px;pointer-events:none}
   #fs,#pagesBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
   #fs svg{width:20px;height:20px;stroke:#f4f1ea;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
   #pagesBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
@@ -80,6 +81,7 @@
         <div id="spineShade"></div>
       </div></div></div>
     </div>
+    <div id="notice" role="status"></div>
     <div id="sheet" aria-hidden="true">
       <div id="sheetBar"><span id="sheetTitle">Pages — tap one to jump there</span><button id="sheetClose" type="button" aria-label="Close pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div id="strip"></div>
@@ -87,8 +89,12 @@
   </div>
   <script src="flipbook1/manifest.js"></script>
   <script>
-  (function () {
+  function startFlipbook() {
     var PAGES = BOOK.pages, N = PAGES.length, HALF = N / 2;
+    function pageSrc(src) {
+      if (typeof PAGE_DATA !== "undefined" && PAGE_DATA && PAGE_DATA[src]) return PAGE_DATA[src];
+      return src;
+    }
     var viewer = document.getElementById("viewer");
     var stage = document.getElementById("stage");
     var bookWrap = document.getElementById("bookWrap");
@@ -108,7 +114,12 @@
     var sheet = document.getElementById("sheet");
     var strip = document.getElementById("strip");
 
-    var pageImgs = PAGES.map(function (src) { var im = new Image(); im.src = src; return im; });
+    var pageImgs = PAGES.map(function (src) { var im = new Image(); im.src = pageSrc(src); return im; });
+    var noticeEl = document.getElementById("notice");
+    function reportNotice(text) {
+      noticeEl.textContent = text;
+      noticeEl.style.display = "block";
+    }
 
     /* ================= WebGL leaf ================= */
     var M = 24;                                  // strip columns (shared vertices = no seams)
@@ -177,18 +188,27 @@
     var texCtx = texCanvas.getContext("2d");
     texCtx.imageSmoothingEnabled = true;
     texCtx.imageSmoothingQuality = "high";
+    function dropGL(err) {
+      glOK = false;
+      reportNotice("3D turn is off in this browser. Flat pages still turn. " + (err && err.message ? err.message : ""));
+    }
     function makeTex(img) {
-      texCtx.drawImage(img, 0, 0, 1024, 1024);
-      var t = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texCanvas);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.generateMipmap(gl.TEXTURE_2D);
-      return t;
+      try {
+        texCtx.drawImage(img, 0, 0, 1024, 1024);
+        var t = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, t);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texCanvas);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        return t;
+      } catch (err) {
+        dropGL(err);
+        return null;
+      }
     }
 
     function drawLeafGL(thetaDeg, lagSign, shade, mx, my, bend) {
@@ -287,8 +307,8 @@
     function render() {
       var li = flipped === 0 ? null : 2 * flipped - 1;
       var ri = flipped === HALF ? null : 2 * flipped;
-      if (li === null) { baseL.style.display = "none"; } else { baseL.style.display = "block"; imgL.src = PAGES[li]; }
-      if (ri === null) { baseR.style.display = "none"; } else { baseR.style.display = "block"; imgR.src = PAGES[ri]; }
+      if (li === null) { baseL.style.display = "none"; } else { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[li]); }
+      if (ri === null) { baseR.style.display = "none"; } else { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[ri]); }
       // While a leaf is flying, poseLeaf owns the glide (it interpolates to
       // exactly this value on the final frame). Setting it here mid-flight
       // would slam the book sideways at the swap, then step it back.
@@ -341,10 +361,11 @@
         if (gTexF) gl.deleteTexture(gTexF);
         if (gTexB) gl.deleteTexture(gTexB);
         gTexF = makeTex(pageImgs[frontIdx]);
-        gTexB = makeTex(pageImgs[backIdx]);
-      } else {
-        fbFrontImg.src = PAGES[frontIdx];
-        fbBackImg.src = PAGES[backIdx];
+        if (glOK) gTexB = makeTex(pageImgs[backIdx]);
+      }
+      if (!glOK) {
+        fbFrontImg.src = pageSrc(PAGES[frontIdx]);
+        fbBackImg.src = pageSrc(PAGES[backIdx]);
       }
     }
 
@@ -394,13 +415,13 @@
         var f = flipped;
         setLeafImages(2 * f, 2 * f + 1);
         var nr = 2 * f + 2;
-        if (nr < N) { baseR.style.display = "block"; imgR.src = PAGES[nr]; } else baseR.style.display = "none";
+        if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[nr]); } else baseR.style.display = "none";
       } else {
         if (flipped <= 0) return false;
         var g = flipped;
         setLeafImages(2 * g - 2, 2 * g - 1);
         var pl = 2 * g - 3;
-        if (pl >= 0) { baseL.style.display = "block"; imgL.src = PAGES[pl]; } else baseL.style.display = "none";
+        if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[pl]); } else baseL.style.display = "none";
       }
       return true;
     }
@@ -642,7 +663,7 @@
         var b = document.createElement("button");
         b.type = "button";
         b.className = "tcard" + (g.indexOf(cur) >= 0 ? " now" : "");
-        var imgs = g.map(function (ix) { return '<img loading="lazy" alt="" src="' + PAGES[ix] + '">'; }).join("");
+        var imgs = g.map(function (ix) { return '<img loading="lazy" alt="" src="' + pageSrc(PAGES[ix]) + '">'; }).join("");
         var cap = g.length === 2 ? (g[0] + 1) + "–" + (g[1] + 1) : "" + (g[0] + 1);
         b.innerHTML = '<span class="timgs">' + imgs + '</span><span class="tcap">' + cap + "</span>";
         b.setAttribute("aria-label", "Go to page " + cap);
@@ -703,6 +724,15 @@
       if (sheet.classList.contains("open")) setTimeout(buildStrip, 260);
     });
     fit();
-  })();
+  }
+  if (location.protocol === "file:") {
+    var dataScript = document.createElement("script");
+    dataScript.src = "flipbook1/pages-data.js";
+    dataScript.onload = function () { startFlipbook(); };
+    dataScript.onerror = function () { startFlipbook(); };
+    document.body.appendChild(dataScript);
+  } else {
+    startFlipbook();
+  }
   </script>
 </body></html>
