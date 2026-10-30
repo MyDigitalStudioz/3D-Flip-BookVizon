@@ -4,10 +4,10 @@
 
 **Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: main (GitHub default is main).
 
-[![Preview](https://img.shields.io/badge/preview-live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
+[![Preview](https://img.shields.io/badge/preview-live-brightgreen?style=flat)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 [![Pages](https://img.shields.io/github/deployments/MyDigitalStudioz/3D-Flip-BookVizon/github-pages?label=pages)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
-[![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/commits/main)
-[![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon)
+[![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon?style=flat)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/commits/main)
+[![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon?style=flat)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon)
 [![Static site](https://img.shields.io/badge/site-static-blue)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 
 ## Live preview
