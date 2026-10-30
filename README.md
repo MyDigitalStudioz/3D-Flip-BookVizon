@@ -16,27 +16,27 @@
 
 Double-click `flipbook18.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=20261029-1)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-2)
 
 ## Screenshots
 
-Captured from the live Pages site. Refresh these files, and the `?v=` stamp, whenever the viewer changes.
+Captured from the working viewer on `3D-Flip-BookVizon-v1`. Refresh these files, and the `?v=` stamp, whenever the viewer changes. Pages still serves `main`.
 
 **Cover** — the book closed on the dark stage.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=20261029-1)
+![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-2)
 
 **Mid-book** — pages 4–5, the first story spread.
 
-![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=20261029-1)
+![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/spread.jpg?v=20261029-2)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=20261029-1)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/mobile.jpg?v=20261029-2)
 
 ## What's inside
 
-- `flipbook18.html` — the hardcover viewer. Future tweaks start here.
+- `flipbook18.html` — the hardcover viewer. Future tweaks start here. The folder button opens a folder of images, or you can drop the folder on the page.
 - `index.html` — opens that viewer.
 - `flipbook1/` — the book: `manifest.js` plus the page images and favicon. The HTML file loads them by relative path, so the folder stays beside it.
 - `flipbook1/pages-data.js` — those same JPGs as data URIs, loaded only when the page is opened from disk. The JPGs stay the source. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
@@ -46,7 +46,9 @@ The pages are the Harlow review mocks and are marked not for print.
 
 ## Design language
 
-Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on the leaf. Controls are small round buttons on the dark bar: a pages grid, a fullscreen mark, and white side arrows. The book sits centered with a soft shadow.
+Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on the leaf. Controls are small round buttons on the dark bar: a folder, a pages grid, a fullscreen mark, and white side arrows. The book sits centered with a soft shadow.
+
+The folder button takes a folder of JPG, PNG, or WebP pages. Files sort by the first number in the name. A wide image is treated as an open spread and split at the fold. The first image is the cover unless that box is unchecked. A missing number is a warning under the book; the pages still turn.
 
 ## Tech stack
 

@@ -11,9 +11,16 @@
   #counter{background:rgba(20,20,20,.55);color:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap}
   #mark{white-space:nowrap}
   #notice{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:8;background:rgba(20,20,20,.88);color:#f4f1ea;border-radius:10px;padding:8px 12px;font-size:13px;pointer-events:none}
-  #fs,#pagesBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
+  #folderPop{position:absolute;top:62px;right:18px;z-index:9;display:flex;flex-direction:column;gap:10px;background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:12px;padding:12px 14px;font-size:14px}
+  #folderPop[hidden]{display:none}
+  #folderPop label{display:flex;align-items:center;gap:8px}
+  #folderGo{background:#e8b34b;color:#191919;border:0;border-radius:999px;padding:8px 12px;font:inherit;cursor:pointer}
+  #loadBar{position:absolute;left:0;right:0;top:0;height:3px;z-index:7;background:transparent}
+  #loadBar[hidden]{display:none}
+  #loadFill{height:100%;width:0;background:#e8b34b}
+  #fs,#pagesBtn,#folderBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
   #fs svg{width:20px;height:20px;stroke:#f4f1ea;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
-  #pagesBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
+  #pagesBtn svg,#folderBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
   #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
   #bookWrap{position:relative;z-index:1;cursor:grab;touch-action:none;will-change:transform}
   #bookWrap.grabbing{cursor:grabbing}
@@ -63,7 +70,8 @@
 </style></head>
 <body>
   <div id="viewer">
-    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
+    <div id="loadBar" hidden><div id="loadFill"></div></div>
+    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
     <div id="stage">
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
@@ -81,6 +89,8 @@
         <div id="spineShade"></div>
       </div></div></div>
     </div>
+    <div id="folderPop" hidden><label><input id="coverFirst" type="checkbox" checked> First image is the cover</label><button id="folderGo" type="button">Choose folder</button></div>
+    <input id="folderPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" webkitdirectory multiple hidden>
     <div id="notice" role="status"></div>
     <div id="sheet" aria-hidden="true">
       <div id="sheetBar"><span id="sheetTitle">Pages — tap one to jump there</span><button id="sheetClose" type="button" aria-label="Close pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -258,6 +268,7 @@
     var pageSize = 300;
     var camX = 0, camAnim = null;
     var animating = false;
+    var pendingBook = false;
     var pendingDir = null;   // one-deep queue: a tap mid-flip lines up the next turn
     var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FLIP_MS = REDUCED ? 320 : 950;
@@ -293,15 +304,17 @@
       counter.textContent = label();
     }
 
+    var blankNote = "";
     function label() {
+      var text;
       if (focusMode) {
-        if (flipped === 0) return "Page 1 of " + N;
-        if (flipped === HALF) return "Page " + N + " of " + N;
-        return "Page " + (focus === 0 ? 2 * flipped : 2 * flipped + 1) + " of " + N;
-      }
-      if (flipped === 0) return "Page 1 of " + N;
-      if (flipped === HALF) return "Page " + N + " of " + N;
-      return "Page " + (2 * flipped) + "–" + (2 * flipped + 1) + " of " + N;
+        if (flipped === 0) text = "Page 1 of " + N;
+        else if (flipped === HALF) text = "Page " + N + " of " + N;
+        else text = "Page " + (focus === 0 ? 2 * flipped : 2 * flipped + 1) + " of " + N;
+      } else if (flipped === 0) text = "Page 1 of " + N;
+      else if (flipped === HALF) text = "Page " + N + " of " + N;
+      else text = "Page " + (2 * flipped) + "–" + (2 * flipped + 1) + " of " + N;
+      return blankNote ? text + " · " + blankNote : text;
     }
 
     function render() {
@@ -458,6 +471,7 @@
         if (raw < 1) { requestAnimationFrame(frame); return; }
         hideLeaf();
         animating = false;
+        if (pendingBook) { pendingBook = false; render(); }
         if (onDone) onDone();
         if (pendingDir) {
           var pd = pendingDir;
@@ -723,6 +737,221 @@
       scheduleFit();
       if (sheet.classList.contains("open")) setTimeout(buildStrip, 260);
     });
+
+    /* Folder of images. The manifest book stays the default until a folder arrives. */
+    var blankCanvas = document.createElement("canvas");
+    blankCanvas.width = 8; blankCanvas.height = 8;
+    var blankCtx = blankCanvas.getContext("2d");
+    blankCtx.fillStyle = "#f4f1ea";
+    blankCtx.fillRect(0, 0, 8, 8);
+    var BLANK = blankCanvas.toDataURL("image/jpeg", 0.8);
+    var folderBtn = document.getElementById("folderBtn");
+    var folderPop = document.getElementById("folderPop");
+    var folderPick = document.getElementById("folderPick");
+    var loadBar = document.getElementById("loadBar");
+    var loadFill = document.getElementById("loadFill");
+    var folderGen = 0;
+    var tempBlank = false;
+    var coverOpened = false;
+    folderBtn.onclick = function () { folderPop.hidden = !folderPop.hidden; };
+    document.getElementById("folderGo").onclick = function () { folderPick.click(); };
+    folderPick.onchange = function () {
+      folderPop.hidden = true;
+      if (folderPick.files && folderPick.files.length) takeFiles(folderPick.files);
+      folderPick.value = "";
+    };
+    viewer.addEventListener("dragover", function (e) { e.preventDefault(); });
+    viewer.addEventListener("drop", function (e) {
+      e.preventDefault();
+      folderPop.hidden = true;
+      var items = e.dataTransfer && e.dataTransfer.items;
+      if (!items || !items.length) { takeFiles(e.dataTransfer.files); return; }
+      Promise.all([].map.call(items, readDropItem)).then(function (groups) {
+        var flat = [];
+        groups.forEach(function (g) { flat = flat.concat(g); });
+        takeFiles(flat);
+      });
+    });
+    function readDropItem(item) {
+      return new Promise(function (resolve) {
+        var entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
+        if (!entry) { var one = item.getAsFile && item.getAsFile(); resolve(one ? [one] : []); return; }
+        if (entry.isFile) { entry.file(function (f) { resolve([f]); }, function () { resolve([]); }); return; }
+        var reader = entry.createReader();
+        var all = [];
+        function batch() {
+          reader.readEntries(function (entries) {
+            if (!entries.length) { resolve(all); return; }
+            var pending = entries.length;
+            entries.forEach(function (ent) {
+              if (!ent.isFile) { if (--pending === 0) batch(); return; }
+              ent.file(function (f) { all.push(f); if (--pending === 0) batch(); }, function () { if (--pending === 0) batch(); });
+            });
+          }, function () { resolve(all); });
+        }
+        batch();
+      });
+    }
+    function isPageFile(file) {
+      var name = (file.name || "").toLowerCase();
+      if (name === "thumbs.db" || name === ".ds_store" || name === "desktop.ini") return false;
+      var rel = file.webkitRelativePath || "";
+      if (rel && rel.split("/").length > 2) return false;
+      return /\.(jpe?g|png|webp)$/.test(name);
+    }
+    function firstNumber(name) { var m = String(name).match(/\d+/); return m ? parseInt(m[0], 10) : null; }
+    function sortFiles(files) {
+      return files.slice().sort(function (a, b) {
+        var na = firstNumber(a.name), nb = firstNumber(b.name);
+        if (na !== null && nb !== null && na !== nb) return na - nb;
+        if (na !== null && nb === null) return -1;
+        if (na === null && nb !== null) return 1;
+        return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
+      });
+    }
+    function gapWarnings(files) {
+      var seen = {}, dups = {}, nums = [];
+      files.forEach(function (f) {
+        var n = firstNumber(f.name);
+        if (n === null) return;
+        if (seen[n]) dups[n] = true;
+        seen[n] = true;
+        nums.push(n);
+      });
+      nums.sort(function (a, b) { return a - b; });
+      var missing = [];
+      if (nums.length) {
+        for (var n = nums[0]; n < nums[nums.length - 1]; n++) if (!seen[n]) missing.push(n);
+      }
+      var out = [];
+      var start = null, prev = null;
+      function flush() {
+        if (start === null) return;
+        out.push(start === prev ? "No page " + start + " found." : "No pages " + start + "–" + prev + " found.");
+        start = prev = null;
+      }
+      missing.forEach(function (n) {
+        if (start === null) { start = prev = n; return; }
+        if (n === prev + 1) { prev = n; return; }
+        flush();
+        start = prev = n;
+      });
+      flush();
+      Object.keys(dups).forEach(function (n) { out.push("Two files numbered " + n + "."); });
+      return out;
+    }
+    function paintSlice(im, sx, sy, sw, sh) {
+      var maxSide = 1600;
+      var scale = Math.min(1, maxSide / Math.max(sw, sh));
+      var c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(sw * scale));
+      c.height = Math.max(1, Math.round(sh * scale));
+      c.getContext("2d").drawImage(im, sx, sy, sw, sh, 0, 0, c.width, c.height);
+      return c.toDataURL("image/jpeg", 0.85);
+    }
+    function fileToPages(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onerror = function () { reject(new Error("read")); };
+        reader.onload = function () {
+          var im = new Image();
+          im.onload = function () {
+            var w = im.naturalWidth, h = im.naturalHeight;
+            if (w / h >= 1.45) resolve([paintSlice(im, 0, 0, w / 2, h), paintSlice(im, w / 2, 0, w / 2, h)]);
+            else resolve([paintSlice(im, 0, 0, w, h)]);
+          };
+          im.onerror = function () { reject(new Error("image")); };
+          im.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    function pushPage(src) {
+      PAGES.push(src);
+      var im = new Image();
+      im.src = pageSrc(src);
+      pageImgs.push(im);
+    }
+    function dropTempBlank() {
+      if (!tempBlank) return;
+      PAGES.pop();
+      pageImgs.pop();
+      tempBlank = false;
+    }
+    function ensureEven() {
+      if (PAGES.length % 2 === 0) return;
+      pushPage(BLANK);
+      tempBlank = true;
+    }
+    function showBook(reset, coverOn) {
+      N = PAGES.length;
+      HALF = N / 2;
+      if (!coverOn && !coverOpened && flipped === 0 && N >= 4) { flipped = 1; focus = 0; coverOpened = true; }
+      if (reset) {
+        flipped = (!coverOn && N >= 4) ? 1 : 0;
+        focus = 0;
+        animating = false;
+        hideLeaf();
+        render();
+        fit();
+      } else if (animating) pendingBook = true;
+      else {
+        if (flipped > HALF) flipped = HALF;
+        render();
+      }
+      if (sheet.classList.contains("open")) buildStrip();
+    }
+    function takeFiles(fileList) {
+      var gen = ++folderGen;
+      var files = [];
+      for (var i = 0; i < fileList.length; i++) if (isPageFile(fileList[i])) files.push(fileList[i]);
+      if (!files.length) { reportNotice("No page images in that folder."); return; }
+      files = sortFiles(files);
+      var warnings = gapWarnings(files);
+      var coverOn = document.getElementById("coverFirst").checked;
+      blankNote = "";
+      tempBlank = false;
+      coverOpened = false;
+      PAGES = [];
+      pageImgs = [];
+      if (!coverOn) pushPage(BLANK);
+      var opened = false;
+      loadBar.hidden = false;
+      loadFill.style.width = "0%";
+      function say() {
+        var parts = warnings.slice();
+        if (blankNote) parts.push("A blank page was added so the last opening has a facing page.");
+        if (parts.length) reportNotice(parts.join(" "));
+        else { noticeEl.textContent = ""; noticeEl.style.display = "none"; }
+      }
+      function step(i) {
+        if (gen !== folderGen) return;
+        if (i >= files.length) {
+          dropTempBlank();
+          if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; }
+          showBook(!opened, coverOn);
+          opened = true;
+          loadBar.hidden = true;
+          say();
+          return;
+        }
+        fileToPages(files[i]).then(function (parts) {
+          if (gen !== folderGen) return;
+          dropTempBlank();
+          parts.forEach(pushPage);
+          ensureEven();
+          showBook(!opened, coverOn);
+          opened = true;
+          loadFill.style.width = Math.round(((i + 1) / files.length) * 100) + "%";
+          step(i + 1);
+        }).catch(function () {
+          warnings.push("Could not read " + files[i].name + ".");
+          step(i + 1);
+        });
+      }
+      step(0);
+    }
+
     fit();
   }
   if (location.protocol === "file:") {
