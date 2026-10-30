@@ -17,7 +17,7 @@
 
 Double-click `flipbook18.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-2)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-3)
 
 ## Screenshots
 
@@ -25,15 +25,15 @@ Captured from the working viewer on `3D-Flip-BookVizon-v1`. Refresh these files,
 
 **Cover** — the book closed on the dark stage.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-2)
+![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/hero.jpg?v=20261029-3)
 
 **Mid-book** — pages 4–5, the first story spread.
 
-![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/spread.jpg?v=20261029-2)
+![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/spread.jpg?v=20261029-3)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/mobile.jpg?v=20261029-2)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v1/media/mobile.jpg?v=20261029-3)
 
 ## What's inside
 
@@ -47,7 +47,7 @@ The pages are the Harlow review mocks and are marked not for print.
 
 ## Design language
 
-Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on the leaf. Controls are small round buttons on the dark bar: a folder, a pages grid, a fullscreen mark, and white side arrows. The book sits centered with a soft shadow.
+Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on the leaf. The bar has a page-turn choice, Hardcover or Magazine, plus small round buttons: a folder, a pages grid, a fullscreen mark, and white side arrows. The book sits centered with a soft shadow. Hardcover is the 3D sheet. Magazine is the corner peel. The choice is remembered on this browser.
 
 The folder button takes a folder of JPG, PNG, or WebP pages. Files sort by the first number in the name. A wide image is treated as an open spread and split at the fold. The first image is the cover unless that box is unchecked. A missing number is a warning under the book; the pages still turn.
 
@@ -56,7 +56,7 @@ The folder button takes a folder of JPG, PNG, or WebP pages. Files sort by the f
 | Layer | Technology | Purpose |
 | --- | --- | --- |
 | Viewer | Single-file HTML | `flipbook18.html` is the whole hardcover viewer |
-| Page turn | WebGL leaf | The sheet turns on the spine |
+| Page turn | WebGL leaf or corner peel | Hardcover turns the 3D sheet. Magazine peels the corner. |
 | Script | Vanilla JS | Fit, arrows, paging, fullscreen |
 | Book | `flipbook1/manifest.js` + JPGs | Page list and images |
 | Host | GitHub Pages | Serves `main` at the preview URL |

@@ -18,6 +18,8 @@
   #loadBar{position:absolute;left:0;right:0;top:0;height:3px;z-index:7;background:transparent}
   #loadBar[hidden]{display:none}
   #loadFill{height:100%;width:0;background:#e8b34b}
+  #turnLabel{display:flex;align-items:center;gap:6px;color:#f4f1ea;font-size:13px;white-space:nowrap}
+  #turnPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
   #fs,#pagesBtn,#folderBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
   #fs svg{width:20px;height:20px;stroke:#f4f1ea;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
   #pagesBtn svg,#folderBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
@@ -39,6 +41,11 @@
   #leafFB .fshade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
   #spineShade{position:absolute;top:0;height:100%;z-index:8;pointer-events:none;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.16) 38%,rgba(0,0,0,.30) 50%,rgba(0,0,0,.16) 62%,rgba(0,0,0,0) 100%)}
   #castShade{position:absolute;top:0;height:100%;z-index:4;pointer-events:none;opacity:0;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.85) 50%,rgba(0,0,0,0) 100%)}
+  #botLayer{position:absolute;top:0;height:100%;z-index:4;display:none;pointer-events:none;background:#2b2b2b}
+  #botLayer img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  #flipLayer{position:absolute;z-index:6;display:none;pointer-events:none;background:#2b2b2b;will-change:transform,clip-path}
+  #flipLayer img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  #shadeCv{position:absolute;left:0;top:0;z-index:7;display:none;pointer-events:none}
   .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:64px;height:96px;margin:0;padding:0;border:0;outline:0;box-shadow:none;background:transparent;color:#fff;font-size:52px;cursor:pointer;line-height:1;pointer-events:auto;appearance:none;-webkit-appearance:none}
   .arrow:hover,.arrow:focus,.arrow:focus-visible,.arrow:active{border:0;outline:0;box-shadow:none;background:transparent}
   #prev{left:8px}#next{right:8px}
@@ -49,6 +56,7 @@
   #viewer:fullscreen #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end;z-index:30}
   #viewer:fullscreen #counter,#viewer:fullscreen #mark{display:none}
   body.expanded #fs,body.expanded #pagesBtn,#viewer:fullscreen #fs,#viewer:fullscreen #pagesBtn{background:rgba(15,15,15,.5)}
+  body.expanded #turnLabel,#viewer:fullscreen #turnLabel{background:rgba(15,15,15,.55);border-radius:999px;padding:4px 8px}
   #sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:rgba(16,16,16,.97);border-top:1px solid #4a4a4a;transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
   #sheet.open{transform:none;visibility:visible;transition:transform .3s ease}
   #sheetBar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 0}
@@ -71,7 +79,7 @@
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
+    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><label id="turnLabel">Page turn: <select id="turnPick" aria-label="Page turn"><option value="hardcover">Hardcover</option><option value="magazine">Magazine</option></select></label><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
     <div id="stage">
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
@@ -86,6 +94,9 @@
           <div class="face front"><img alt=""><div class="fshade"></div></div>
           <div class="face back"><img alt=""><div class="fshade"></div></div>
         </div>
+        <div id="botLayer"><img alt=""></div>
+        <div id="flipLayer"><img alt=""></div>
+        <canvas id="shadeCv"></canvas>
         <div id="spineShade"></div>
       </div></div></div>
     </div>
@@ -117,6 +128,15 @@
     var leafFB = document.getElementById("leafFB");
     var fbFrontImg = leafFB.querySelector(".front img"), fbBackImg = leafFB.querySelector(".back img");
     var fbShades = leafFB.querySelectorAll(".fshade");
+    var botLayer = document.getElementById("botLayer");
+    var flipLayer = document.getElementById("flipLayer");
+    var botImg = botLayer.querySelector("img");
+    var flipImg = flipLayer.querySelector("img");
+    var shadeCv = document.getElementById("shadeCv");
+    var shadeCtx = shadeCv.getContext("2d");
+    var turnMode = "hardcover";
+    try { if (localStorage.getItem("flipbook18-page-turn") === "magazine") turnMode = "magazine"; } catch (err) {}
+    function isMag() { return turnMode === "magazine"; }
     var spineShade = document.getElementById("spineShade");
     var castShade = document.getElementById("castShade");
     var counter = document.getElementById("counter");
@@ -269,6 +289,7 @@
     var camX = 0, camAnim = null;
     var animating = false;
     var pendingBook = false;
+    var turnGen = 0;
     var pendingDir = null;   // one-deep queue: a tap mid-flip lines up the next turn
     var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var FLIP_MS = REDUCED ? 320 : 950;
@@ -364,6 +385,14 @@
       canvas.height = Math.round(winH * dpr);
       // shift the GL book origin by the margins: handled by translating positions
       canvas.dataset.mx = mx; canvas.dataset.my = my;
+      botLayer.style.width = pageSize + "px";
+      flipLayer.style.width = pageSize + "px";
+      flipLayer.style.height = pageSize + "px";
+      shadeCv.style.width = bookW + "px";
+      shadeCv.style.height = pageSize + "px";
+      shadeCv.width = Math.round(bookW * dpr);
+      shadeCv.height = Math.round(pageSize * dpr);
+      shadeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       if (camAnim) { cancelAnimationFrame(camAnim); camAnim = null; }
       setCam(camTargetFor(flipped, focus));
       render();
@@ -382,7 +411,187 @@
       }
     }
 
-    function showLeaf() { var el = glOK ? canvas : leafFB; el.style.opacity = ""; el.style.display = "block"; }
+    /* ================= corner-fold leaf (magazine / flipbook17) =================
+       Rigid plane on the spine corner. DOM layers and clip geometry, no
+       canvas texture, so file:// does not taint it. Spine frame: x from
+       the spine toward the turning side, y down. */
+    function limitToCircle(c, R, p) {
+      var dx = c.x - p.x, dy = c.y - p.y;
+      if (Math.sqrt(dx * dx + dy * dy) <= R) return p;
+      var ax = Math.sqrt(R * R * dx * dx / (dx * dx + dy * dy)) + c.x;
+      if (p.x < 0) ax *= -1;
+      var ay = (ax - c.x) * dy / dx + c.y;
+      if (dx + c.y === 0) ay = R;
+      return { x: ax, y: ay };
+    }
+    function calcFold(F0, corner, W, H) {
+      var F = { x: F0.x, y: F0.y }, rect = null, A = 0, valid = true;
+      function geom(p) {
+        var e = W - p.x + 1;
+        var i = corner === "bottom" ? H - p.y : p.y;
+        var s0 = 2 * Math.acos(Math.max(-1, Math.min(1, e / Math.sqrt(i * i + e * e))));
+        if (!isFinite(s0) || (Math.PI - s0 >= 0 && Math.PI - s0 < 0.003)) { valid = false; return; }
+        var sg = i < 0 ? -s0 : s0;
+        A = corner === "bottom" ? -sg : sg;
+        var base = corner === "top"
+          ? [{ x: 0, y: 0 }, { x: W, y: 0 }, { x: 0, y: H }, { x: W, y: H }]
+          : [{ x: 0, y: -H }, { x: W, y: -H }, { x: 0, y: 0 }, { x: W, y: 0 }];
+        var c = Math.cos(A), sn = Math.sin(A);
+        function rot(b) { return { x: b.x * c + b.y * sn + p.x, y: b.y * c - b.x * sn + p.y }; }
+        rect = { tl: rot(base[0]), tr: rot(base[1]), bl: rot(base[2]), br: rot(base[3]) };
+      }
+      geom(F);
+      if (!valid) return { valid: false };
+      var cPt = corner === "top" ? { x: 0, y: 0 } : { x: 0, y: H };
+      var oPt = corner === "top" ? { x: 0, y: H } : { x: 0, y: 0 };
+      var n1 = limitToCircle(cPt, W, F);
+      if (n1.x !== F.x || n1.y !== F.y) { F = n1; geom(F); if (!valid) return { valid: false }; }
+      var rr = Math.sqrt(W * W + H * H);
+      var o = rect.br, a = rect.tl;
+      if (corner === "bottom") { o = rect.tr; a = rect.bl; }
+      if (o.x <= 0) {
+        var n2 = limitToCircle(oPt, rr, a);
+        if (n2.x !== F.x || n2.y !== F.y) { F = n2; geom(F); if (!valid) return { valid: false }; }
+      }
+      function lineI(p1, p2, p3, p4) {
+        var d = (p2.x - p1.x) * (p4.y - p3.y) - (p2.y - p1.y) * (p4.x - p3.x);
+        if (!d) return null;
+        var t = ((p3.x - p1.x) * (p4.y - p3.y) - (p3.y - p1.y) * (p4.x - p3.x)) / d;
+        var x = p1.x + t * (p2.x - p1.x), y = p1.y + t * (p2.y - p1.y);
+        return (x >= -1 && x <= W + 1 && y >= -1 && y <= H + 1) ? { x: x, y: y } : null;
+      }
+      var topI = corner === "top" ? lineI(F, rect.tr, { x: 0, y: 0 }, { x: W, y: 0 }) : lineI(rect.tl, rect.tr, { x: 0, y: 0 }, { x: W, y: 0 });
+      var sideI = corner === "top" ? lineI(F, rect.bl, { x: W, y: 0 }, { x: W, y: H }) : lineI(F, rect.tl, { x: W, y: 0 }, { x: W, y: H });
+      var botI = lineI(rect.bl, rect.br, { x: 0, y: H }, { x: W, y: H });
+      var flipClip = [rect.tl], flag = false;
+      if (topI) flipClip.push(topI);
+      if (!sideI) flag = true; else { flipClip.push(sideI); if (!botI) flag = false; }
+      if (botI) flipClip.push(botI);
+      if (flag || corner === "bottom") flipClip.push(rect.bl);
+      function pdist(p, q) { return (!p || !q) ? Infinity : Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)); }
+      var botClip = [];
+      if (topI) botClip.push(topI);
+      if (corner === "top") botClip.push({ x: W, y: 0 });
+      else { if (topI) botClip.push({ x: W, y: 0 }); botClip.push({ x: W, y: H }); }
+      if (sideI) { if (pdist(sideI, topI) >= 10) botClip.push(sideI); }
+      else if (corner === "top") botClip.push({ x: W, y: H });
+      if (botI) botClip.push(botI);
+      if (topI) botClip.push(topI);
+      var shadowStart = corner === "top" ? topI : (sideI || topI);
+      var shadowEnd = shadowStart === topI ? (sideI || botI) : botI;
+      return { valid: true, F: F, A: A, rect: rect, flipClip: flipClip, botClip: botClip,
+               shadowStart: shadowStart, shadowEnd: shadowEnd,
+               progress: Math.abs((F.x - W) / (2 * W)) };
+    }
+    var MAX_SHADOW_OPACITY = 0.22;
+    var turnDir = null;
+    var turnCorner = "bottom";
+    var lastPoseP = 0;
+    function showTurn() {
+      botLayer.style.display = "block";
+      flipLayer.style.display = "block";
+      flipLayer.style.opacity = "";
+      shadeCv.style.display = "block";
+    }
+    function hideTurn() {
+      botLayer.style.display = "none";
+      flipLayer.style.display = "none";
+      flipLayer.style.opacity = "";
+      flipLayer.style.transform = "";
+      flipLayer.style.clipPath = "";
+      shadeCv.style.display = "none";
+      turnDir = null;
+    }
+    function toBook(q) {
+      return turnDir === "next" ? { x: pageSize + q.x, y: q.y } : { x: pageSize - q.x, y: q.y };
+    }
+    function polyStr(pts) {
+      return "polygon(" + pts.map(function (q) { return q.x.toFixed(1) + "px " + q.y.toFixed(1) + "px"; }).join(", ") + ")";
+    }
+    function poseTurn(F, glideNow) {
+      var W = pageSize, H = pageSize;
+      var c = calcFold(F, turnCorner, W, H);
+      if (!c.valid) return lastPoseP;
+      var p = c.progress;
+      lastPoseP = p;
+      var B = function (q) { return toBook(q); };
+      var q00, q10, q01;
+      if (turnDir === "next") { q00 = B(c.rect.tl); q10 = B(c.rect.tr); q01 = B(c.rect.bl); }
+      else { q00 = B(c.rect.tr); q10 = B(c.rect.tl); q01 = B(c.rect.br); }
+      var ma = (q10.x - q00.x) / W, mb = (q10.y - q00.y) / W;
+      var mc = (q01.x - q00.x) / H, md = (q01.y - q00.y) / H;
+      flipLayer.style.left = "0px";
+      flipLayer.style.top = "0px";
+      flipLayer.style.transformOrigin = "0 0";
+      flipLayer.style.transform = "matrix(" + ma.toFixed(5) + ", " + mb.toFixed(5) + ", " + mc.toFixed(5) + ", " + md.toFixed(5) + ", " + q00.x.toFixed(1) + ", " + q00.y.toFixed(1) + ")";
+      var det = ma * md - mb * mc;
+      flipLayer.style.clipPath = polyStr(c.flipClip.map(function (q) {
+        var qb = B(q), vx = qb.x - q00.x, vy = qb.y - q00.y;
+        return { x: (md * vx - mc * vy) / det, y: (-mb * vx + ma * vy) / det };
+      }));
+      botLayer.style.clipPath = polyStr(c.botClip.map(function (q) {
+        return turnDir === "next" ? { x: q.x, y: q.y } : { x: pageSize - q.x, y: q.y };
+      }));
+      var ctx = shadeCtx;
+      ctx.clearRect(0, 0, W * 2, H);
+      if (c.shadowStart && c.shadowEnd) {
+        var s0 = toBook(c.shadowStart), s1 = toBook(c.shadowEnd);
+        var ddx = s1.x - s0.x, ddy = s1.y - s0.y;
+        var len = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
+        var ux = ddx / len, uy = ddy / len;
+        var nx = uy, ny = -ux;
+        var bcx = 0, bcy = 0;
+        c.botClip.forEach(function (q) { var b = toBook(q); bcx += b.x; bcy += b.y; });
+        bcx /= c.botClip.length; bcy /= c.botClip.length;
+        if (nx * (bcx - (s0.x + s1.x) / 2) + ny * (bcy - (s0.y + s1.y) / 2) < 0) { nx = -nx; ny = -ny; }
+        var sw = 0.75 * W * p;
+        var op = MAX_SHADOW_OPACITY * (1 - p) + 0.04 * Math.sin(Math.PI * p);
+        var ext = H * 1.3;
+        function band(sign, width, stops) {
+          var ax = s0.x - ux * ext, ay = s0.y - uy * ext;
+          var bx = s1.x + ux * ext, by = s1.y + uy * ext;
+          var g = ctx.createLinearGradient(ax, ay, ax + nx * sign * width, ay + ny * sign * width);
+          stops.forEach(function (st) { g.addColorStop(st[0], "rgba(0,0,0," + (st[1]).toFixed(3) + ")"); });
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+          ctx.lineTo(bx + nx * sign * width, by + ny * sign * width);
+          ctx.lineTo(ax + nx * sign * width, ay + ny * sign * width);
+          ctx.closePath(); ctx.fill();
+        }
+        if (sw > 1 && len > 4) {
+          ctx.save();
+          ctx.beginPath();
+          c.botClip.forEach(function (q, ix) { var b = toBook(q); if (ix === 0) ctx.moveTo(b.x, b.y); else ctx.lineTo(b.x, b.y); });
+          ctx.closePath(); ctx.clip();
+          band(1, sw, [[0, op], [1, 0]]);
+          ctx.restore();
+          ctx.save();
+          ctx.beginPath();
+          c.flipClip.forEach(function (q, ix) { var b = toBook(q); if (ix === 0) ctx.moveTo(b.x, b.y); else ctx.lineTo(b.x, b.y); });
+          ctx.closePath(); ctx.clip();
+          band(-1, sw * 0.75, [[0, op], [0.15, 0.05], [0.35, op], [1, 0]]);
+          ctx.restore();
+        }
+      }
+      var s = Math.sin(Math.PI * p);
+      if (turnDir === "next") { shadeR.style.opacity = (s * 0.34).toFixed(3); shadeL.style.opacity = (s * 0.20).toFixed(3); }
+      else { shadeL.style.opacity = (s * 0.34).toFixed(3); shadeR.style.opacity = (s * 0.20).toFixed(3); }
+      if (glideNow !== null && glideNow !== undefined) glideEl.style.transform = "translateX(" + glideNow + "px)";
+      return p;
+    }
+    function turnStartF(corner) { return corner === "top" ? { x: pageSize - 10, y: 2 } : { x: pageSize - 10, y: pageSize - 2 }; }
+    function turnEndF(corner) { return corner === "top" ? { x: -pageSize, y: 2 } : { x: -pageSize, y: pageSize - 2 }; }
+    function magMs() { return REDUCED ? 320 : 700; }
+    function linearEase(t) { return t; }
+    /* =============== end corner-fold leaf =============== */
+
+    function showLeaf() {
+      if (isMag()) { showTurn(); return; }
+      var el = glOK ? canvas : leafFB;
+      el.style.opacity = "";
+      el.style.display = "block";
+    }
     function hideLeaf() {
       canvas.style.display = "none";
       canvas.style.opacity = "";
@@ -392,6 +601,7 @@
       shadeL.style.opacity = 0; shadeR.style.opacity = 0;
       fbShades[0].style.opacity = 0; fbShades[1].style.opacity = 0;
       castShade.style.opacity = 0;
+      hideTurn();
     }
 
     function poseLeaf(theta, lagSign, glideNow) {
@@ -421,20 +631,38 @@
       if (glideNow !== null && glideNow !== undefined) glideEl.style.transform = "translateX(" + glideNow + "px)";
     }
 
-    /* Set up bases + leaf for a turn. dir: "next" | "prev". Returns false if impossible. */
-    function setupTurn(dir) {
+    /* Set up bases + leaf for a turn. dir: "next" | "prev". Returns false if impossible.
+       Magazine uses the peel layers. Hardcover keeps the WebGL sheet, or the flat leaf. */
+    function setupTurn(dir, corner) {
+      turnDir = dir;
+      turnCorner = corner || "bottom";
+      lastPoseP = 0;
       if (dir === "next") {
         if (flipped >= HALF) return false;
         var f = flipped;
-        setLeafImages(2 * f, 2 * f + 1);
         var nr = 2 * f + 2;
-        if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[nr]); } else baseR.style.display = "none";
+        if (isMag()) {
+          flipImg.src = pageSrc(PAGES[2 * f + 1]);
+          botLayer.style.left = pageSize + "px";
+          if (nr < N) { botImg.src = pageSrc(PAGES[nr]); botLayer.style.visibility = "visible"; }
+          else botLayer.style.visibility = "hidden";
+        } else {
+          setLeafImages(2 * f, 2 * f + 1);
+          if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[nr]); } else baseR.style.display = "none";
+        }
       } else {
         if (flipped <= 0) return false;
         var g = flipped;
-        setLeafImages(2 * g - 2, 2 * g - 1);
         var pl = 2 * g - 3;
-        if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[pl]); } else baseL.style.display = "none";
+        if (isMag()) {
+          flipImg.src = pageSrc(PAGES[2 * g - 2]);
+          botLayer.style.left = "0px";
+          if (pl >= 0) { botImg.src = pageSrc(PAGES[pl]); botLayer.style.visibility = "visible"; }
+          else botLayer.style.visibility = "hidden";
+        } else {
+          setLeafImages(2 * g - 2, 2 * g - 1);
+          if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[pl]); } else baseL.style.display = "none";
+        }
       }
       return true;
     }
@@ -447,11 +675,13 @@
 
     var SWAP_DEG = 10;   // landing crossfade window, degrees before touchdown
     function animateLeaf(fromDeg, toDeg, gFrom, gTo, lagSign, dur, onSwap, onDone) {
+      var gen = ++turnGen;
       animating = true;
       showLeaf();
       var t0 = null, swapped = false;
       var leafEl = glOK ? canvas : leafFB;
       function frame(ts) {
+        if (gen !== turnGen) return;
         if (t0 === null) t0 = ts;
         var raw = Math.min(1, (ts - t0) / dur);
         var e = easeInOutSine(raw);
@@ -482,29 +712,77 @@
       requestAnimationFrame(frame);
     }
 
+    var SWAP_P = 0.93;
+    function animateTurnF(dir, F0, F1, g0, g1, dur, onSwap, onDone) {
+      var gen = ++turnGen;
+      animating = true;
+      showTurn();
+      var t0 = null, swapped = false;
+      function frame(ts) {
+        if (gen !== turnGen) return;
+        if (t0 === null) t0 = ts;
+        var raw = Math.min(1, (ts - t0) / dur);
+        var F = { x: F0.x + (F1.x - F0.x) * raw, y: F0.y + (F1.y - F0.y) * raw };
+        var p = poseTurn(F, g0 + (g1 - g0) * raw);
+        if (!swapped && p >= SWAP_P) {
+          swapped = true;
+          if (onSwap) onSwap();
+        }
+        if (swapped) flipLayer.style.opacity = Math.pow(Math.max(0, (1 - p) / (1 - SWAP_P)), 0.65).toFixed(3);
+        if (raw < 1) { requestAnimationFrame(frame); return; }
+        hideLeaf();
+        animating = false;
+        if (pendingBook) { pendingBook = false; render(); }
+        if (onDone) onDone();
+        if (pendingDir) {
+          var pd = pendingDir;
+          pendingDir = null;
+          if (pd === "next") flipNext(); else flipPrev();
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
     function flipNext() {
       if (drag) return;
       if (animating) { pendingDir = "next"; return; }
       if (focusMode && flipped > 0 && flipped < HALF && focus === 0) { slideTo(1); return; }
-      if (!setupTurn("next")) return;
+      if (!setupTurn("next", "bottom")) return;
       var g0 = glideFor(flipped), g1 = glideFor(flipped + 1);
-      showLeaf(); poseLeaf(0, 1, g0);   // cover the swapped base in this same task — no bare incoming-page frame
-      tweenCam(camTargetFor(flipped + 1, 0), FLIP_MS, easeInOutSine);
-      animateLeaf(0, -180, g0, g1, 1, FLIP_MS, function () { commitTurn("next"); focus = 0; render(); }, null);
+      var done = function () { commitTurn("next"); focus = 0; render(); };
+      if (isMag()) {
+        showLeaf();
+        poseTurn(turnStartF("bottom"), g0);
+        tweenCam(camTargetFor(flipped + 1, 0), magMs(), linearEase);
+        animateTurnF("next", turnStartF("bottom"), turnEndF("bottom"), g0, g1, magMs(), done, null);
+      } else {
+        showLeaf(); poseLeaf(0, 1, g0);   // cover the swapped base in this same task — no bare incoming-page frame
+        tweenCam(camTargetFor(flipped + 1, 0), FLIP_MS, easeInOutSine);
+        animateLeaf(0, -180, g0, g1, 1, FLIP_MS, done, null);
+      }
     }
 
     function flipPrev() {
       if (drag) return;
       if (animating) { pendingDir = "prev"; return; }
       if (focusMode && flipped > 0 && flipped < HALF && focus === 1) { slideTo(0); return; }
-      if (!setupTurn("prev")) return;
+      if (!setupTurn("prev", "bottom")) return;
       var g0 = glideFor(flipped), g1 = glideFor(flipped - 1);
-      showLeaf(); poseLeaf(-180, -1, g0);   // same-task cover, prev side
-      tweenCam(camTargetFor(flipped - 1, 1), FLIP_MS, easeInOutSine);
-      animateLeaf(-180, 0, g0, g1, -1, FLIP_MS, function () { commitTurn("prev"); focus = 1; render(); }, null);
+      var done = function () { commitTurn("prev"); focus = 1; render(); };
+      if (isMag()) {
+        showLeaf();
+        poseTurn(turnStartF("bottom"), g0);
+        tweenCam(camTargetFor(flipped - 1, 1), magMs(), linearEase);
+        animateTurnF("prev", turnStartF("bottom"), turnEndF("bottom"), g0, g1, magMs(), done, null);
+      } else {
+        showLeaf(); poseLeaf(-180, -1, g0);   // same-task cover, prev side
+        tweenCam(camTargetFor(flipped - 1, 1), FLIP_MS, easeInOutSine);
+        animateLeaf(-180, 0, g0, g1, -1, FLIP_MS, done, null);
+      }
     }
 
     function goTo(firstIdx) {
+      turnGen++;
       animating = false;
       pendingDir = null;
       hideLeaf();
@@ -539,12 +817,24 @@
       if (d.dir === "next") return Math.max(-180, Math.min(0, 180 * dx / pageSize));
       return Math.max(-180, Math.min(0, -180 + 180 * dx / pageSize));
     }
+    function dragF(d, clientX, clientY) {
+      var r = bookEl.getBoundingClientRect();
+      var spineX = r.left + pageSize;
+      var u = d.dir === "next" ? (clientX - spineX) : (spineX - clientX);
+      u = Math.max(-pageSize, Math.min(pageSize, u));
+      var v = Math.max(-pageSize, Math.min(2 * pageSize, clientY - r.top));
+      return { x: u, y: v };
+    }
+    function grabCorner(clientY) {
+      var r = bookEl.getBoundingClientRect();
+      return (clientY - r.top) < pageSize / 2 ? "top" : "bottom";
+    }
     bookWrap.addEventListener("pointerdown", function (e) {
       if (drag) return;
-      if (e.target.closest("button") || sheet.classList.contains("open")) return;
+      if (e.target.closest("button") || e.target.closest("select") || e.target.closest("label") || sheet.classList.contains("open")) return;
       // During a flip a press can't peel, but it can still be a tap (the
       // flip functions queue it). tapOnly drags never activate.
-      drag = { x0: e.clientX, dx: 0, dir: null, active: false, tapOnly: animating, t0: performance.now(), id: e.pointerId, samples: [{ t: performance.now(), dx: 0 }] };
+      drag = { x0: e.clientX, y0: e.clientY, dx: 0, dir: null, corner: "bottom", active: false, tapOnly: animating, t0: performance.now(), id: e.pointerId, samples: [{ t: performance.now(), dx: 0 }] };
       try { bookWrap.setPointerCapture(e.pointerId); } catch (err) {}
     });
     bookWrap.addEventListener("pointermove", function (e) {
@@ -568,7 +858,8 @@
             drag.active = true;
             bookWrap.classList.add("grabbing");
           } else {
-            if (!setupTurn(intent)) { drag = null; return; }
+            drag.corner = isMag() ? grabCorner(drag.y0) : "bottom";
+            if (!setupTurn(intent, drag.corner)) { drag = null; return; }
             drag.kind = "flip";
             drag.dir = intent;
             drag.active = true;
@@ -583,7 +874,8 @@
           var spineX = r.left + pageSize;
           if (e.clientX - drag.dx < spineX) dir = "prev"; else dir = "next";
           if ((dir === "next" && flipped >= HALF) || (dir === "prev" && flipped <= 0)) dir = drag.dx < 0 ? "next" : "prev";
-          if (!setupTurn(dir)) { drag = null; return; }
+          drag.corner = isMag() ? grabCorner(drag.y0) : "bottom";
+          if (!setupTurn(dir, drag.corner)) { drag = null; return; }
           drag.kind = "flip";
           drag.dir = dir;
           drag.active = true;
@@ -596,6 +888,14 @@
       if (drag.kind === "slide") {
         var lo = Math.min(drag.camFrom, drag.camTo), hi = Math.max(drag.camFrom, drag.camTo);
         setCam(Math.max(lo, Math.min(hi, drag.camFrom + drag.dx)));
+        return;
+      }
+      if (isMag()) {
+        var F = dragF(drag, e.clientX, e.clientY);
+        drag.F = F;
+        var pNow = poseTurn(F, null);
+        drag.p = pNow;
+        glideEl.style.transform = "translateX(" + (drag.g0 + (drag.g1 - drag.g0) * pNow) + "px)";
         return;
       }
       var th = dragTheta(drag);
@@ -636,14 +936,28 @@
         }
         return;
       }
-      var th = d.theta || (d.dir === "next" ? 0 : -180);
+      var gNow = parseFloat((glideEl.style.transform || "").replace(/[^0-9.\-]/g, "")) || 0;
+      var landFocus = d.dir === "next" ? 0 : 1;
       var flick = d.dir === "next" ? vel < -0.45 : vel > 0.45;
+      if (isMag()) {
+        var Fcur = d.F || turnStartF(d.corner || "bottom");
+        var progF = (pageSize - Fcur.x) / (2 * pageSize);
+        var completeM = flick || progF >= 0.78 || (Fcur.x <= 0 && Math.abs(d.dx) >= 40);
+        var targetF = completeM ? turnEndF(d.corner || "bottom") : turnStartF(d.corner || "bottom");
+        var durM = Math.max(120, magMs() * Math.abs(targetF.x - Fcur.x) / (2 * pageSize));
+        var gEndM = completeM ? d.g1 : d.g0;
+        if (completeM) tweenCam(camTargetFor(stateAfter(d.dir), landFocus), durM, linearEase);
+        animateTurnF(d.dir, Fcur, targetF, gNow, gEndM, durM, function () {
+          if (completeM) { commitTurn(d.dir); focus = landFocus; }
+          render();
+        }, null);
+        return;
+      }
+      var th = d.theta || (d.dir === "next" ? 0 : -180);
       var complete = d.dir === "next" ? (th <= -65 || flick) : (th >= -115 || flick);
       var target = d.dir === "next" ? (complete ? -180 : 0) : (complete ? 0 : -180);
       var dur = Math.max(140, FLIP_MS * Math.abs(target - th) / 180);
-      var gNow = parseFloat((glideEl.style.transform || "").replace(/[^0-9.\-]/g, "")) || 0;
       var gEnd = complete ? d.g1 : d.g0;
-      var landFocus = d.dir === "next" ? 0 : 1;
       if (complete) tweenCam(camTargetFor(stateAfter(d.dir), landFocus), dur, easeInOutSine);
       animateLeaf(th, target, gNow, gEnd, d.dir === "next" ? 1 : -1, dur, function () {
         if (complete) { commitTurn(d.dir); focus = landFocus; }
@@ -951,6 +1265,23 @@
       }
       step(0);
     }
+
+    var turnPick = document.getElementById("turnPick");
+    turnPick.value = turnMode;
+    turnPick.addEventListener("change", function () {
+      var mode = turnPick.value === "magazine" ? "magazine" : "hardcover";
+      var spread = flipped;
+      turnGen++;
+      animating = false;
+      pendingDir = null;
+      drag = null;
+      bookWrap.classList.remove("grabbing");
+      hideLeaf();
+      turnMode = mode;
+      flipped = spread;
+      try { localStorage.setItem("flipbook18-page-turn", mode); } catch (err) {}
+      render();
+    });
 
     fit();
   }
