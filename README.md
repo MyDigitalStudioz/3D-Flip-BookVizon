@@ -4,11 +4,12 @@
 
 **Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v1 (GitHub default is main).
 
-[![Preview](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-preview.svg?v=20261029-1)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
-[![Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-pages.svg?v=20261029-1)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
-[![Last commit](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-last-commit.svg?v=20261029-1)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/commits/main)
-[![Repo size](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-repo-size.svg?v=20261029-1)](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon)
-[![Static site](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/badge-static.svg?v=20261029-1)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
+[![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
+![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
+![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
+![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
+![Static site](https://img.shields.io/badge/site-static-blue)
+![Version](https://img.shields.io/badge/version-1.0.0-orange)
 
 ## Live preview
 
