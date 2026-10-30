@@ -14,7 +14,12 @@
   #folderPop{position:absolute;top:62px;right:18px;z-index:9;display:flex;flex-direction:column;gap:10px;background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:12px;padding:12px 14px;font-size:14px}
   #folderPop[hidden]{display:none}
   #folderPop label{display:flex;align-items:center;gap:8px}
-  #folderGo{background:#e8b34b;color:#191919;border:0;border-radius:999px;padding:8px 12px;font:inherit;cursor:pointer}
+  #folderGo,#pdfGo{background:#e8b34b;color:#191919;border:0;border-radius:999px;padding:8px 12px;font:inherit;cursor:pointer}
+  #pdfBtn{flex:0 0 auto;height:42px;padding:0 14px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;cursor:pointer;font:inherit;white-space:nowrap}
+  #pdfPop{position:absolute;top:62px;right:18px;z-index:9;display:flex;flex-direction:column;gap:10px;background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:12px;padding:12px 14px;font-size:14px}
+  #pdfPop[hidden]{display:none}
+  #pdfPop label{display:flex;align-items:center;gap:8px}
+  #pdfLayout{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:8px;padding:4px 8px;font:inherit}
   #loadBar{position:absolute;left:0;right:0;top:0;height:3px;z-index:7;background:transparent}
   #loadBar[hidden]{display:none}
   #loadFill{height:100%;width:0;background:#e8b34b}
@@ -79,7 +84,7 @@
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><label id="turnLabel">Page turn: <select id="turnPick" aria-label="Page turn"><option value="hardcover">Hardcover</option><option value="magazine">Magazine</option></select></label><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
+    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><label id="turnLabel">Page turn: <select id="turnPick" aria-label="Page turn"><option value="hardcover">Hardcover</option><option value="magazine">Magazine</option></select></label><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pdfBtn" type="button">Open PDF</button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
     <div id="stage">
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
@@ -101,7 +106,9 @@
       </div></div></div>
     </div>
     <div id="folderPop" hidden><label><input id="coverFirst" type="checkbox" checked> First image is the cover</label><button id="folderGo" type="button">Choose folder</button></div>
+    <div id="pdfPop" hidden><label><input id="pdfCover" type="checkbox" checked> First page is the cover</label><label>Pages <select id="pdfLayout" aria-label="PDF page layout"><option value="auto">Auto</option><option value="single">Single pages</option><option value="spreads">Wide spreads</option></select></label><label><input id="pdfPrint" type="checkbox" checked> NOT FOR PRINT</label><button id="pdfGo" type="button">Choose PDF</button></div>
     <input id="folderPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" webkitdirectory multiple hidden>
+    <input id="pdfPick" type="file" accept="application/pdf,.pdf" hidden>
     <div id="notice" role="status"></div>
     <div id="sheet" aria-hidden="true">
       <div id="sheetBar"><span id="sheetTitle">Pages — tap one to jump there</span><button id="sheetClose" type="button" aria-label="Close pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -109,6 +116,9 @@
     </div>
   </div>
   <script src="flipbook1/manifest.js"></script>
+  <!-- pdf.js 3.11.174 (Apache-2.0), classic scripts. The worker script is loaded on purpose so file:// uses the main-thread fake worker. -->
+  <script src="vendor/pdfjs/pdf.min.js"></script>
+  <script src="vendor/pdfjs/pdf.worker.min.js"></script>
   <script>
   function startFlipbook() {
     var PAGES = BOOK.pages, N = PAGES.length, HALF = N / 2;
@@ -1065,9 +1075,28 @@
     var loadBar = document.getElementById("loadBar");
     var loadFill = document.getElementById("loadFill");
     var folderGen = 0;
+    var pdfGen = 0;
+    var livePdf = null;
+    var pdfName = "";
     var tempBlank = false;
     var coverOpened = false;
-    folderBtn.onclick = function () { folderPop.hidden = !folderPop.hidden; };
+    var markEl = document.getElementById("mark");
+    var markHome = markEl.textContent;
+    var pdfBtn = document.getElementById("pdfBtn");
+    var pdfPop = document.getElementById("pdfPop");
+    var pdfPick = document.getElementById("pdfPick");
+    folderBtn.onclick = function () { pdfPop.hidden = true; folderPop.hidden = !folderPop.hidden; };
+    pdfBtn.onclick = function () { folderPop.hidden = true; pdfPop.hidden = !pdfPop.hidden; };
+    document.getElementById("pdfGo").onclick = function () { pdfPick.click(); };
+    pdfPick.onchange = function () {
+      pdfPop.hidden = true;
+      if (pdfPick.files && pdfPick.files[0]) takePdf(pdfPick.files[0]);
+      pdfPick.value = "";
+    };
+    document.getElementById("pdfPrint").addEventListener("change", function () {
+      if (!pdfName) return;
+      markEl.textContent = document.getElementById("pdfPrint").checked ? pdfName + " — NOT FOR PRINT" : pdfName;
+    });
     document.getElementById("folderGo").onclick = function () { folderPick.click(); };
     folderPick.onchange = function () {
       folderPop.hidden = true;
@@ -1078,12 +1107,20 @@
     viewer.addEventListener("drop", function (e) {
       e.preventDefault();
       folderPop.hidden = true;
+      pdfPop.hidden = true;
       var items = e.dataTransfer && e.dataTransfer.items;
-      if (!items || !items.length) { takeFiles(e.dataTransfer.files); return; }
-      Promise.all([].map.call(items, readDropItem)).then(function (groups) {
-        var flat = [];
-        groups.forEach(function (g) { flat = flat.concat(g); });
-        takeFiles(flat);
+      var incoming = (!items || !items.length)
+        ? Promise.resolve([].slice.call(e.dataTransfer.files || []))
+        : Promise.all([].map.call(items, readDropItem)).then(function (groups) {
+          var flat = [];
+          groups.forEach(function (g) { flat = flat.concat(g); });
+          return flat;
+        });
+      incoming.then(function (flat) {
+        var pdf = null;
+        for (var i = 0; i < flat.length; i++) if (isPdfFile(flat[i])) { pdf = flat[i]; break; }
+        if (pdf) takePdf(pdf);
+        else takeFiles(flat);
       });
     });
     function readDropItem(item) {
@@ -1215,8 +1252,109 @@
       }
       if (sheet.classList.contains("open")) buildStrip();
     }
+    function isPdfFile(file) {
+      var name = (file.name || "").toLowerCase();
+      return file.type === "application/pdf" || /\.pdf$/.test(name);
+    }
+    function stopPdf() {
+      pdfGen++;
+      if (livePdf) { try { livePdf.destroy(); } catch (err) {} livePdf = null; }
+    }
+    function paintPdf(page, layout) {
+      var base = page.getViewport({ scale: 1 });
+      var split = layout === "spreads" ? true : layout === "single" ? false : (base.width / base.height) >= 1.45;
+      var longTarget = 1600;
+      var scale = split
+        ? longTarget / Math.max(base.width / 2, base.height)
+        : longTarget / Math.max(base.width, base.height);
+      var vp = page.getViewport({ scale: scale });
+      var canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(vp.width));
+      canvas.height = Math.max(1, Math.round(vp.height));
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
+        if (!split) return [canvas.toDataURL("image/jpeg", 0.92)];
+        var w = Math.floor(canvas.width / 2);
+        function half(x) {
+          var c = document.createElement("canvas");
+          c.width = w;
+          c.height = canvas.height;
+          c.getContext("2d").drawImage(canvas, x, 0, w, canvas.height, 0, 0, w, canvas.height);
+          return c.toDataURL("image/jpeg", 0.92);
+        }
+        return [half(0), half(w)];
+      });
+    }
+    function takePdf(file) {
+      var gen = ++pdfGen;
+      folderGen++;
+      if (livePdf) { try { livePdf.destroy(); } catch (err) {} livePdf = null; }
+      pdfName = file.name || "PDF";
+      markEl.textContent = document.getElementById("pdfPrint").checked ? pdfName + " — NOT FOR PRINT" : pdfName;
+      var layout = document.getElementById("pdfLayout").value;
+      var coverOn = document.getElementById("pdfCover").checked;
+      var reader = new FileReader();
+      reader.onerror = function () { if (gen === pdfGen) reportNotice("Could not read that PDF."); };
+      reader.onload = function () {
+        if (gen !== pdfGen || typeof pdfjsLib === "undefined") return;
+        var data = new Uint8Array(reader.result);
+        pdfjsLib.getDocument({ data: data, useSystemFonts: true }).promise.then(function (doc) {
+          if (gen !== pdfGen) { doc.destroy(); return; }
+          livePdf = doc;
+          blankNote = "";
+          tempBlank = false;
+          coverOpened = false;
+          PAGES = [];
+          pageImgs = [];
+          if (!coverOn) pushPage(BLANK);
+          var opened = false;
+          var total = doc.numPages;
+          loadBar.hidden = false;
+          loadFill.style.width = "0%";
+          function finish() {
+            if (gen !== pdfGen) return;
+            dropTempBlank();
+            if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; }
+            showBook(!opened, coverOn);
+            loadBar.hidden = true;
+            if (!PAGES.length) reportNotice("That PDF has no pages.");
+            else { noticeEl.textContent = ""; noticeEl.style.display = "none"; }
+          }
+          function step(n) {
+            if (gen !== pdfGen) return;
+            if (n > total) { finish(); return; }
+            reportNotice("Loading page " + n + " of " + total);
+            doc.getPage(n).then(function (page) {
+              return paintPdf(page, layout);
+            }).then(function (parts) {
+              if (gen !== pdfGen) return;
+              dropTempBlank();
+              parts.forEach(pushPage);
+              ensureEven();
+              showBook(!opened, coverOn);
+              opened = true;
+              loadFill.style.width = Math.round((n / total) * 100) + "%";
+              step(n + 1);
+            }).catch(function () {
+              if (gen !== pdfGen) return;
+              reportNotice("Could not read page " + n + " of " + pdfName + ".");
+              step(n + 1);
+            });
+          }
+          step(1);
+        }).catch(function () {
+          if (gen === pdfGen) reportNotice("Could not open " + pdfName + ".");
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
     function takeFiles(fileList) {
       var gen = ++folderGen;
+      stopPdf();
+      pdfName = "";
+      markEl.textContent = markHome;
       var files = [];
       for (var i = 0; i < fileList.length; i++) if (isPageFile(fileList[i])) files.push(fileList[i]);
       if (!files.length) { reportNotice("No page images in that folder."); return; }
@@ -1284,6 +1422,7 @@
     });
 
     fit();
+    document.body.dataset.flipReady = "1";
   }
   if (location.protocol === "file:") {
     var dataScript = document.createElement("script");
