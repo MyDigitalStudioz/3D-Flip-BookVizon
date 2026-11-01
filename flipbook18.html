@@ -155,7 +155,11 @@
        out to be trim-cropped, flipping basis to "trim" keeps the lines
        true — change nothing else. (BEST-3 measurement pending from Cursor;
        see CURSOR-NOTES-flipbook-v3-and-dimensions-2026-10-31.) */
-    var PAGE_SPEC = { trimIn: 8.5, bleedIn: 0.125, safetyIn: 0.5, basis: "bleed" };
+    // Basis set from Cursor's measurement (2026-10-31): the built-in book's
+    // images (and BEST-3's) are TrimBox crops — the 8.5in trim, no bleed in
+    // the picture — so basis is "trim". Flip to "bleed" only for an image
+    // set rendered WITH bleed (e.g. a future flipbook1750 set).
+    var PAGE_SPEC = { trimIn: 8.5, bleedIn: 0.125, safetyIn: 0.5, basis: "trim" };
     var guideL = document.getElementById("guideL"), guideR = document.getElementById("guideR");
     function paintGuides() {
       var full = PAGE_SPEC.basis === "bleed" ? PAGE_SPEC.trimIn + 2 * PAGE_SPEC.bleedIn : PAGE_SPEC.trimIn;
@@ -163,6 +167,9 @@
       var trimPct = 100 * trimInset / full, safePct = 100 * (trimInset + PAGE_SPEC.safetyIn) / full;
       [guideL, guideR].forEach(function (g) {
         var t = g.querySelector(".gTrim"), s = g.querySelector(".gSafe");
+        // Trim-basis images contain no bleed — the blue bleed outline would
+        // sit exactly on the trim line and lie about what the edge is.
+        g.querySelector(".gBleed").style.display = PAGE_SPEC.basis === "bleed" ? "" : "none";
         t.style.left = t.style.right = t.style.top = t.style.bottom = trimPct + "%";
         s.style.left = s.style.right = s.style.top = s.style.bottom = safePct + "%";
       });
