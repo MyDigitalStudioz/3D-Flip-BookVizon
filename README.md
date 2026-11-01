@@ -17,7 +17,7 @@
 
 Double-click `index.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v2/media/hero.jpg?v=20261029-4)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v4/media/hero.jpg?v=20261101-1)
 
 ## Screenshots
 
@@ -25,15 +25,15 @@ Captured from the working viewer on `3D-Flip-BookVizon-v2`. Refresh these files,
 
 **Cover** — the book closed on the dark stage.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v2/media/hero.jpg?v=20261029-4)
+![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v4/media/hero.jpg?v=20261101-1)
 
 **Mid-book** — pages 4–5, the first story spread.
 
-![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v2/media/spread.jpg?v=20261029-4)
+![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v4/media/spread.jpg?v=20261101-1)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v2/media/mobile.jpg?v=20261029-4)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v4/media/mobile.jpg?v=20261101-1)
 
 ## What's inside
 
