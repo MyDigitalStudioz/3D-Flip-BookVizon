@@ -382,6 +382,44 @@
       return blankNote ? text + " · " + blankNote : text;
     }
 
+    /* ---- Turn readiness: never flip a page whose image has not loaded ----
+       The preloader (pageImgs) races the reader: building a leaf texture or
+       revealing a base page from an unloaded image is what made pages flash
+       in mid-turn. Animated turns and strip jumps now wait (load bar shows,
+       1.2s cap) until the leaf's pages + the page the turn reveals are
+       decoded, and every render warms the spreads around the current one. */
+    function imgReady(im) { return !!(im && im.complete && im.naturalWidth > 0); }
+    function ensureIndices(list, cb) {
+      var need = [];
+      list.forEach(function (i) {
+        if (i >= 0 && i < N && !imgReady(pageImgs[i]) && need.indexOf(i) < 0) need.push(i);
+      });
+      if (!need.length) { cb(); return; }
+      loadBar.hidden = false;
+      var done = false;
+      function finish() { if (done) return; done = true; loadBar.hidden = true; cb(); }
+      var left = need.length;
+      need.forEach(function (i) {
+        var im = pageImgs[i], stepped = false;
+        function step() { if (stepped) return; stepped = true; if (--left <= 0) finish(); }
+        if (im.decode) im.decode().then(step, step);
+        else { im.addEventListener("load", step, { once: true }); im.addEventListener("error", step, { once: true }); }
+      });
+      setTimeout(finish, 1200);
+    }
+    function turnIndices(dir) {
+      if (dir === "next") return [2 * flipped, 2 * flipped + 1, 2 * flipped + 2];
+      return [2 * flipped - 2, 2 * flipped - 1, 2 * flipped - 3];
+    }
+    function warmAround() {
+      var c = 2 * flipped;
+      [c - 3, c - 2, c - 1, c, c + 1, c + 2, c + 3, c + 4].forEach(function (i) {
+        if (i < 0 || i >= N) return;
+        var im = pageImgs[i];
+        if (im && !imgReady(im) && im.decode) im.decode().catch(function () {});
+      });
+    }
+
     function render() {
       var li = flipped === 0 ? null : 2 * flipped - 1;
       var ri = flipped === HALF ? null : 2 * flipped;
@@ -392,6 +430,7 @@
       // would slam the book sideways at the swap, then step it back.
       if (!animating) glideEl.style.transform = "translateX(" + glideFor(flipped) + "px)";
       counter.textContent = label();
+      warmAround();
     }
 
     function fit() {
@@ -793,6 +832,11 @@
       if (drag) return;
       if (animating) { pendingDir = "next"; return; }
       if (focusMode && flipped > 0 && flipped < HALF && focus === 0) { slideTo(1); return; }
+      ensureIndices(turnIndices("next"), startFlipNext);
+    }
+    function startFlipNext() {
+      if (drag) return;
+      if (animating) { pendingDir = "next"; return; }
       if (!setupTurn("next", "bottom")) return;
       var g0 = glideFor(flipped), g1 = glideFor(flipped + 1);
       var done = function () { commitTurn("next"); focus = 0; render(); };
@@ -812,6 +856,11 @@
       if (drag) return;
       if (animating) { pendingDir = "prev"; return; }
       if (focusMode && flipped > 0 && flipped < HALF && focus === 1) { slideTo(0); return; }
+      ensureIndices(turnIndices("prev"), startFlipPrev);
+    }
+    function startFlipPrev() {
+      if (drag) return;
+      if (animating) { pendingDir = "prev"; return; }
       if (!setupTurn("prev", "bottom")) return;
       var g0 = glideFor(flipped), g1 = glideFor(flipped - 1);
       var done = function () { commitTurn("prev"); focus = 1; render(); };
@@ -886,6 +935,7 @@
       // flip functions queue it). tapOnly drags never activate.
       drag = { x0: e.clientX, y0: e.clientY, dx: 0, dir: null, corner: "bottom", active: false, tapOnly: animating, t0: performance.now(), id: e.pointerId, samples: [{ t: performance.now(), dx: 0 }] };
       try { bookWrap.setPointerCapture(e.pointerId); } catch (err) {}
+      warmAround();   // a drag can't wait at grab time — start decoding both turns' pages now
     });
     bookWrap.addEventListener("pointermove", function (e) {
       if (!drag || e.pointerId !== drag.id) return;
@@ -1045,7 +1095,7 @@
         var cap = g.length === 2 ? (g[0] + 1) + "–" + (g[1] + 1) : "" + (g[0] + 1);
         b.innerHTML = '<span class="timgs">' + imgs + '</span><span class="tcap">' + cap + "</span>";
         b.setAttribute("aria-label", "Go to page " + cap);
-        b.onclick = function () { closeSheet(); goTo(g[0]); };
+        b.onclick = function () { closeSheet(); ensureIndices([g[0], g[0] + 1], function () { goTo(g[0]); }); };
         strip.appendChild(b);
       });
       var now = strip.querySelector(".tcard.now");
