@@ -195,7 +195,18 @@
     var sheet = document.getElementById("sheet");
     var strip = document.getElementById("strip");
 
-    var pageImgs = PAGES.map(function (src) { var im = new Image(); im.src = pageSrc(src); return im; });
+    function newPageImg(src) {
+      var im = new Image();
+      // CORS-mode loads keep the WebGL texture canvas untainted when the
+      // page images are served from a different host than the page itself
+      // (preview lenses, embeds): without this, texImage2D throws a
+      // SecurityError and the 3D turn disables itself. http(s) only —
+      // file:// keeps the plain load that already works there.
+      if (/^https?:$/.test(location.protocol)) im.crossOrigin = "anonymous";
+      im.src = pageSrc(src);
+      return im;
+    }
+    var pageImgs = PAGES.map(newPageImg);
     var noticeEl = document.getElementById("notice");
     function reportNotice(text) {
       noticeEl.textContent = text;
@@ -1358,9 +1369,7 @@
     }
     function pushPage(src) {
       PAGES.push(src);
-      var im = new Image();
-      im.src = pageSrc(src);
-      pageImgs.push(im);
+      pageImgs.push(newPageImg(src));
     }
     function dropTempBlank() {
       if (!tempBlank) return;
