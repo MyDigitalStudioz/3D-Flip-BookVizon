@@ -25,9 +25,19 @@
   #loadFill{height:100%;width:0;background:#e8b34b}
   #turnLabel{display:flex;align-items:center;gap:6px;color:#f4f1ea;font-size:13px;white-space:nowrap}
   #turnPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
-  #fs,#pagesBtn,#folderBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
+  #fs,#pagesBtn,#folderBtn,#guidesBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit}
   #fs svg{width:20px;height:20px;stroke:#f4f1ea;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
   #pagesBtn svg,#folderBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
+  #guidesBtn svg{width:19px;height:19px;stroke:#f4f1ea;fill:none;stroke-width:1.8;display:block}
+  #guidesBtn[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
+  .guide{position:absolute;top:0;height:100%;z-index:9;pointer-events:none;display:none}
+  body.guides-on .guide{display:block}
+  .guide .gBleed{position:absolute;inset:0;border:2px solid rgba(63,169,245,.9)}
+  .guide .gTrim{position:absolute;border:2px solid rgba(255,83,71,.95)}
+  .guide .gSafe{position:absolute;border:2px dashed rgba(176,110,232,.95)}
+  .guide .gtag{position:absolute;top:2px;left:2px;font-size:9px;font-weight:700;letter-spacing:.06em;padding:1px 4px;border-radius:3px;color:#fff}
+  .guide .gtagT{background:#ff5347}
+  .guide .gtagS{background:#b06ee8}
   #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
   #bookWrap{position:relative;z-index:1;cursor:grab;touch-action:none;will-change:transform}
   #bookWrap.grabbing{cursor:grabbing}
@@ -84,13 +94,15 @@
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><label id="turnLabel">Page turn: <select id="turnPick" aria-label="Page turn"><option value="hardcover">Hardcover</option><option value="magazine">Magazine</option></select></label><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pdfBtn" type="button">Open PDF</button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
+    <div id="banner"><span id="counter">Page 1 of 52</span><span id="tools"><strong id="mark">BookDesk-Mocks-Test-20261029-c · v2-pages — NOT FOR PRINT</strong><label id="turnLabel">Page turn: <select id="turnPick" aria-label="Page turn"><option value="hardcover">Hardcover</option><option value="magazine">Magazine</option></select></label><button id="folderBtn" type="button" aria-label="Open a folder of images" title="Open a folder of images"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></button><button id="pdfBtn" type="button">Open PDF</button><button id="pagesBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><button id="guidesBtn" type="button" aria-label="Print guides" aria-pressed="false" title="Print guides — Lulu trim + safety"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg></button><button id="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg></button></span></div>
     <div id="stage">
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
         <div class="base" id="baseL"><img alt=""></div>
         <div class="base" id="baseR"><img alt=""></div>
+        <div class="guide" id="guideL"><div class="gBleed"></div><div class="gTrim"><span class="gtag gtagT">TRIM</span></div><div class="gSafe"><span class="gtag gtagS">SAFE</span></div></div>
+        <div class="guide" id="guideR"><div class="gBleed"></div><div class="gTrim"><span class="gtag gtagT">TRIM</span></div><div class="gSafe"><span class="gtag gtagS">SAFE</span></div></div>
         <div class="shade" id="shadeL"></div>
         <div class="shade" id="shadeR"></div>
         <canvas id="gl"></canvas>
@@ -133,6 +145,27 @@
     var glideEl = document.getElementById("glide");
     var baseL = document.getElementById("baseL"), baseR = document.getElementById("baseR");
     var imgL = baseL.querySelector("img"), imgR = baseR.querySelector("img");
+
+    /* ---- Print guides (Lulu spec, locked 2026-10-31) ----
+       PAGE_SPEC.basis says what the loaded page images ARE:
+         "bleed" = full 8.75in page (8.5 trim + 0.125 bleed all around)
+         "trim"  = already cropped to the 8.5in trim
+       Guide insets are computed from the spec, so if a book's images turn
+       out to be trim-cropped, flipping basis to "trim" keeps the lines
+       true — change nothing else. (BEST-3 measurement pending from Cursor;
+       see CURSOR-NOTES-flipbook-v3-and-dimensions-2026-10-31.) */
+    var PAGE_SPEC = { trimIn: 8.5, bleedIn: 0.125, safetyIn: 0.5, basis: "bleed" };
+    var guideL = document.getElementById("guideL"), guideR = document.getElementById("guideR");
+    function paintGuides() {
+      var full = PAGE_SPEC.basis === "bleed" ? PAGE_SPEC.trimIn + 2 * PAGE_SPEC.bleedIn : PAGE_SPEC.trimIn;
+      var trimInset = PAGE_SPEC.basis === "bleed" ? PAGE_SPEC.bleedIn : 0;
+      var trimPct = 100 * trimInset / full, safePct = 100 * (trimInset + PAGE_SPEC.safetyIn) / full;
+      [guideL, guideR].forEach(function (g) {
+        var t = g.querySelector(".gTrim"), s = g.querySelector(".gSafe");
+        t.style.left = t.style.right = t.style.top = t.style.bottom = trimPct + "%";
+        s.style.left = s.style.right = s.style.top = s.style.bottom = safePct + "%";
+      });
+    }
     var shadeL = document.getElementById("shadeL"), shadeR = document.getElementById("shadeR");
     var canvas = document.getElementById("gl");
     var leafFB = document.getElementById("leafFB");
@@ -375,6 +408,8 @@
       bookEl.style.height = pageSize + "px";
       baseL.style.left = "0px"; baseL.style.width = pageSize + "px";
       baseR.style.left = pageSize + "px"; baseR.style.width = pageSize + "px";
+      guideL.style.left = "0px"; guideL.style.width = pageSize + "px";
+      guideR.style.left = pageSize + "px"; guideR.style.width = pageSize + "px";
       shadeL.style.left = "0px"; shadeL.style.width = pageSize + "px";
       shadeR.style.left = pageSize + "px"; shadeR.style.width = pageSize + "px";
       spineShade.style.display = "block";
@@ -804,7 +839,11 @@
         if (camAnim) { cancelAnimationFrame(camAnim); camAnim = null; }
         setCam(camTargetFor(flipped, focus));
       } else {
-        flipped = firstIdx === 0 ? 0 : (firstIdx + 1) / 2;
+        // Floor + clamp: an even (right-hand) target used to leave flipped
+        // fractional (e.g. 1.5), pointing PAGES[] at fractional indices and
+        // blanking every page. Any caller may now pass any page index.
+        flipped = firstIdx === 0 ? 0 : Math.floor((firstIdx + 1) / 2);
+        if (flipped < 0) flipped = 0; else if (flipped > HALF) flipped = HALF;
       }
       render();
     }
@@ -1017,6 +1056,17 @@
       if (sheet.classList.contains("open")) closeSheet(); else openSheet();
     };
     document.getElementById("sheetClose").onclick = closeSheet;
+
+    /* ---- Print guides toggle ---- */
+    var guidesBtn = document.getElementById("guidesBtn");
+    function setGuides(on) {
+      document.body.classList.toggle("guides-on", on);
+      guidesBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      try { localStorage.setItem("fb-guides", on ? "1" : "0"); } catch (err) {}
+    }
+    guidesBtn.onclick = function () { setGuides(!document.body.classList.contains("guides-on")); };
+    paintGuides();
+    try { if (localStorage.getItem("fb-guides") === "1") setGuides(true); } catch (err) {}
 
     /* ---- Fullscreen / expand (same behavior as flipbook5) ---- */
     var fsRequest = viewer.requestFullscreen || viewer.webkitRequestFullscreen;
