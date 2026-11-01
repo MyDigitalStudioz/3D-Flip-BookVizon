@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v2 (GitHub default is main).
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v4 (GitHub default is main).
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
@@ -15,7 +15,7 @@
 
 **https://mydigitalstudioz.github.io/3D-Flip-BookVizon/**
 
-Double-click `flipbook18.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
+Double-click `index.html` to open the same viewer with no server. The page images ride along as data URIs, so the 3D turn still works. GitHub Pages does not download that file; it keeps using the JPGs. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
 
 ![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v2/media/hero.jpg?v=20261029-4)
 
@@ -37,7 +37,7 @@ Captured from the working viewer on `3D-Flip-BookVizon-v2`. Refresh these files,
 
 ## What's inside
 
-- `flipbook18.html` — the hardcover viewer. Future tweaks start here. The folder button opens a folder of images, or you can drop the folder on the page. Open PDF, beside it, opens one interior PDF the same way. Drop a PDF on the page too.
+- `index.html` — the hardcover viewer (the whole site; formerly developed as flipbook18.html). Future tweaks start here. The folder button opens a folder of images, or you can drop the folder on the page. Open PDF, beside it, opens one interior PDF the same way. Drop a PDF on the page too.
 - `index.html` — opens that viewer.
 - `flipbook1/` — the book: `manifest.js` plus the page images and favicon. The HTML file loads them by relative path, so the folder stays beside it.
 - `flipbook1/pages-data.js` — those same JPGs as data URIs, loaded only when the page is opened from disk. The JPGs stay the source. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
@@ -58,7 +58,7 @@ Open PDF takes one interior PDF. Square and portrait pages stay one page. A wide
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
-| Viewer | Single-file HTML | `flipbook18.html` is the whole hardcover viewer |
+| Viewer | Single-file HTML | `index.html` is the whole hardcover viewer |
 | Page turn | WebGL leaf or corner peel | Hardcover turns the 3D sheet. Magazine peels the corner. |
 | Script | Vanilla JS | Fit, arrows, paging, fullscreen |
 | Book | `flipbook1/manifest.js` + JPGs | Page list and images |
@@ -71,7 +71,7 @@ Open PDF takes one interior PDF. Square and portrait pages stay one page. A wide
 
 ```
 ├── index.html
-├── flipbook18.html
+├── index.html
 ├── .nojekyll
 ├── flipbook1/
 │   ├── manifest.js
