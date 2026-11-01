@@ -21,7 +21,7 @@ Double-click `index.html` to open the same viewer with no server. The page image
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v2`. Refresh these files, and the `?v=` stamp, whenever the viewer changes. Pages still serves `main`.
+Captured from the working viewer on `3D-Flip-BookVizon-v4`. Refresh these files, and the `?v=` stamp, whenever the viewer changes. Pages still serves `main`.
 
 **Cover** — the book closed on the dark stage.
 
