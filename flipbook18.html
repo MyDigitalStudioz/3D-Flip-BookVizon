@@ -78,7 +78,8 @@
   #sheetTitle{font-weight:600;letter-spacing:.03em}
   #sheetClose{flex:0 0 auto;width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer}
   #sheetClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
-  #strip{display:flex;gap:10px;overflow-x:auto;padding:10px 14px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#4d4d4d #101010}
+  #strip{display:flex;gap:10px;overflow-x:auto;padding:10px 14px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#4d4d4d #101010;cursor:grab}
+  #strip.dragging{cursor:grabbing}
   #strip::-webkit-scrollbar{height:10px}
   #strip::-webkit-scrollbar-track{background:#101010}
   #strip::-webkit-scrollbar-thumb{background:#4d4d4d;border-radius:6px;border:2px solid #101010}
@@ -1056,6 +1057,37 @@
       if (sheet.classList.contains("open")) closeSheet(); else openSheet();
     };
     document.getElementById("sheetClose").onclick = closeSheet;
+
+    /* ---- Pages strip: click-hold and drag to scroll (mouse; touch keeps
+       its native swipe). A drag past a few px swallows the click that
+       follows, so dragging across a card never jumps by accident. ---- */
+    (function () {
+      var sdrag = null, smoved = false;
+      strip.addEventListener("pointerdown", function (e) {
+        if (e.pointerType !== "mouse" || e.button !== 0) return;
+        sdrag = { x: e.clientX, sl: strip.scrollLeft, id: e.pointerId };
+        smoved = false;
+      });
+      strip.addEventListener("pointermove", function (e) {
+        if (!sdrag) return;
+        var dx = e.clientX - sdrag.x;
+        if (!smoved && Math.abs(dx) > 4) {
+          smoved = true;
+          strip.classList.add("dragging");
+          // Capture ONLY once this is really a drag: capturing on pointerdown
+          // retargets the release click to the strip and starves card buttons.
+          try { strip.setPointerCapture(sdrag.id); } catch (err) {}
+        }
+        if (smoved) strip.scrollLeft = sdrag.sl - dx;
+      });
+      function endSDrag() { sdrag = null; strip.classList.remove("dragging"); }
+      strip.addEventListener("pointerup", endSDrag);
+      strip.addEventListener("pointercancel", endSDrag);
+      strip.addEventListener("click", function (e) {
+        if (smoved) { e.preventDefault(); e.stopPropagation(); smoved = false; }
+      }, true);
+      strip.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    })();
 
     /* ---- Print guides toggle ---- */
     var guidesBtn = document.getElementById("guidesBtn");
