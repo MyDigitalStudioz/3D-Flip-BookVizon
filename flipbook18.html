@@ -54,7 +54,8 @@
   #leafFB .face img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
   #leafFB .face.back{transform:rotateY(180deg)}
   #leafFB .fshade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
-  #spineShade{position:absolute;top:0;height:100%;z-index:8;pointer-events:none;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.16) 38%,rgba(0,0,0,.30) 50%,rgba(0,0,0,.16) 62%,rgba(0,0,0,0) 100%)}
+  /* 5, not 8: this gutter wash must sit under the magazine sheet (#flipLayer is 6). 8 painted it across the turning leaf. It still covers the hardcover leaf because #gl and #leafFB are 5 and come first in the DOM. */
+  #spineShade{position:absolute;top:0;height:100%;z-index:5;pointer-events:none;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.16) 38%,rgba(0,0,0,.30) 50%,rgba(0,0,0,.16) 62%,rgba(0,0,0,0) 100%)}
   #castShade{position:absolute;top:0;height:100%;z-index:4;pointer-events:none;opacity:0;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.85) 50%,rgba(0,0,0,0) 100%)}
   #botLayer{position:absolute;top:0;height:100%;z-index:4;display:none;pointer-events:none;background:#2b2b2b}
   #botLayer img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
