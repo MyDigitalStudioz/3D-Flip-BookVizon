@@ -1,8 +1,8 @@
-"""Rebuild flipbook1/pages-data.js from the canonical page JPGs.
+"""Rebuild images/pages-data.js from the page JPGs.
 
-The JPGs stay the source. pages-data.js is the local double-click copy:
-data URIs so WebGL can upload textures over file://. GitHub Pages does
-not load this file.
+The JPGs stay the source. pages-data.js is the same bytes as data URIs.
+index.html loads it before the first turn on every protocol, including
+a double-click and GitHub Pages, so a turn does not fetch each JPEG.
 """
 import base64
 import json
@@ -10,8 +10,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "flipbook1" / "manifest.js"
-OUT = ROOT / "flipbook1" / "pages-data.js"
+MANIFEST = ROOT / "images" / "manifest.js"
+OUT = ROOT / "images" / "pages-data.js"
 
 
 def page_list():
