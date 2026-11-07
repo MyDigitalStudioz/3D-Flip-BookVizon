@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v7 (GitHub default is main). v6 at `01457de` is the frozen restore point. `main` stays at `1a6d128`, the shipped BEST-25d book, until a v7 change is approved to merge.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v8 (GitHub default is main). v7 and v6 are frozen restore points. `main` stays at the shipped BEST-25d book (the v7 build) until a v8 change is approved to merge.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
