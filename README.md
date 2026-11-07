@@ -2,14 +2,14 @@
 
 > The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v5 (GitHub default is main).
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v6 (GitHub default is main).
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Static site](https://img.shields.io/badge/site-static-blue)
-![Version](https://img.shields.io/badge/version-5.0.0-orange)
+![Version](https://img.shields.io/badge/version-6.0.0-orange)
 
 ## Live preview
 
@@ -21,13 +21,13 @@ Double-click `index.html` to open the viewer with no server. The page images als
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v5`. Refresh these files, and the `?v=` stamp, whenever the viewer changes. Pages still serves `main`.
+Captured from the working viewer on `3D-Flip-BookVizon-v5`. The live book is now the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages still serves `main`.
 
 **Cover** — the book closed on the dark stage.
 
 ![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/hero.jpg?v=20261101-1)
 
-**Mid-book** — pages 4–5, the first story spread.
+**Mid-book** — the v5 capture below. On BEST-25d the first story spread is pages 6–7.
 
 ![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/spread.jpg?v=20261101-1)
 
@@ -38,12 +38,12 @@ Captured from the working viewer on `3D-Flip-BookVizon-v5`. Refresh these files,
 ## What's inside
 
 - `index.html` — the hardcover viewer. This is the only page. The folder button opens a folder of images, or you can drop the folder on the page. Open PDF, beside it, opens one interior PDF the same way. Drop a PDF on the page too.
-- `images/` — the book. Fifty-two 1750×1750 pages, `manifest.js`, `pages-data.js`, and the favicon. The HTML loads them by relative path, so this folder stays beside `index.html`.
+- `images/` — the book. Sixty 1750×1750 pages from the BEST-25d print set, `manifest.js`, `pages-data.js`, and the favicon. The HTML loads them by relative path, so this folder stays beside `index.html`.
 - `images/pages-data.js` — those same JPGs as data URIs. `index.html` loads it before the first turn on every protocol. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
 - `vendor/pdfjs/` — pdf.js 3.11.174 (Apache-2.0) as classic scripts. The worker script is loaded in the page so a double-click uses the main-thread worker. Newer pdf.js builds are ES modules and will not run from disk.
 - `media/` — the README shots. `hero.jpg` is also the social preview.
 
-The pages are the current Harlow print review at 1750×1750, marked not for print. The Lulu trim is 8.5 inches. These pictures are the trim face, the same size the review books use.
+The pages are the shipped BEST-25d print set at 1750×1750. The banner reads BEST-25d. The Lulu trim is 8.5 inches. These pictures are the trim face.
 
 ## Design language
 
@@ -75,7 +75,7 @@ This viewer draws the turn itself.
 │   ├── manifest.js
 │   ├── pages-data.js
 │   ├── favicon.png
-│   └── 01-front.jpg … 52-back.jpg
+│   └── 01-front.jpg … 60-back.jpg
 ├── scripts/
 │   └── build-pages-data.py
 ├── vendor/
