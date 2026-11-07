@@ -31,7 +31,7 @@
   /* Shelf mode: the page counter and the open book's title belong to
      the reader, not the shelf — hide them (visibility, so the banner
      keeps its height and nothing jumps) while the shelf is open. */
-  body.shelf-open #counter,body.shelf-open #mark,body.shelf-open #textBtn,body.shelf-open #editionBadge{visibility:hidden}
+  body.shelf-open #counter,body.shelf-open #mark,body.shelf-open #textBtn,body.shelf-open #compareBtn,body.shelf-open #listenBtn,body.shelf-open #editionBadge{visibility:hidden}
   #notice{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:8;background:rgba(20,20,20,.88);color:#f4f1ea;border-radius:10px;padding:8px 12px;font-size:13px;pointer-events:none}
   #wiz{position:absolute;inset:0;z-index:30;background:rgba(10,10,10,.62);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
   #wiz[hidden]{display:none}
@@ -54,6 +54,7 @@
   .wizChoice[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
   .wizChosen{margin:0;font-size:13px;line-height:1.4;color:#f4f1ea;background:rgba(255,255,255,.06);border-radius:8px;padding:8px 10px;overflow-wrap:anywhere}
   .wizChosen[hidden]{display:none}
+  .wizRemove{margin-left:8px;width:24px;height:24px;padding:0;border-radius:50%;background:rgba(255,255,255,.1);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font-size:14px;line-height:1;cursor:pointer;vertical-align:middle;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .wizField{display:flex;flex-direction:column;gap:6px;font-size:14px}
   .wizField[hidden]{display:none}
   .wizField input[type="text"]{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:8px;padding:9px 10px;font:inherit;width:100%;box-sizing:border-box}
@@ -81,7 +82,8 @@
   #loadBar[hidden]{display:none}
   #loadFill{height:100%;width:0;background:#e8b34b}
   #turnLabel{display:flex;align-items:center;gap:6px;color:#f4f1ea;font-size:13px;white-space:nowrap}
-  #turnPick,#labelPick,#slidePick,#bdPick,#startPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
+  #turnPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
+  #voicePick{max-width:188px;text-overflow:ellipsis}
   #bdColor{width:46px;height:30px;padding:2px;border:1px solid rgba(244,241,234,.45);border-radius:8px;background:#242424;cursor:pointer;flex:0 0 auto}
   #settingsPanel .setRow[hidden],#settingsPanel .setBtn[hidden]{display:none}
   #bdNote{font-size:12px;line-height:1.4;color:#b9b2a4}
@@ -156,10 +158,10 @@
   #prev{left:8px}#next{right:8px}
   body.expanded #viewer{position:fixed;inset:0;height:100%;height:100dvh;z-index:50}
   body.expanded #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end}
-  body.expanded #counter,body.expanded #mark,body.expanded #textBtn{display:none}
+  body.expanded #counter,body.expanded #mark,body.expanded #textBtn,body.expanded #compareBtn,body.expanded #listenBtn{display:none}
   body.expanded #stage{height:100%}
   #viewer:fullscreen #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end;z-index:30}
-  #viewer:fullscreen #counter,#viewer:fullscreen #mark,#viewer:fullscreen #textBtn{display:none}
+  #viewer:fullscreen #counter,#viewer:fullscreen #mark,#viewer:fullscreen #textBtn,#viewer:fullscreen #compareBtn,#viewer:fullscreen #listenBtn{display:none}
   body.expanded #fs,body.expanded #pagesBtn,#viewer:fullscreen #fs,#viewer:fullscreen #pagesBtn{background:rgba(15,15,15,.5)}
   body.expanded #turnLabel,#viewer:fullscreen #turnLabel{background:rgba(15,15,15,.55);border-radius:999px;padding:4px 8px}
   #sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:rgba(16,16,16,.97);border-top:1px solid #4a4a4a;transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
@@ -193,13 +195,38 @@
   #stripActions{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
   #stripActions[hidden]{display:none}
   #stripSelLabel{font-size:13px;color:#cfc9bd;margin-right:auto}
-  #artReplaceBtn,#artRevertBtn{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #artReplaceBtn,#artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #artReplaceBtn{background:#e8b34b;color:#191919;border:0}
-  #artRevertBtn{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
-  #artRevertBtn[hidden]{display:none}
+  #artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
+  #artRevertBtn[hidden],#artSpreadBtn[hidden],#artPhBtn[hidden],#artPhSpreadBtn[hidden],#artInsertBeforeBtn[hidden],#artInsertAfterBtn[hidden],#artRemoveBtn[hidden]{display:none}
+  /* Insert-source bar + placeholder picker row (strip edit mode) */
+  #insertBar{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
+  #insertBar[hidden]{display:none}
+  #insertBarText{font-size:13px;line-height:1.45;color:#f0c66d;margin-right:auto}
+  #insertFileBtn,#insertPhBtn,#insertCancelBtn,#phCancelBtn{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
+  #insertFileBtn{background:#e8b34b;color:#191919;border:0}
+  #phRow{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
+  #phRow[hidden]{display:none}
+  #phRowLabel{font-size:13px;line-height:1.45;color:#cfc9bd;width:100%}
+  /* Placeholder thumbnails: the built-in stand-in designs, offered in
+     the wizard's cover pickers and in the strip's edit mode. */
+  .phThumbs{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .phThumb{display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.06);border:1px solid rgba(244,241,234,.35);border-radius:8px;padding:5px 5px 4px;cursor:pointer;color:#cfc9bd;font:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .phThumb canvas{display:block;border-radius:3px;background:#2b2b2b}
+  .phThumb span{font-size:9.5px;line-height:1.1;white-space:nowrap}
+  .phThumb[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.2);color:#f4f1ea}
+  .wizPhRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:-2px}
+  .wizPhLabel{font-size:12px;color:#b9b2a4}
+  #stripOffer{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
+  #stripOffer[hidden]{display:none}
+  #stripOfferText{font-size:13px;line-height:1.45;color:#f0c66d;margin-right:auto}
+  #stripOfferYes,#stripOfferNo{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #stripOfferYes{background:#e8b34b;color:#191919;border:0}
+  #stripOfferNo{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
   .twrap{position:relative;display:inline-block;line-height:0;border-radius:3px}
   .twrap.sel{outline:2px solid #e8b34b;outline-offset:1px}
   .rmark{position:absolute;left:3px;bottom:3px;font-size:8.5px;font-weight:800;letter-spacing:.06em;color:#191919;background:#e8b34b;border-radius:4px;padding:2px 4px;line-height:1.2}
+  .imark{position:absolute;right:3px;bottom:3px;font-size:8.5px;font-weight:800;letter-spacing:.06em;color:#191919;background:#f4f1ea;border-radius:4px;padding:2px 4px;line-height:1.2}
   /* ---- Page text ("proofreading mode") ----
      The Text pill sits with the page counter in the banner and exists
      only while the open book carries per-page text data. Its panel is
@@ -238,24 +265,29 @@
   #shelfBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.34);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35)}
   #shelfBtn svg{width:20px;height:20px;fill:#f4f1ea;display:block}
   #shelfBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
-  #settingsPanel #shelfBtn2{display:inline-flex;align-items:center;box-sizing:border-box;width:100%;height:auto;min-height:42px;border-radius:10px;justify-content:flex-start;gap:10px;padding:8px 12px;font-size:14px;text-align:left}
-  #settingsPanel #shelfBtn2 svg{width:19px;height:19px;fill:#f4f1ea;flex:0 0 auto;display:block}
   #shelf{position:absolute;inset:0;z-index:15;background:linear-gradient(180deg,rgba(26,24,22,.94),rgba(18,17,16,.97));display:flex;flex-direction:column;overflow:hidden}
   #shelf[hidden]{display:none}
   #shelfHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 4px}
   #shelfTitle{font-size:24px;font-weight:700;letter-spacing:.02em;color:#e8b34b;margin:0}
   #shelfSub{font-size:13px;color:#cfc9bd;margin:3px 0 0}
-  #shelfBack{flex:0 0 auto;min-height:40px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;cursor:pointer}
+  #shelfBack{flex:0 0 auto;min-height:40px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;cursor:pointer}
   #shelfScroll{flex:1;overflow-y:auto;padding:10px 14px 6px;-webkit-overflow-scrolling:touch}
   .shelfRow{position:relative;display:flex;gap:16px;justify-content:center;padding:6px 2px 0;margin-bottom:8px}
-  .shelfRow::after{content:"";position:absolute;left:0;right:0;bottom:83px;height:13px;border-radius:3px;background:linear-gradient(180deg,#96683c 0%,#7a522c 45%,#5b3a1e 100%);box-shadow:0 12px 20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,224,170,.45);z-index:0}
+  /* The plank is anchored to the TOP of the row, not the bottom:
+     its position derives only from the cover height (row padding
+     6px + the square cover, whose height is the .sbook width) plus
+     a 4px gap, so it lands in the same place under the covers in
+     every row and column no matter how many lines a title wraps
+     to. Anchoring it to the row's bottom instead let long titles
+     push the first row's title block up onto the bar. */
+  .shelfRow::after{content:"";position:absolute;left:0;right:0;top:calc(clamp(94px,27vw,126px) + 10px);height:13px;border-radius:3px;background:linear-gradient(180deg,#96683c 0%,#7a522c 45%,#5b3a1e 100%);box-shadow:0 12px 20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,224,170,.45);z-index:0}
   .sbook{position:relative;z-index:1;flex:0 0 auto;width:clamp(94px,27vw,126px);text-align:center}
   .sbookOpen{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:inherit;text-align:center}
   /* The Info pill lives in the title block under the meta line — its
      own tap target, separate from the cover button that opens the
      book. The plank above is offset for this row's height (30px pill
      + 7px gap on top of the old title block). */
-  .sinfo{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 14px;background:rgba(255,255,255,.07);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:999px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .sinfo{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 14px;background:rgba(255,255,255,.07);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .sinfo svg{width:13px;height:13px;fill:#e8b34b;display:block;flex:0 0 auto}
   .sinfo:active{background:rgba(232,179,75,.22)}
   /* Status dot + Info share one centered row in the title block. The
@@ -276,11 +308,15 @@
   .sbook .nowTag{position:absolute;top:6px;right:6px;z-index:2;font-size:9px;font-weight:800;letter-spacing:.07em;color:#191919;background:#e8b34b;border-radius:5px;padding:2px 5px}
   .sbook .nowTag[hidden]{display:none}
   .sbook.now .covWrap{outline:2px solid #e8b34b;outline-offset:2px}
-  .sbook .stit{display:block;margin-top:16px;font-size:12.5px;font-weight:600;line-height:1.25;color:#f4f1ea;min-height:31px}
+  /* Title block: a fixed start below the plank (cover bottom +
+     24px clears the plank's underside by ~7px in every row) and a
+     fixed three-line height, so the meta line and the Info row sit
+     at the same height in every column whatever the title length. */
+  .sbook .stit{display:block;margin-top:24px;font-size:12.5px;font-weight:600;line-height:1.25;color:#f4f1ea;min-height:47px}
   .sbook .smeta{display:block;font-size:11px;color:#b9b2a4;margin-top:1px}
   #shelfFoot{padding:8px 18px 16px;display:flex;flex-direction:column;gap:8px;align-items:center}
   #shelfNote{font-size:12px;line-height:1.45;color:#b9b2a4;text-align:center;margin:0;max-width:520px}
-  #shelfImport{min-height:42px;padding:8px 20px;background:#e8b34b;color:#191919;border:0;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+  #shelfImport{min-height:42px;padding:8px 20px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   /* ---- Flip-over info card (lightbox) ----
      Tapping a shelf book's Info pill flips its card over into this
      full-screen lightbox. The card itself does the 3D flip; the shelf
@@ -312,21 +348,21 @@
      writes straight through to the book's data (and, for built-ins,
      to fb-book-status), and the reader badge follows the open book. */
   .icStatusRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:13.5px}
-  #icStatus{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
-  .icLink{display:inline-flex;align-items:center;min-height:38px;padding:7px 16px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:999px;font-size:13.5px;font-weight:600;text-decoration:none;box-sizing:border-box}
+  #icStatus{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  .icLink{display:inline-flex;align-items:center;min-height:38px;padding:7px 16px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;box-sizing:border-box}
   /* Copy-link row: a quiet full-width button under the links; the
      fallback field appears only when the clipboard refuses, so the
      link can still be selected and copied by hand. */
-  #icCopy{width:100%;margin-top:12px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
+  #icCopy{width:100%;margin-top:12px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
   #icCopy[hidden]{display:none}
   #icCopyField{width:100%;margin-top:10px;background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:8px;padding:9px 10px;font:inherit;font-size:13px;box-sizing:border-box}
   #icCopyField[hidden]{display:none}
   /* Update-from-book-file: a second quiet full-width action under
      Copy link, plus the small note line its results land in. */
-  #icUpdate{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
+  #icUpdate{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
   #icNote{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:#f0c66d}
   #icNote[hidden]{display:none}
-  #icBack{width:100%;margin-top:16px;min-height:44px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+  #icBack{width:100%;margin-top:16px;min-height:44px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
 
   /* ---- Interface consistency: no native white/blue controls ----
      Every Settings and wizard control speaks the viewer's language:
@@ -334,9 +370,8 @@
      accents - the same language as the dark pill selects. */
   #settingsPanel .setBtn{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);cursor:pointer}
   #settingsPanel .setBtn:hover{background:rgba(232,179,75,.14)}
-  #settingsPanel #importBtn,#settingsPanel #shelfBtn2{border-radius:999px}
+  #settingsPanel #importBtn{border-radius:10px}
   #settingsPanel #importBtn svg{fill:#e8b34b}
-  #settingsPanel #shelfBtn2 svg{fill:#e8b34b}
   #settingsPanel #tplBtn svg{width:19px;height:19px;fill:#e8b34b;flex:0 0 auto;display:block}
   /* Pill-button labels never wrap or spill: icon + label share one
      line inside the pill (the Bookshelf label used to fall below its
@@ -379,14 +414,73 @@
      nothing wrapping. The title leaves the header at this width (it
      lives on the shelf, the info card, and the tab title); tighter
      paddings and gaps buy the row its room. */
-  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{display:none}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}}
+  /* ---- Compare + Read-to-me pills (banner, Text-pill family) ----
+     Compare exists only while a visible page wears replacement art;
+     Listen exists only while Read to me is on and the book carries
+     text. Both are view states: gold tint while active. */
+  #compareBtn,#listenBtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;min-height:32px;background:rgba(20,20,20,.62);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #compareBtn svg{width:15px;height:15px;stroke:#e8b34b;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block;flex:0 0 auto}
+  #listenBtn svg{width:13px;height:13px;fill:#e8b34b;display:block;flex:0 0 auto}
+  #compareBtn[hidden],#listenBtn[hidden]{display:none}
+  #compareBtn.on{border-color:#e8b34b;background:rgba(232,179,75,.22);color:#e8b34b}
+  #listenBtn[data-state="stop"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
+  #listenBtn[data-state="play"] .icoStop,#listenBtn[data-state="stop"] .icoPlay{display:none}
+  .cmpShort{display:none}
+  /* ---- Stage-corner tools: Mark (star) + Zoom ----
+     A small floating cluster at the stage's top-left, directly
+     under the page counter, with the header icons' halo treatment —
+     the banner row itself is full, and these two are always-on
+     reader tools rather than contextual pills. */
+  #stageTools{position:absolute;top:10px;left:10px;z-index:12;display:flex;gap:8px}
+  #markBtn,#zoomBtn{flex:0 0 auto;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.5);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #markBtn svg{width:19px;height:19px;fill:none;stroke:#f4f1ea;stroke-width:1.7;stroke-linejoin:round;display:block}
+  #zoomBtn svg{width:19px;height:19px;fill:none;stroke:#f4f1ea;stroke-width:2;stroke-linecap:round;display:block}
+  #markBtn.marked{border-color:#e8b34b;background:rgba(232,179,75,.28)}
+  #markBtn.marked svg{fill:#e8b34b;stroke:#e8b34b}
+  /* ---- Marked pages (Pages sheet bar + strip stars) ---- */
+  #marksBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 14px 0}
+  #marksLabel{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4}
+  .markChip{min-height:30px;padding:4px 12px;border-radius:10px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #marksClear{min-height:30px;padding:4px 12px;border-radius:10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation}
+  #marksClear[hidden]{display:none}
+  .marksEmpty{font-size:12.5px;color:#b9b2a4}
+  .mmark{position:absolute;top:3px;right:4px;font-size:13px;line-height:1;color:#e8b34b;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.9);pointer-events:none}
+  /* ---- Read-to-me settings rows ---- */
+  #speedSeg{display:inline-flex;gap:0;flex:0 0 auto}
+  #speedSeg button{min-height:32px;padding:5px 10px;background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:12.5px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #speedSeg button:first-child{border-radius:8px 0 0 8px}
+  #speedSeg button:last-child{border-radius:0 8px 8px 0}
+  #speedSeg button:not(:first-child){border-left:0}
+  #speedSeg button[aria-pressed="true"]{background:#e8b34b;color:#191919;border-color:#e8b34b;font-weight:700}
+  #readNote{font-size:12px;line-height:1.4;color:#b9b2a4}
+  #readNote[hidden]{display:none}
+  /* ---- Zoom (magnifier) view ----
+     A flat full-screen closeup of the visible spread, rendered from
+     the same effective page sources as the stage (replacements and
+     Compare state included). Transform state lives on #zoomContent;
+     the view always opens fitted and never persists. */
+  #zoomView{position:absolute;inset:0;z-index:49;background:rgba(12,12,12,.98);display:flex;flex-direction:column}
+  #zoomView[hidden]{display:none}
+  #zoomBar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;flex-wrap:wrap}
+  #zoomTitle{font-weight:600;letter-spacing:.03em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #zoomCtrls{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+  #zoomOut,#zoomIn,#zoomReset{min-height:38px;min-width:38px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #zoomPct{font-size:13px;color:#cfc9bd;min-width:44px;text-align:center}
+  #zoomClose{flex:0 0 auto;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer}
+  #zoomClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
+  #zoomStage{flex:1;position:relative;overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;cursor:grab}
+  #zoomStage:active{cursor:grabbing}
+  #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
+  #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
+  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{display:none}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
 </style></head>
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">3D-Flip-BookVizon-v8</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f4f1ea" fill-rule="evenodd" d="M8.99 4.16 L9.62 1.67 L14.38 1.67 L15.01 4.16 L15.42 4.33 L17.62 3.01 L20.99 6.38 L19.67 8.58 L19.84 8.99 L22.33 9.62 L22.33 14.38 L19.84 15.01 L19.67 15.42 L20.99 17.62 L17.62 20.99 L15.42 19.67 L15.01 19.84 L14.38 22.33 L9.62 22.33 L8.99 19.84 L8.58 19.67 L6.38 20.99 L3.01 17.62 L4.33 15.42 L4.16 15.01 L1.67 14.38 L1.67 9.62 L4.16 8.99 L4.33 8.58 L3.01 6.38 L6.38 3.01 L8.58 4.33 Z M8.70 12.00 A3.3 3.3 0 1 0 15.30 12.00 A3.3 3.3 0 1 0 8.70 12.00 Z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHead">Settings</span><span class="setGroup">Reading</span><label id="turnLabel">Page turn <select id="turnPick" aria-label="Page turn"><option value="magazine">Magazine</option><option value="hardcover" selected>Hardcover</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="shelfBtn2" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg><span>Bookshelf</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="pagesBtn" class="setBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Pages</span></button><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
+    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">3D-Flip-BookVizon-v8</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f4f1ea" fill-rule="evenodd" d="M8.99 4.16 L9.62 1.67 L14.38 1.67 L15.01 4.16 L15.42 4.33 L17.62 3.01 L20.99 6.38 L19.67 8.58 L19.84 8.99 L22.33 9.62 L22.33 14.38 L19.84 15.01 L19.67 15.42 L20.99 17.62 L17.62 20.99 L15.42 19.67 L15.01 19.84 L14.38 22.33 L9.62 22.33 L8.99 19.84 L8.58 19.67 L6.38 20.99 L3.01 17.62 L4.33 15.42 L4.16 15.01 L1.67 14.38 L1.67 9.62 L4.16 8.99 L4.33 8.58 L3.01 6.38 L6.38 3.01 L8.58 4.33 Z M8.70 12.00 A3.3 3.3 0 1 0 15.30 12.00 A3.3 3.3 0 1 0 8.70 12.00 Z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHead">Settings</span><span class="setGroup">Reading</span><label id="turnLabel">Page turn <select id="turnPick" aria-label="Page turn"><option value="magazine">Magazine</option><option value="hardcover" selected>Hardcover</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="pagesBtn" class="setBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Pages</span></button><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
+      <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
       <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><button id="shelfBack" type="button">Back to book</button></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot"><p id="shelfNote">Books you import sit on this shelf for this visit. A fresh visit starts again with the books that live here.</p><button id="shelfImport" type="button">Import a book&hellip;</button></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
@@ -409,7 +503,7 @@
         <div id="spineShade"></div>
       </div></div></div>
     </div>
-    <div id="wiz" hidden role="dialog" aria-modal="true" aria-label="Import a book"><div class="wizCard"><div class="wizHead"><span class="wizTitle">Import a book</span><button id="wizX" type="button" aria-label="Cancel import"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="wizSteps" aria-hidden="true"><span class="wstep" data-wstep="1">1 &middot; Source</span><span class="wstep" data-wstep="2">2 &middot; Title</span><span class="wstep" data-wstep="3">3 &middot; Options</span><span class="wstep" data-wstep="4">4 &middot; Done</span></div><section class="wizPane" data-pane="1"><p class="wizLead">Where is the book coming from?</p><button id="wizPickPdf" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8L19 7.5v14H6zM13.5 3v5H19z"/></svg><span>PDF file<small>One PDF &mdash; its pages become the book</small></span></button><button id="wizPickFolder" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg><span>Folder of images<small>jpg, png or webp page images</small></span></button><p class="wizChosen" id="wizChosen" hidden></p></section><section class="wizPane" data-pane="2" hidden><label class="wizField" id="wizPdfTitleRow">Book title <input id="pdfTitle" type="text" autocomplete="off"></label><label class="wizField" id="wizFolderTitleRow" hidden>Book title <input id="folderTitle" type="text" autocomplete="off"></label><p class="wizNote">Loaded books use generic page names: Cover, Spread 01, Back Cover&hellip;</p></section><section class="wizPane" data-pane="3" hidden><div id="wizPdfOpts"><label class="wizOpt"><input id="pdfCover" type="checkbox" checked> First page is the cover</label><label class="wizOpt">Pages <select id="pdfLayout" aria-label="PDF page layout"><option value="auto">Auto</option><option value="single">Single pages</option><option value="spreads">Wide spreads</option></select></label><label class="wizOpt"><input id="pdfPrint" type="checkbox" checked> NOT FOR PRINT</label></div><div id="wizFolderOpts" hidden><label class="wizOpt"><input id="coverFirst" type="checkbox" checked> First image is the cover</label></div><button id="wizBookFileBtn" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8L19 7.5v14H6zM13.5 3v5H19z"/></svg><span>Book file (.md)<small>Optional — title, author, status, format, about &amp; page text</small></span></button><p class="wizChosen" id="wizBookFileChosen" hidden></p><p class="wizNote"># Title · Author: / Status: / Format: / About: lines · ## Page N sections</p><p class="wizNote" id="wizBookFilePdfNote" hidden>Book file attached — its page text will be used instead of the PDF's own text.</p><label class="wizOpt">Book size <select id="bookSize" aria-label="Book size"><option value="auto">Auto — from the source</option><option value="square">Square (1:1)</option><option value="portrait">Portrait (4:5 — 8×10)</option><option value="landscape">Landscape (5:4 — 10×8)</option><option value="letter">US Letter (8.5×11)</option></select></label><p class="wizNote">Pages that don't match the book's shape sit inside the page without stretching.</p><div class="wizWarn" id="wizWarn" hidden></div></section><section class="wizPane" data-pane="4" hidden><div id="wizLoading"><p id="wizLoadMsg">Loading your book&hellip;</p><div class="wizBar"><div id="wizFill"></div></div></div><div id="wizDone" hidden><p id="wizDoneMsg"></p><div class="wizWarn" id="wizDoneWarn" hidden></div><p class="wizNote" id="wizDoneNote" hidden></p><button id="wizStart" type="button">Start reading</button></div><div id="wizFailed" hidden><p id="wizFailMsg"></p><button id="wizClose2" type="button">Close</button></div></section><div class="wizFoot" id="wizFoot"><button id="wizBack" type="button" hidden>Back</button><button id="wizNext" type="button" disabled>Next</button></div></div></div>
+    <div id="wiz" hidden role="dialog" aria-modal="true" aria-label="Import a book"><div class="wizCard"><div class="wizHead"><span class="wizTitle">Import a book</span><button id="wizX" type="button" aria-label="Cancel import"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="wizSteps" aria-hidden="true"><span class="wstep" data-wstep="1">1 &middot; Source</span><span class="wstep" data-wstep="2">2 &middot; Title</span><span class="wstep" data-wstep="3">3 &middot; Options</span><span class="wstep" data-wstep="4">4 &middot; Done</span></div><section class="wizPane" data-pane="1"><p class="wizLead">Where is the book coming from?</p><button id="wizPickPdf" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8L19 7.5v14H6zM13.5 3v5H19z"/></svg><span>PDF file<small>One PDF &mdash; its pages become the book</small></span></button><button id="wizPickFolder" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg><span>Folder of images<small>jpg, png or webp page images</small></span></button><p class="wizChosen" id="wizChosen" hidden></p></section><section class="wizPane" data-pane="2" hidden><label class="wizField" id="wizPdfTitleRow">Book title <input id="pdfTitle" type="text" autocomplete="off"></label><label class="wizField" id="wizFolderTitleRow" hidden>Book title <input id="folderTitle" type="text" autocomplete="off"></label><p class="wizNote">Loaded books use generic page names: Cover, Spread 01, Back Cover&hellip;</p></section><section class="wizPane" data-pane="3" hidden><div id="wizPdfOpts"><label class="wizOpt"><input id="pdfCover" type="checkbox" checked> First page is the cover</label><label class="wizOpt">Pages <select id="pdfLayout" aria-label="PDF page layout"><option value="auto">Auto</option><option value="single">Single pages</option><option value="spreads">Wide spreads</option></select></label><label class="wizOpt"><input id="pdfPrint" type="checkbox" checked> NOT FOR PRINT</label></div><div id="wizFolderOpts" hidden><label class="wizOpt"><input id="coverFirst" type="checkbox" checked> First image is the cover</label></div><button id="wizFrontCoverBtn" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Front cover (optional)<small>One image &mdash; becomes the book&rsquo;s first page and its face on the shelf</small></span></button><p class="wizChosen" id="wizFrontCoverChosen" hidden><span id="wizFrontCoverName"></span><button type="button" class="wizRemove" id="wizFrontCoverRemove" aria-label="Remove front cover">&times;</button></p><div class="wizPhRow"><span class="wizPhLabel">&hellip;or pick a placeholder:</span><span class="phThumbs" id="wizFrontPhThumbs"></span></div><button id="wizBackCoverBtn" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Back cover (optional)<small>One image &mdash; becomes the book&rsquo;s last page</small></span></button><p class="wizChosen" id="wizBackCoverChosen" hidden><span id="wizBackCoverName"></span><button type="button" class="wizRemove" id="wizBackCoverRemove" aria-label="Remove back cover">&times;</button></p><div class="wizPhRow"><span class="wizPhLabel">&hellip;or pick a placeholder:</span><span class="phThumbs" id="wizBackPhThumbs"></span></div><button id="wizBookFileBtn" class="wizChoice" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8L19 7.5v14H6zM13.5 3v5H19z"/></svg><span>Book file (.md)<small>Optional — title, author, status, format, about &amp; page text</small></span></button><p class="wizChosen" id="wizBookFileChosen" hidden></p><p class="wizNote"># Title · Author: / Status: / Format: / About: lines · ## Page N sections</p><p class="wizNote" id="wizBookFilePdfNote" hidden>Book file attached — its page text will be used instead of the PDF's own text.</p><label class="wizOpt">Book size <select id="bookSize" aria-label="Book size"><option value="auto">Auto — from the source</option><option value="square">Square (1:1)</option><option value="portrait">Portrait (4:5 — 8×10)</option><option value="landscape">Landscape (5:4 — 10×8)</option><option value="letter">US Letter (8.5×11)</option></select></label><p class="wizNote">Pages that don't match the book's shape sit inside the page without stretching.</p><div class="wizWarn" id="wizWarn" hidden></div></section><section class="wizPane" data-pane="4" hidden><div id="wizLoading"><p id="wizLoadMsg">Loading your book&hellip;</p><div class="wizBar"><div id="wizFill"></div></div></div><div id="wizDone" hidden><p id="wizDoneMsg"></p><div class="wizWarn" id="wizDoneWarn" hidden></div><p class="wizNote" id="wizDoneNote" hidden></p><button id="wizStart" type="button">Start reading</button></div><div id="wizFailed" hidden><p id="wizFailMsg"></p><button id="wizClose2" type="button">Close</button></div></section><div class="wizFoot" id="wizFoot"><button id="wizBack" type="button" hidden>Back</button><button id="wizNext" type="button" disabled>Next</button></div></div></div>
     <input id="folderPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" webkitdirectory multiple hidden>
     <input id="pdfPick" type="file" accept="application/pdf,.pdf" hidden>
     <input id="bdFile" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
@@ -418,18 +512,27 @@
     <input id="bookFilePick" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
     <input id="icBookFilePick" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
     <input id="artFilePick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
+    <input id="artSpreadPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
+    <input id="artInsertPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
+    <input id="frontCoverPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
+    <input id="backCoverPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
     <div id="notice" role="status"></div>
     <div id="sheet" aria-hidden="true">
       <div id="sheetBar"><span id="sheetTitle">Pages — tap one to jump there</span><span id="sheetActions"><button id="stripEditBtn" type="button" aria-pressed="false">Edit pages</button><button id="sheetClose" type="button" aria-label="Close pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+      <div id="marksBar"><span id="marksLabel">Marked pages</span><span id="marksList"></span><button id="marksClear" type="button" hidden>Clear all</button></div>
       <p id="stripNote" hidden></p>
       <div id="strip"></div>
-      <div id="stripActions" hidden><span id="stripSelLabel">Tap a page above to choose it.</span><button id="artReplaceBtn" type="button">Replace art&hellip;</button><button id="artRevertBtn" type="button" hidden>Revert to original art</button></div>
+      <div id="stripActions" hidden><span id="stripSelLabel">Tap a page above to choose it.</span><button id="artReplaceBtn" type="button">Replace art&hellip;</button><button id="artSpreadBtn" type="button" hidden>Replace spread&hellip;</button><button id="artPhBtn" type="button" hidden>Use a placeholder&hellip;</button><button id="artPhSpreadBtn" type="button" hidden>Placeholder spread&hellip;</button><button id="artInsertBeforeBtn" type="button" hidden>Insert before&hellip;</button><button id="artInsertAfterBtn" type="button" hidden>Insert after&hellip;</button><button id="artRemoveBtn" type="button" hidden>Remove inserted page</button><button id="artRevertBtn" type="button" hidden>Revert to original art</button></div>
+      <div id="insertBar" hidden><span id="insertBarText"></span><button id="insertFileBtn" type="button">Choose image&hellip;</button><button id="insertPhBtn" type="button">Use a placeholder&hellip;</button><button id="insertCancelBtn" type="button">Cancel</button></div>
+      <div id="phRow" hidden><span id="phRowLabel"></span><span class="phThumbs" id="phThumbs"></span><button id="phCancelBtn" type="button">Cancel</button></div>
+      <div id="stripOffer" hidden><span id="stripOfferText"></span><button id="stripOfferYes" type="button">Use for this page</button><button id="stripOfferNo" type="button">Cancel</button></div>
     </div>
     <div id="textSheet" aria-hidden="true">
       <div id="textBar"><span id="textTitle">Page text</span><span id="textActions"><button id="textEdit" type="button">Edit</button><button id="textSave" type="button" hidden>Save</button><button id="textCancel" type="button" hidden>Cancel</button><button id="textClose" type="button" aria-label="Close page text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
       <div id="textBody"></div>
     </div>
     <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><button id="icCopy" type="button" hidden>Copy link to this book</button><input id="icCopyField" type="text" readonly hidden aria-label="Link to this book — select the text and copy it"><button id="icUpdate" type="button">Update from book file&hellip;</button><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
+    <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
   <script src="images/manifest.js"></script>
   <!-- pdf.js 3.11.174 (Apache-2.0), classic scripts. The worker script is loaded on purpose so file:// uses the main-thread fake worker. -->
@@ -543,6 +646,12 @@
        it from the file's text layer, image imports never have it, and
        the wordless built-in book never will. */
     var pageTexts = PAGES.map(function () { return null; });
+    /* Inserted-page flags, parallel to PAGES: true for pages the
+       reader added with Insert before/after (the only pages the
+       strip's edit mode may remove). Maintained everywhere PAGES is
+       rebuilt — pushPage, the loaders, book switches, and the
+       stored-insert reconstruction in loadArtOverrides. */
+    var pageIns = PAGES.map(function () { return false; });
     var noticeEl = document.getElementById("notice");
     function reportNotice(text) {
       noticeEl.textContent = text;
@@ -731,9 +840,17 @@
       tweenCam(camTargetFor(flipped, side), REDUCED ? 180 : 500);
       counter.textContent = label();
       if (typeof updateTextPanel === "function") updateTextPanel();
+      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+      if (typeof maybeRespeak === "function") maybeRespeak();
     }
 
     var blankNote = "";
+    /* Index of the parity blank an insert/remove added so the book
+       keeps an even page count (-1 = none). It sits just before the
+       back cover; structural edits take it out first and recompute
+       it after, so it never accumulates or strands. */
+    var autoBlankIdx = -1;
     /* ---- Spread names ----
        A book whose manifest flags itself "structured" names its pairs
        from that layout (cover alone, then its named pairs, back cover
@@ -867,7 +984,7 @@
     } catch (err) {}
     function clearSlideTimer() { if (slideTimer) { clearTimeout(slideTimer); slideTimer = null; } }
     function slideBlocked() {
-      return animating || !!drag || shelfIsOpen || !settingsPanel.hidden || !wizEl.hidden || sheet.classList.contains("open");
+      return animating || !!drag || shelfIsOpen || !settingsPanel.hidden || !wizEl.hidden || sheet.classList.contains("open") || (typeof zoomIsOpen !== "undefined" && zoomIsOpen);
     }
     function scheduleSlide() {
       clearSlideTimer();
@@ -1208,17 +1325,22 @@
        decoded, and every render warms the spreads around the current one. */
     function imgReady(im) { return !!(im && im.complete && im.naturalWidth > 0); }
     function ensureIndices(list, cb) {
+      // Wait on the EFFECTIVE images (originals while Compare is on,
+      // replacements otherwise) — the leaf paints exactly those.
       var need = [];
       list.forEach(function (i) {
-        if (i >= 0 && i < N && !imgReady(pageImgs[i]) && need.indexOf(i) < 0) need.push(i);
+        if (i >= 0 && i < N) {
+          var im = effImg(i);
+          if (im && !imgReady(im) && need.indexOf(im) < 0) need.push(im);
+        }
       });
       if (!need.length) { cb(); return; }
       loadBar.hidden = false;
       var done = false;
       function finish() { if (done) return; done = true; loadBar.hidden = true; cb(); }
       var left = need.length;
-      need.forEach(function (i) {
-        var im = pageImgs[i], stepped = false;
+      need.forEach(function (im) {
+        var stepped = false;
         function step() { if (stepped) return; stepped = true; if (--left <= 0) finish(); }
         if (im.decode) im.decode().then(step, step);
         else { im.addEventListener("load", step, { once: true }); im.addEventListener("error", step, { once: true }); }
@@ -1241,8 +1363,8 @@
     function render() {
       var li = flipped === 0 ? null : 2 * flipped - 1;
       var ri = flipped === HALF ? null : 2 * flipped;
-      if (li === null) { baseL.style.display = "none"; } else { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[li]); }
-      if (ri === null) { baseR.style.display = "none"; } else { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[ri]); }
+      if (li === null) { baseL.style.display = "none"; } else { baseL.style.display = "block"; imgL.src = pageSrc(effSrc(li)); }
+      if (ri === null) { baseR.style.display = "none"; } else { baseR.style.display = "block"; imgR.src = pageSrc(effSrc(ri)); }
       // While a leaf is flying, poseLeaf owns the glide (it interpolates to
       // exactly this value on the final frame). Setting it here mid-flight
       // would slam the book sideways at the swap, then step it back.
@@ -1251,6 +1373,9 @@
       // The Text pill exists only for books carrying text, and an open
       // text panel follows every landed flip.
       if (typeof refreshTextChrome === "function") refreshTextChrome();
+      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+      if (typeof refreshListenChrome === "function") refreshListenChrome();
+      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
       warmAround();
       placeSave();
       // A landed flip re-arms the slideshow from this spread; renders
@@ -1556,26 +1681,26 @@
         var f = flipped;
         var nr = 2 * f + 2;
         if (isMag()) {
-          flipImg.src = pageSrc(PAGES[2 * f + 1]);
+          flipImg.src = pageSrc(effSrc(2 * f + 1));
           botLayer.style.left = pageSize + "px";
-          if (nr < N) { botImg.src = pageSrc(PAGES[nr]); botLayer.style.visibility = "visible"; }
+          if (nr < N) { botImg.src = pageSrc(effSrc(nr)); botLayer.style.visibility = "visible"; }
           else botLayer.style.visibility = "hidden";
         } else {
           setLeafImages(2 * f, 2 * f + 1);
-          if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(PAGES[nr]); } else baseR.style.display = "none";
+          if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(effSrc(nr)); } else baseR.style.display = "none";
         }
       } else {
         if (flipped <= 0) return false;
         var g = flipped;
         var pl = 2 * g - 3;
         if (isMag()) {
-          flipImg.src = pageSrc(PAGES[2 * g - 2]);
+          flipImg.src = pageSrc(effSrc(2 * g - 2));
           botLayer.style.left = "0px";
-          if (pl >= 0) { botImg.src = pageSrc(PAGES[pl]); botLayer.style.visibility = "visible"; }
+          if (pl >= 0) { botImg.src = pageSrc(effSrc(pl)); botLayer.style.visibility = "visible"; }
           else botLayer.style.visibility = "hidden";
         } else {
           setLeafImages(2 * g - 2, 2 * g - 1);
-          if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(PAGES[pl]); } else baseL.style.display = "none";
+          if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(effSrc(pl)); } else baseL.style.display = "none";
         }
       }
       return true;
@@ -1618,6 +1743,7 @@
         animating = false;
         if (pendingBook) { pendingBook = false; render(); }
         if (onDone) onDone();
+        if (typeof maybeRespeak === "function") maybeRespeak();
         if (pendingDir) {
           var pd = pendingDir;
           pendingDir = null;
@@ -1651,6 +1777,7 @@
         animating = false;
         if (pendingBook) { pendingBook = false; render(); }
         if (onDone) onDone();
+        if (typeof maybeRespeak === "function") maybeRespeak();
         if (pendingDir) {
           var pd = pendingDir;
           pendingDir = null;
@@ -1732,11 +1859,16 @@
         if (flipped < 0) flipped = 0; else if (flipped > HALF) flipped = HALF;
       }
       render();
+      if (typeof maybeRespeak === "function") maybeRespeak();
     }
 
     document.getElementById("prev").onclick = function (e) { e.preventDefault(); e.stopPropagation(); flipPrev(); };
     document.getElementById("next").onclick = function (e) { e.preventDefault(); e.stopPropagation(); flipNext(); };
     document.addEventListener("keydown", function (e) {
+      if (typeof zoomIsOpen !== "undefined" && zoomIsOpen) {
+        if (e.key === "Escape") closeZoomView();
+        return;
+      }
       if (e.key === "Escape" && sheet.classList.contains("open")) { closeSheet(); return; }
       if (e.repeat || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.key === "ArrowLeft") { e.preventDefault(); flipPrev(); }
@@ -1877,6 +2009,9 @@
           tweenCam(d.camTo, REDUCED ? 120 : 260);
           counter.textContent = label();
           if (typeof updateTextPanel === "function") updateTextPanel();
+          if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+          if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+          if (typeof maybeRespeak === "function") maybeRespeak();
         } else {
           tweenCam(d.camFrom, REDUCED ? 120 : 260);
         }
@@ -1951,8 +2086,9 @@
           : "height:82px;width:" + Math.max(20, Math.round(82 * bookAspect)) + "px";
         var imgs = g.map(function (ix) {
           var im = '<img loading="lazy" alt="" style="' + tStyle + '" src="' + pageSrc(PAGES[ix]) + '">';
-          if (!artEditing) return im;
-          return '<span class="twrap' + (ix === artSelIdx ? " sel" : "") + '" data-pidx="' + ix + '">' + im + (artReplaced[ix] ? '<span class="rmark">REPLACED</span>' : "") + "</span>";
+          var star = (typeof isPageMarked === "function" && isPageMarked(ix)) ? '<span class="mmark" aria-hidden="true">&#9733;</span>' : "";
+          if (!artEditing && !star) return im;
+          return '<span class="twrap' + (artEditing && ix === artSelIdx ? " sel" : "") + '" data-pidx="' + ix + '">' + im + (artEditing && artReplaced[ix] ? '<span class="rmark">REPLACED</span>' : "") + (artEditing && pageIns[ix] ? '<span class="imark">INSERTED</span>' : "") + star + "</span>";
         }).join("");
         var cap;
         if (labelMode === "spreads") {
@@ -1966,6 +2102,7 @@
       });
       var now = strip.querySelector(".tcard.now");
       if (now) strip.scrollLeft = Math.max(0, now.offsetLeft - strip.clientWidth / 2 + now.clientWidth / 2);
+      if (typeof refreshMarksBar === "function") refreshMarksBar();
     }
     function openSheet() { if (typeof closeTextPanel === "function") closeTextPanel(); buildStrip(); sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false"); }
     function closeSheet() { if (artEditing) exitArtEdit(); sheet.classList.remove("open"); sheet.setAttribute("aria-hidden", "true"); if (slideSec) scheduleSlide(); }
@@ -2004,6 +2141,92 @@
       }, true);
       strip.addEventListener("dragstart", function (e) { e.preventDefault(); });
     })();
+
+    /* ---- Placeholder images ----
+       A small built-in set of stand-in designs for any spot that
+       needs an image before the real art exists: the wizard's front
+       / back cover pickers, Replace art / Replace spread, and page
+       inserts. Each is drawn on a canvas at the moment it is chosen
+       — a quiet two-tone ground in the viewer's own palette, a thin
+       double frame, a small diamond, and its label set in serif —
+       so it reads unmistakably as a placeholder, never as story art.
+       Once chosen, a placeholder is an ordinary page image: the
+       usual processing, letterbox rules, overrides, and Revert
+       semantics apply to it unchanged. Covers stay optional in the
+       wizard; a placeholder is an option, never a gate. */
+    var PLACEHOLDERS = [
+      { id: "charcoal", name: "Charcoal", bg: ["#2c2c30", "#1d1d20"], frame: "#e8b34b", ink: "#f4f1ea" },
+      { id: "cream", name: "Warm cream", bg: ["#f6eeda", "#ecdcba"], frame: "#8a6b35", ink: "#4a3a20" },
+      { id: "wood", name: "Wood tone", bg: ["#8a5a33", "#684324"], frame: "#e8cf9e", ink: "#fdf3df" },
+      { id: "gray", name: "Soft gray", bg: ["#bcbfc1", "#a0a4a7"], frame: "#5c6063", ink: "#2c2e30" },
+      { id: "blue", name: "Deep blue", bg: ["#2a4e7a", "#1b3555"], frame: "#e8b34b", ink: "#eef3fa" },
+      { id: "sage", name: "Sage", bg: ["#b3c2a4", "#93a884"], frame: "#4d5c40", ink: "#26301f" }
+    ];
+    function placeholderCanvas(ph, label, aspect, w, mini) {
+      var a = aspect && aspect > 0 ? aspect : 1;
+      var cw = w || 1000;
+      var ch = Math.max(60, Math.round(cw / a));
+      var c = document.createElement("canvas");
+      c.width = cw;
+      c.height = ch;
+      var g = c.getContext("2d");
+      var grad = g.createLinearGradient(0, 0, cw * 0.25, ch);
+      grad.addColorStop(0, ph.bg[0]);
+      grad.addColorStop(1, ph.bg[1]);
+      g.fillStyle = grad;
+      g.fillRect(0, 0, cw, ch);
+      var m = Math.min(cw, ch);
+      var inset = Math.round(m * 0.055);
+      g.strokeStyle = ph.frame;
+      g.lineWidth = Math.max(2, Math.round(m * 0.009));
+      g.strokeRect(inset, inset, cw - 2 * inset, ch - 2 * inset);
+      g.lineWidth = 1;
+      var inset2 = inset + Math.round(m * 0.032);
+      g.strokeRect(inset2, inset2, cw - 2 * inset2, ch - 2 * inset2);
+      var cx = cw / 2, cy = ch / 2 - (mini ? 0 : ch * 0.075), r = m * 0.045;
+      g.save();
+      g.translate(cx, cy);
+      g.rotate(Math.PI / 4);
+      g.strokeStyle = ph.frame;
+      g.lineWidth = Math.max(2, r * 0.2);
+      g.strokeRect(-r, -r, 2 * r, 2 * r);
+      g.restore();
+      if (!mini && label) {
+        g.fillStyle = ph.ink;
+        g.textAlign = "center";
+        g.textBaseline = "middle";
+        g.font = "600 " + Math.round(ch * 0.052) + "px Georgia, 'Times New Roman', serif";
+        g.fillText(label, cx, ch / 2 + ch * 0.05);
+        g.globalAlpha = 0.72;
+        g.font = Math.round(ch * 0.024) + "px Georgia, 'Times New Roman', serif";
+        g.fillText("P L A C E H O L D E R", cx, ch / 2 + ch * 0.115);
+        g.globalAlpha = 1;
+      }
+      return c;
+    }
+    function placeholderData(ph, label, aspect) {
+      return placeholderCanvas(ph, label, aspect, 1000, false).toDataURL("image/jpeg", 0.88);
+    }
+    /* One row of placeholder thumbnail buttons; cb(ph) fires on a tap. */
+    function buildPhThumbs(container, cb) {
+      if (!container) return;
+      container.innerHTML = "";
+      PLACEHOLDERS.forEach(function (ph) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "phThumb";
+        b.setAttribute("data-ph", ph.id);
+        b.setAttribute("aria-pressed", "false");
+        b.setAttribute("aria-label", ph.name + " placeholder");
+        b.title = ph.name + " placeholder";
+        b.appendChild(placeholderCanvas(ph, "", 1, 72, true));
+        var s = document.createElement("span");
+        s.textContent = ph.name;
+        b.appendChild(s);
+        b.addEventListener("click", function () { cb(ph); });
+        container.appendChild(b);
+      });
+    }
 
     /* ---- Replace page art ----
        The visual twin of the page-text edits: from the strip's Edit
@@ -2045,17 +2268,54 @@
         } catch (err) { cb(null); }
       });
     }
+    /* The override record, v2: { pages: {idx: replacementSrc},
+       ins: {idx: insertedSrc} } — both keyed by FINAL page index.
+       An inserted page that also wears replacement art stores its
+       original inserted image under ins and the replacement under
+       pages, so a reload rebuilds the book first and re-applies the
+       replacement over it. Records written by earlier builds are a
+       bare {idx: src} map; loadArtOverrides reads those as pages
+       with no inserts, and the next save rewrites them as v2. */
     function artIdbSave(id) {
-      var rec = {};
-      Object.keys(artReplaced).forEach(function (k) { if (artReplaced[k]) rec[k] = PAGES[parseInt(k, 10)]; });
+      var rec = { v: 2, pages: {}, ins: {} };
+      Object.keys(artReplaced).forEach(function (k) { if (artReplaced[k]) rec.pages[k] = PAGES[parseInt(k, 10)]; });
+      for (var i = 0; i < PAGES.length; i++) {
+        if (pageIns[i]) rec.ins[i] = (artReplaced[i] && artOrig[i]) ? artOrig[i] : PAGES[i];
+      }
       artDbOpen(function (db) {
         if (!db) return;
         try {
           var store = db.transaction("art", "readwrite").objectStore("art");
-          if (Object.keys(rec).length) store.put(rec, id);
+          if (Object.keys(rec.pages).length || Object.keys(rec.ins).length) store.put(rec, id);
           else store.delete(id);
         } catch (err) {}
       });
+    }
+    /* Rebuild a catalog book's inserted pages over its seeded pages:
+       the stored ins map names final indices, so the book is woven
+       back together slot by slot (seeded pages fill the slots the
+       map doesn't claim), the parity blank is recomputed, and the
+       reader's place is re-read under the rebuilt page count. */
+    function applyStoredInserts(insMap) {
+      var total = PAGES.length + Object.keys(insMap).length;
+      var nP = [], nI = [], nN = [], nT = [], nIns = [];
+      var sp = 0;
+      for (var i = 0; i < total; i++) {
+        if (Object.prototype.hasOwnProperty.call(insMap, i)) {
+          nP.push(insMap[i]); nI.push(newPageImg(insMap[i])); nN.push(null); nT.push(null); nIns.push(true);
+        } else if (sp < PAGES.length) {
+          nP.push(PAGES[sp]); nI.push(pageImgs[sp]); nN.push(pageNames[sp]); nT.push(pageTexts[sp]); nIns.push(false); sp++;
+        }
+      }
+      while (sp < PAGES.length) {
+        nP.push(PAGES[sp]); nI.push(pageImgs[sp]); nN.push(pageNames[sp]); nT.push(pageTexts[sp]); nIns.push(false); sp++;
+      }
+      PAGES = nP; pageImgs = nI; pageNames = nN; pageTexts = nT; pageIns = nIns;
+      autoBlankIdx = -1;
+      parityNormalize(false);
+      N = PAGES.length;
+      HALF = N / 2;
+      restorePlace();
     }
     function artBookId() { return (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin"; }
     function artEntry() { try { return findShelfEntry(artBookId()); } catch (err) { return null; } }
@@ -2073,23 +2333,42 @@
         return;
       }
       artIdbGet(id, function (rec) {
-        if (gen !== artGen || !rec) return;
+        if (gen !== artGen) return;
+        var pagesMap = null, insMap = null;
+        if (rec) {
+          if (rec.v === 2) { pagesMap = rec.pages || null; insMap = rec.ins || null; }
+          else pagesMap = rec;   // legacy record: a bare replacement map
+        }
         var changed = false;
-        Object.keys(rec).forEach(function (k3) {
-          var idx = parseInt(k3, 10);
-          if (!(idx >= 0 && idx < PAGES.length) || !rec[k3]) return;
-          if (!(idx in artOrig)) artOrig[idx] = PAGES[idx];
-          if (PAGES[idx] !== rec[k3]) {
-            PAGES[idx] = rec[k3];
-            pageImgs[idx] = newPageImg(rec[k3]);
-          }
-          artReplaced[idx] = true;
-          changed = true;
-        });
+        if (insMap && Object.keys(insMap).length) { applyStoredInserts(insMap); changed = true; }
+        /* Text overrides and marks are keyed to the book's final
+           layout — the layout that existed when they were saved —
+           so they land only after any stored inserts are rebuilt. */
+        applyTextOverrides(id);
+        loadMarksFor(id);
+        if (pagesMap) {
+          Object.keys(pagesMap).forEach(function (k3) {
+            var idx = parseInt(k3, 10);
+            if (!(idx >= 0 && idx < PAGES.length) || !pagesMap[k3]) return;
+            if (!(idx in artOrig)) artOrig[idx] = PAGES[idx];
+            if (PAGES[idx] !== pagesMap[k3]) {
+              PAGES[idx] = pagesMap[k3];
+              pageImgs[idx] = newPageImg(pagesMap[k3]);
+            }
+            artReplaced[idx] = true;
+            changed = true;
+          });
+        }
+        refreshTextChrome();
         if (!changed) return;
         if (entry) {
           entry.artOrig = artOrig;
-          if (entry.pages) Object.keys(artReplaced).forEach(function (k4) { entry.pages[k4] = PAGES[k4]; });
+          if (entry.pages) {
+            if (insMap && Object.keys(insMap).length) entry.pages = PAGES.slice();
+            else Object.keys(artReplaced).forEach(function (k4) { entry.pages[k4] = PAGES[k4]; });
+          }
+          entry.insArr = pageIns.slice();
+          entry.autoIdx = autoBlankIdx;
           if (artReplaced[0]) entry.cover = PAGES[0];
         }
         render();
@@ -2099,20 +2378,78 @@
     }
     function processReplacement(file, cb) {
       var reader = new FileReader();
-      reader.onerror = function () { cb(null, false); };
+      reader.onerror = function () { cb(null); };
       reader.onload = function () {
         var im = new Image();
-        im.onerror = function () { cb(null, false); };
+        im.onerror = function () { cb(null); };
         im.onload = function () {
           var w = im.naturalWidth, h = im.naturalHeight;
-          if (!w || !h) { cb(null, false); return; }
+          if (!w || !h) { cb(null); return; }
           var scale = Math.min(1, 1600 / Math.max(w, h));
           var c = document.createElement("canvas");
           c.width = Math.max(1, Math.round(w * scale));
           c.height = Math.max(1, Math.round(h * scale));
           c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
           var letterboxed = !!bookAspect && Math.abs(w / h - bookAspect) > 0.01;
-          cb(fitCanvas(c, bookAspect).toDataURL("image/jpeg", 0.85), letterboxed);
+          // The folder loader's wide-image threshold: at or past it,
+          // an image reads as two pages side by side — a full spread.
+          cb({ src: fitCanvas(c, bookAspect).toDataURL("image/jpeg", 0.85), letterboxed: letterboxed, looksSpread: (w / h) >= 1.45 });
+        };
+        im.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    /* The other page of the spread a page belongs to, by the book's
+       own structure: the cover (0) and the back cover (N-1) stand
+       alone, interior pages pair off (1,2), (3,4), … — the same
+       grouping the strip draws. -1 when the page has no partner. */
+    function spreadPartner(idx) {
+      if (idx <= 0 || idx >= N - 1) return -1;
+      var p = (idx % 2 === 1) ? idx + 1 : idx - 1;
+      return (p >= 1 && p <= N - 2) ? p : -1;
+    }
+    /* Replace spread processing: a wide image (the folder loader's
+       split threshold) is cut at its horizontal midpoint — the same
+       split rule — and each half is finished like a single-page
+       replacement: long side capped at 1600, letterboxed into the
+       book's page shape, JPEG. A narrower image is NOT forced: it
+       comes back processed as a single page, and the caller offers
+       it for the tapped page instead. */
+    function processSpreadImage(file, cb) {
+      var reader = new FileReader();
+      reader.onerror = function () { cb(null); };
+      reader.onload = function () {
+        var im = new Image();
+        im.onerror = function () { cb(null); };
+        im.onload = function () {
+          var w = im.naturalWidth, h = im.naturalHeight;
+          if (!w || !h) { cb(null); return; }
+          function finish(c) { return fitCanvas(c, bookAspect).toDataURL("image/jpeg", 0.85); }
+          if ((w / h) >= 1.45) {
+            function half(x, sw) {
+              var sc = Math.min(1, 1600 / Math.max(sw, h));
+              var c = document.createElement("canvas");
+              c.width = Math.max(1, Math.round(sw * sc));
+              c.height = Math.max(1, Math.round(h * sc));
+              c.getContext("2d").drawImage(im, x, 0, sw, h, 0, 0, c.width, c.height);
+              return finish(c);
+            }
+            // The whole image as one page too: callers that offer a
+            // wide pick "as a spread or as a single page" need both.
+            var wsc = Math.min(1, 1600 / Math.max(w, h));
+            var wc = document.createElement("canvas");
+            wc.width = Math.max(1, Math.round(w * wsc));
+            wc.height = Math.max(1, Math.round(h * wsc));
+            wc.getContext("2d").drawImage(im, 0, 0, wc.width, wc.height);
+            cb({ wide: true, left: half(0, w / 2), right: half(w / 2, w / 2), single: finish(wc) });
+            return;
+          }
+          var scale = Math.min(1, 1600 / Math.max(w, h));
+          var c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(w * scale));
+          c.height = Math.max(1, Math.round(h * scale));
+          c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+          cb({ wide: false, single: finish(c), letterboxed: !!bookAspect && Math.abs(w / h - bookAspect) > 0.01 });
         };
         im.src = reader.result;
       };
@@ -2154,6 +2491,208 @@
       if (sheet.classList.contains("open")) buildStrip();
       if (shelfIsOpen) buildShelf();
     }
+    /* ---- Insert / remove pages ----
+       Insert before/after adds pages to the open book at a chosen
+       spot; only inserted pages can be removed again. The front
+       cover stays first and the back cover stays last — positions
+       clamp inside them with no fuss. Everything keyed by page
+       index moves with its page: text (the seeded arrays splice,
+       the saved overrides remap), marks, and art replacements all
+       shift by the same rule, an inserted page starts with no text,
+       and the parity blank is taken out before the change and
+       recomputed after it, so the book's count only ever moves by
+       the pages actually inserted or removed. Persistence mirrors
+       Replace art exactly: catalog books save into the same
+       IndexedDB override record (inserted image + position), and
+       imports bank the new arrays onto their shelf entry for the
+       visit. */
+    function shiftMapKeys(map, pos, cnt) {
+      if (!map) return map;
+      var out = {};
+      Object.keys(map).forEach(function (k) {
+        var i = parseInt(k, 10);
+        out[i >= pos ? i + cnt : i] = map[k];
+      });
+      return out;
+    }
+    function dropMapKey(map, idx) {
+      if (!map) return map;
+      var out = {};
+      Object.keys(map).forEach(function (k) {
+        var i = parseInt(k, 10);
+        if (i === idx) return;
+        out[i > idx ? i - 1 : i] = map[k];
+      });
+      return out;
+    }
+    /* Remap every index-keyed store for cnt pages appearing at pos. */
+    function remapIndicesInsert(pos, cnt) {
+      artReplaced = shiftMapKeys(artReplaced, pos, cnt);
+      artOrig = shiftMapKeys(artOrig, pos, cnt);
+      var entry = artEntry();
+      if (entry && entry.artOrig) entry.artOrig = shiftMapKeys(entry.artOrig, pos, cnt);
+      var id = artBookId();
+      if (isCatalogId(id) && textStore[id]) { textStore[id] = shiftMapKeys(textStore[id], pos, cnt); saveTextStore(); }
+      if (currentMarks.length) {
+        currentMarks = currentMarks.map(function (mk) { return mk >= pos ? mk + cnt : mk; });
+        saveMarks();
+      }
+      origImgCache = {};
+    }
+    /* The same, for the page at idx going away (its own records go with it). */
+    function remapIndicesRemove(idx) {
+      artReplaced = dropMapKey(artReplaced, idx);
+      artOrig = dropMapKey(artOrig, idx);
+      var entry = artEntry();
+      if (entry && entry.artOrig) entry.artOrig = dropMapKey(entry.artOrig, idx);
+      var id = artBookId();
+      if (isCatalogId(id) && textStore[id]) { textStore[id] = dropMapKey(textStore[id], idx); saveTextStore(); }
+      if (currentMarks.length) {
+        var nm = [];
+        currentMarks.forEach(function (mk) { if (mk !== idx) nm.push(mk > idx ? mk - 1 : mk); });
+        currentMarks = nm;
+        saveMarks();
+      }
+      origImgCache = {};
+    }
+    function splicePageOut(idx) {
+      remapIndicesRemove(idx);
+      PAGES.splice(idx, 1);
+      pageImgs.splice(idx, 1);
+      pageNames.splice(idx, 1);
+      pageTexts.splice(idx, 1);
+      pageIns.splice(idx, 1);
+    }
+    /* Keep the book even: an odd count takes one blank just before
+       the back cover. Live structural edits pass remap=true so the
+       stores shift over the blank too; the stored-insert rebuild
+       passes false because its stores were saved against the final
+       layout, blank included. */
+    function parityNormalize(remap) {
+      autoBlankIdx = -1;
+      if (PAGES.length % 2 === 0) return;
+      var at = PAGES.length - 1;
+      if (remap) remapIndicesInsert(at, 1);
+      PAGES.splice(at, 0, BLANK);
+      pageImgs.splice(at, 0, newPageImg(BLANK));
+      pageNames.splice(at, 0, null);
+      pageTexts.splice(at, 0, null);
+      pageIns.splice(at, 0, false);
+      autoBlankIdx = at;
+      blankNote = "blank page added";
+    }
+    /* The page index the reader is looking at (the focused page in
+       portrait, the spread's left page otherwise) — structural edits
+       follow it so the reader stays on their content. */
+    function structAnchor() {
+      if (focusMode) {
+        if (flipped === 0) return 0;
+        if (flipped === HALF) return N - 1;
+        return focus === 0 ? 2 * flipped - 1 : 2 * flipped;
+      }
+      return flipped === 0 ? 0 : 2 * flipped - 1;
+    }
+    function followAnchor(idx) {
+      idx = Math.max(0, Math.min(N - 1, idx));
+      if (idx <= 0) { flipped = 0; focus = 0; }
+      else if (idx >= N - 1) { flipped = HALF; focus = 0; }
+      else { flipped = Math.floor((idx + 1) / 2); focus = (idx === 2 * flipped - 1) ? 0 : 1; }
+      if (!focusMode) focus = 0;
+    }
+    /* Bank the post-edit book onto its shelf entry: imports reopen
+       from theirs for the visit, and catalog shelf books use theirs
+       as the in-session master (their reload persistence is the
+       IndexedDB record artIdbSave writes). */
+    function syncStructToEntry(entry) {
+      if (!entry) return;
+      if (entry.source === "import") {
+        entry.pages = PAGES.slice();
+        entry.names = pageNames.slice();
+        entry.texts = pageTexts.slice();
+        entry.cover = PAGES[0];
+      } else if (entry.pages) {
+        entry.pages = PAGES.slice();
+        if (entry.text) entry.text = pageTexts.slice();
+      }
+      entry.insArr = pageIns.slice();
+      entry.autoIdx = autoBlankIdx;
+    }
+    function finishStructChange(selIdx) {
+      compareOn = false;
+      origImgCache = {};
+      syncStructToEntry(artEntry());
+      if (isCatalogId(artBookId())) artIdbSave(artBookId());
+      placeSave();
+      artSelIdx = selIdx;
+      render();
+      if (sheet.classList.contains("open")) buildStrip();
+      if (shelfIsOpen) buildShelf();
+      refreshArtSelection();
+      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+    }
+    function insertPagesAt(rawPos, srcs, afterHint) {
+      if (!srcs || !srcs.length || animating) return;
+      var anchor = structAnchor();
+      if (autoBlankIdx >= 0) {
+        var ab = autoBlankIdx;
+        splicePageOut(ab);
+        autoBlankIdx = -1;
+        blankNote = "";
+        if (anchor > ab) anchor--;
+        if (rawPos > ab) rawPos--;
+      }
+      var pos = Math.max(1, Math.min(PAGES.length - 1, rawPos));
+      if (srcs.length === 2) {
+        // A spread lands as a facing pair: pair starts are odd indices.
+        if (pos % 2 === 0) pos = afterHint ? pos + 1 : pos - 1;
+        pos = Math.max(1, Math.min(PAGES.length - 1, pos));
+        if (pos % 2 === 0 && pos > 1) pos--;
+      }
+      var cnt = srcs.length;
+      remapIndicesInsert(pos, cnt);
+      for (var i = 0; i < cnt; i++) {
+        PAGES.splice(pos + i, 0, srcs[i]);
+        pageImgs.splice(pos + i, 0, newPageImg(srcs[i]));
+        pageNames.splice(pos + i, 0, null);
+        pageTexts.splice(pos + i, 0, null);
+        pageIns.splice(pos + i, 0, true);
+      }
+      if (anchor >= pos) anchor += cnt;
+      parityNormalize(true);
+      if (autoBlankIdx >= 0 && anchor >= autoBlankIdx) anchor++;
+      if (autoBlankIdx < 0) blankNote = "";
+      N = PAGES.length;
+      HALF = N / 2;
+      followAnchor(anchor);
+      finishStructChange(pos);
+      showStripNote(cnt === 2
+        ? "Inserted a new spread \u2014 the book now has " + N + " pages."
+        : "Inserted a new page \u2014 the book now has " + N + " pages.");
+    }
+    function removeInsertedPage(idx) {
+      if (idx < 0 || idx >= PAGES.length || !pageIns[idx] || animating) return;
+      var anchor = structAnchor();
+      if (autoBlankIdx >= 0) {
+        var ab = autoBlankIdx;
+        splicePageOut(ab);
+        autoBlankIdx = -1;
+        blankNote = "";
+        if (anchor > ab) anchor--;
+        if (idx > ab) idx--;
+      }
+      splicePageOut(idx);
+      if (anchor > idx) anchor--;
+      parityNormalize(true);
+      if (autoBlankIdx >= 0 && anchor >= autoBlankIdx) anchor++;
+      if (autoBlankIdx < 0) blankNote = "";
+      N = PAGES.length;
+      HALF = N / 2;
+      followAnchor(anchor);
+      finishStructChange(Math.min(idx, N - 1));
+      showStripNote("Inserted page removed \u2014 the book is back to " + N + " pages.");
+    }
+
     /* Strip edit-mode UI */
     var stripEditBtn = document.getElementById("stripEditBtn");
     var sheetTitleEl = document.getElementById("sheetTitle");
@@ -2161,8 +2700,88 @@
     var stripActionsEl = document.getElementById("stripActions");
     var stripSelLabel = document.getElementById("stripSelLabel");
     var artReplaceBtn = document.getElementById("artReplaceBtn");
+    var artSpreadBtn = document.getElementById("artSpreadBtn");
     var artRevertBtn = document.getElementById("artRevertBtn");
+    var artPhBtn = document.getElementById("artPhBtn");
+    var artPhSpreadBtn = document.getElementById("artPhSpreadBtn");
+    var artInsertBeforeBtn = document.getElementById("artInsertBeforeBtn");
+    var artInsertAfterBtn = document.getElementById("artInsertAfterBtn");
+    var artRemoveBtn = document.getElementById("artRemoveBtn");
     var artFilePick = document.getElementById("artFilePick");
+    var artSpreadPick = document.getElementById("artSpreadPick");
+    var artInsertPick = document.getElementById("artInsertPick");
+    var stripOfferEl = document.getElementById("stripOffer");
+    var stripOfferText = document.getElementById("stripOfferText");
+    var stripOfferYes = document.getElementById("stripOfferYes");
+    var stripOfferNo = document.getElementById("stripOfferNo");
+    var insertBarEl = document.getElementById("insertBar");
+    var insertBarText = document.getElementById("insertBarText");
+    var phRowEl = document.getElementById("phRow");
+    var phRowLabel = document.getElementById("phRowLabel");
+    /* The strip's one offer row, shared by two questions: a not-wide
+       Replace-spread pick offered as a single-page replacement, and
+       a wide insert pick offered as a spread or a single page. */
+    var pendingOffer = null;   // {kind:"spreadSingle",idx,src} | {kind:"insertWide",pos,after,left,right,single}
+    function hideSpreadOffer() {
+      pendingOffer = null;
+      stripOfferEl.hidden = true;
+    }
+    /* Insert-source state: which slot the next inserted page(s) go
+       to, chosen with Insert before/after on the selected page. */
+    var pendingInsertPos = -1;
+    var pendingInsertAfter = true;
+    function hideInsertBar() {
+      insertBarEl.hidden = true;
+      pendingInsertPos = -1;
+    }
+    function showInsertBar(idx, after) {
+      pendingInsertAfter = after;
+      pendingInsertPos = after ? idx + 1 : idx;
+      insertBarText.textContent = "Insert " + (after ? "after" : "before") + " page " + (idx + 1) + ":";
+      hideSpreadOffer();
+      closePhRow();
+      insertBarEl.hidden = false;
+    }
+    /* Placeholder picker state: what a thumbnail tap will feed —
+       the selected page, its whole spread, or the pending insert. */
+    var phCtx = null;   // {mode:"replace"|"spread"|"insert"}
+    function openPhRow(mode) {
+      phCtx = { mode: mode };
+      phRowLabel.textContent = mode === "spread" ? "Placeholder for both pages of this spread:"
+        : mode === "insert" ? "Placeholder page to insert:"
+        : "Placeholder for page " + (artSelIdx + 1) + ":";
+      phRowEl.hidden = false;
+    }
+    function closePhRow() {
+      phCtx = null;
+      phRowEl.hidden = true;
+    }
+    buildPhThumbs(document.getElementById("phThumbs"), function (ph) { pickPlaceholder(ph); });
+    function pickPlaceholder(ph) {
+      if (!phCtx) return;
+      var mode = phCtx.mode;
+      closePhRow();
+      if (mode === "replace") {
+        if (artSelIdx < 0) return;
+        applyArtReplacement(artSelIdx, placeholderData(ph, "Page art to come", bookAspect));
+        showStripNote(ph.name + " placeholder set on page " + (artSelIdx + 1) + " \u2014 Revert brings the page's own art back.");
+        refreshArtSelection();
+      } else if (mode === "spread") {
+        var partner = spreadPartner(artSelIdx);
+        if (artSelIdx < 0 || partner < 0) return;
+        var src = placeholderData(ph, "Page art to come", bookAspect);
+        applyArtReplacement(Math.min(artSelIdx, partner), src);
+        applyArtReplacement(Math.max(artSelIdx, partner), src);
+        showStripNote(ph.name + " placeholder set on both pages of the spread \u2014 each page reverts on its own.");
+        refreshArtSelection();
+      } else if (mode === "insert") {
+        if (pendingInsertPos < 0) return;
+        var pos = pendingInsertPos, after = pendingInsertAfter;
+        hideInsertBar();
+        insertPagesAt(pos, [placeholderData(ph, "Page art to come", bookAspect)], after);
+      }
+    }
+    document.getElementById("phCancelBtn").addEventListener("click", function () { closePhRow(); });
     function showStripNote(text) {
       stripNoteEl.hidden = !text;
       stripNoteEl.textContent = text || "";
@@ -2175,10 +2794,22 @@
       if (artSelIdx < 0) {
         stripSelLabel.textContent = "Tap a page above to choose it.";
         artRevertBtn.hidden = true;
+        artSpreadBtn.hidden = true;
+        artPhBtn.hidden = true;
+        artPhSpreadBtn.hidden = true;
+        artInsertBeforeBtn.hidden = true;
+        artInsertAfterBtn.hidden = true;
+        artRemoveBtn.hidden = true;
         return;
       }
-      stripSelLabel.textContent = "Page " + (artSelIdx + 1) + (artReplaced[artSelIdx] ? " \u2014 art replaced" : "");
+      stripSelLabel.textContent = "Page " + (artSelIdx + 1) + (pageIns[artSelIdx] ? " \u2014 inserted page" : "") + (artReplaced[artSelIdx] ? " \u2014 art replaced" : "");
       artRevertBtn.hidden = !artReplaced[artSelIdx];
+      artSpreadBtn.hidden = spreadPartner(artSelIdx) < 0;
+      artPhBtn.hidden = false;
+      artPhSpreadBtn.hidden = spreadPartner(artSelIdx) < 0;
+      artInsertBeforeBtn.hidden = false;
+      artInsertAfterBtn.hidden = false;
+      artRemoveBtn.hidden = !pageIns[artSelIdx];
     }
     function enterArtEdit() {
       if (artEditing) return;
@@ -2188,7 +2819,7 @@
       sheetTitleEl.textContent = "Edit pages \u2014 tap a page to choose it";
       stripActionsEl.hidden = false;
       artSelIdx = -1;
-      if (artDbFailed && isCatalogId(artBookId())) showStripNote("Replacements can't be saved in this browser \u2014 they'll last this visit only.");
+      if (artDbFailed && isCatalogId(artBookId())) showStripNote("Page changes can't be saved in this browser \u2014 they'll last this visit only.");
       buildStrip();
       refreshArtSelection();
     }
@@ -2200,6 +2831,9 @@
       sheetTitleEl.textContent = "Pages \u2014 tap one to jump there";
       stripActionsEl.hidden = true;
       showStripNote("");
+      hideSpreadOffer();
+      hideInsertBar();
+      closePhRow();
       artSelIdx = -1;
     }
     stripEditBtn.addEventListener("click", function () {
@@ -2210,10 +2844,15 @@
       var tw = e.target && e.target.closest ? e.target.closest("[data-pidx]") : null;
       if (!tw) return;
       artSelIdx = parseInt(tw.getAttribute("data-pidx"), 10);
+      hideSpreadOffer();
+      hideInsertBar();
+      closePhRow();
       refreshArtSelection();
     });
     artReplaceBtn.addEventListener("click", function () {
       if (artSelIdx < 0) { showStripNote("Tap a page above first, then Replace art."); return; }
+      closePhRow();
+      hideInsertBar();
       artFilePick.click();
     });
     artFilePick.addEventListener("change", function () {
@@ -2221,12 +2860,130 @@
       artFilePick.value = "";
       if (!f || artSelIdx < 0) return;
       var idx = artSelIdx;
-      processReplacement(f, function (dataUrl, letterboxed) {
-        if (!dataUrl) { showStripNote("That image could not be read \u2014 page " + (idx + 1) + " is unchanged."); return; }
-        applyArtReplacement(idx, dataUrl);
-        showStripNote(letterboxed ? "New art is a different shape \u2014 shown letterboxed, never squashed." : "");
+      processReplacement(f, function (res) {
+        if (!res) { showStripNote("That image could not be read \u2014 page " + (idx + 1) + " is unchanged."); return; }
+        applyArtReplacement(idx, res.src);
+        if (res.looksSpread && spreadPartner(idx) >= 0) showStripNote("This looks like a full spread \u2014 shown letterboxed on this page alone. Replace spread can use both halves.");
+        else showStripNote(res.letterboxed ? "New art is a different shape \u2014 shown letterboxed, never squashed." : "");
         refreshArtSelection();
       });
+    });
+    /* Replace spread: one wide image becomes BOTH pages of the
+       selected page's spread — left half to the left page, right
+       half to the right — each installed through the ordinary
+       per-page replacement path, so both pages bank their own
+       original, wear their own REPLACED tag, persist in the same
+       store, and revert independently. A pick that isn't wide is
+       never forced across two pages: it is offered back as a
+       single-page replacement for the tapped page, or cancelled. */
+    artSpreadBtn.addEventListener("click", function () {
+      if (artSelIdx < 0 || spreadPartner(artSelIdx) < 0) { showStripNote("Choose an inside page first \u2014 the cover and back cover take single-page art."); return; }
+      hideSpreadOffer();
+      closePhRow();
+      hideInsertBar();
+      artSpreadPick.click();
+    });
+    artSpreadPick.addEventListener("change", function () {
+      var f = artSpreadPick.files && artSpreadPick.files[0];
+      artSpreadPick.value = "";
+      if (!f || artSelIdx < 0) return;
+      var idx = artSelIdx;
+      var partner = spreadPartner(idx);
+      if (partner < 0) return;
+      processSpreadImage(f, function (res) {
+        if (!res) { showStripNote("That image could not be read \u2014 the spread is unchanged."); return; }
+        if (res.wide) {
+          hideSpreadOffer();
+          applyArtReplacement(Math.min(idx, partner), res.left);
+          applyArtReplacement(Math.max(idx, partner), res.right);
+          showStripNote("");
+          refreshArtSelection();
+        } else {
+          pendingOffer = { kind: "spreadSingle", idx: idx, src: res.single };
+          stripOfferText.textContent = "That image doesn\u2019t look like a full spread. Use it as the art for page " + (idx + 1) + " only?";
+          stripOfferYes.textContent = "Use for this page";
+          stripOfferNo.textContent = "Cancel";
+          stripOfferEl.hidden = false;
+        }
+      });
+    });
+    stripOfferYes.addEventListener("click", function () {
+      if (!pendingOffer) return;
+      var p = pendingOffer;
+      hideSpreadOffer();
+      if (p.kind === "spreadSingle") {
+        applyArtReplacement(p.idx, p.src);
+        showStripNote("");
+        refreshArtSelection();
+      } else if (p.kind === "insertWide") {
+        insertPagesAt(p.pos, [p.left, p.right], p.after);
+      }
+    });
+    stripOfferNo.addEventListener("click", function () {
+      if (!pendingOffer) return;
+      var p = pendingOffer;
+      hideSpreadOffer();
+      // For an insert offer, "no" is not a cancel: the image still
+      // goes in, as a single page. For a spread pick it just cancels.
+      if (p.kind === "insertWide") insertPagesAt(p.pos, [p.single], p.after);
+    });
+    /* Placeholder sources for Replace art / Replace spread: the
+       built-in set, installed through the same per-page replacement
+       path as a picked file, so Revert and persistence treat a
+       placeholder exactly like any other replacement. */
+    artPhBtn.addEventListener("click", function () {
+      if (artSelIdx < 0) { showStripNote("Tap a page above first, then choose a placeholder."); return; }
+      hideSpreadOffer();
+      hideInsertBar();
+      openPhRow("replace");
+    });
+    artPhSpreadBtn.addEventListener("click", function () {
+      if (artSelIdx < 0 || spreadPartner(artSelIdx) < 0) { showStripNote("Choose an inside page first \u2014 the cover and back cover take single-page art."); return; }
+      hideSpreadOffer();
+      hideInsertBar();
+      openPhRow("spread");
+    });
+    /* Insert pages: the source bar offers a file or a placeholder.
+       A wide file is offered as a full spread or a single page via
+       the shared offer row; anything else goes straight in. */
+    artInsertBeforeBtn.addEventListener("click", function () {
+      if (artSelIdx < 0) { showStripNote("Tap a page above first, then Insert."); return; }
+      showInsertBar(artSelIdx, false);
+    });
+    artInsertAfterBtn.addEventListener("click", function () {
+      if (artSelIdx < 0) { showStripNote("Tap a page above first, then Insert."); return; }
+      showInsertBar(artSelIdx, true);
+    });
+    document.getElementById("insertCancelBtn").addEventListener("click", function () { hideInsertBar(); closePhRow(); });
+    document.getElementById("insertFileBtn").addEventListener("click", function () { artInsertPick.click(); });
+    document.getElementById("insertPhBtn").addEventListener("click", function () { openPhRow("insert"); });
+    artInsertPick.addEventListener("change", function () {
+      var f = artInsertPick.files && artInsertPick.files[0];
+      artInsertPick.value = "";
+      if (!f || pendingInsertPos < 0) return;
+      var pos = pendingInsertPos, after = pendingInsertAfter;
+      hideInsertBar();
+      closePhRow();
+      processSpreadImage(f, function (res) {
+        if (!res) { showStripNote("That image could not be read \u2014 nothing was inserted."); return; }
+        if (res.wide) {
+          pendingOffer = { kind: "insertWide", pos: pos, after: after, left: res.left, right: res.right, single: res.single };
+          stripOfferText.textContent = "That image looks like a full spread. Insert it as a spread (two pages), or as a single page?";
+          stripOfferYes.textContent = "Insert as spread";
+          stripOfferNo.textContent = "One page only";
+          stripOfferEl.hidden = false;
+        } else {
+          insertPagesAt(pos, [res.single], after);
+          if (res.letterboxed) showStripNote("Inserted \u2014 the image is a different shape from the book's pages, so it sits letterboxed, never squashed.");
+        }
+      });
+    });
+    artRemoveBtn.addEventListener("click", function () {
+      if (artSelIdx < 0 || !pageIns[artSelIdx]) return;
+      hideSpreadOffer();
+      hideInsertBar();
+      closePhRow();
+      removeInsertedPage(artSelIdx);
     });
     artRevertBtn.addEventListener("click", function () {
       if (artSelIdx < 0) return;
@@ -2446,11 +3203,553 @@
       exitTextEdit();
       updateTextPanel();
     });
-    // The book on stage at load is always the built-in one; restore
-    // any saved text overrides for it before the first render's pill
-    // check. (Books opened from the shelf get theirs in
-    // openShelfBook.)
-    applyTextOverrides("builtin");
+    // The book on stage at load is always the built-in one; its
+    // saved text overrides are applied by loadArtOverrides (above),
+    // whose callback lands them after any stored inserts are
+    // rebuilt, since the override indices name the final layout.
+    // (Books opened from the shelf get theirs the same way.)
+
+    /* ================= Compare / Read to me / Marks / Zoom =================
+       Four reader tools that all read the same live state:
+       - effSrc/effImg are the EFFECTIVE page source: while Compare
+         is on, a replaced page resolves to its banked original
+         (artOrig) instead of PAGES. Every stage render — base pages,
+         both turn engines' leaves, and the zoom view — goes through
+         them, so Compare is a pure view state: PAGES and the saved
+         overrides are never touched by it.
+       - Marks are per book, keyed like place memory: catalog books
+         persist on-device (fb-marks), imports keep theirs on their
+         shelf entry for the visit.
+       - Read to me uses the device's own speechSynthesis voices,
+         discovered at runtime; nothing about the voice list is
+         assumed or stored except the reader's chosen name+language.
+       - Zoom is a flat overlay of the effective visible pages with
+         its own throwaway transform state. */
+
+    /* ---- Effective source + Compare ---- */
+    var compareOn = false;
+    var origImgCache = {};
+    function origSrcFor(idx) { return (artReplaced[idx] && artOrig[idx]) ? artOrig[idx] : PAGES[idx]; }
+    function effSrc(idx) { return compareOn ? origSrcFor(idx) : PAGES[idx]; }
+    function origImgFor(idx) {
+      var s = artOrig[idx];
+      var c = origImgCache[idx];
+      if (!c || c._src !== s) { c = newPageImg(s); c._src = s; origImgCache[idx] = c; }
+      return c;
+    }
+    function effImg(idx) {
+      if (compareOn && artReplaced[idx] && artOrig[idx]) return origImgFor(idx);
+      return pageImgs[idx];
+    }
+    var compareBtn = document.getElementById("compareBtn");
+    function visibleHasReplacement() {
+      var idxs = visibleTextIdxs();
+      for (var ci = 0; ci < idxs.length; ci++) if (artReplaced[idxs[ci]]) return true;
+      return false;
+    }
+    function refreshCompareChrome() {
+      if (!compareBtn) return;
+      var has = visibleHasReplacement();
+      compareBtn.hidden = !has;
+      compareBtn.classList.toggle("on", compareOn && has);
+      compareBtn.setAttribute("aria-pressed", compareOn ? "true" : "false");
+      var lg = compareBtn.querySelector(".cmpLong"), sh = compareBtn.querySelector(".cmpShort");
+      if (lg) lg.textContent = compareOn ? "Compare: original" : "Compare";
+      if (sh) sh.textContent = compareOn ? "Original" : "Compare";
+      refreshCrowded();
+    }
+    if (compareBtn) compareBtn.addEventListener("click", function () {
+      compareOn = !compareOn;
+      if (compareOn) {
+        visibleTextIdxs().forEach(function (i) {
+          if (artReplaced[i]) { var im = origImgFor(i); if (im && im.decode) im.decode().catch(function () {}); }
+        });
+      }
+      render();
+    });
+    /* Banner crowding at phone width: when the Text, Compare, and
+       Listen pills are all competing with the counter, the edition
+       badge (the same status the shelf dot and info card carry)
+       steps aside so the one-row header never wraps. */
+    function refreshCrowded() {
+      var n = 0;
+      if (textBtn && !textBtn.hidden) n++;
+      if (compareBtn && !compareBtn.hidden) n++;
+      var lb = document.getElementById("listenBtn");
+      if (lb && !lb.hidden) n++;
+      document.body.classList.toggle("hdr-crowded", n >= 3);
+    }
+
+    /* ---- Mark a page ---- */
+    var marksStore = {};
+    try { marksStore = JSON.parse(localStorage.getItem("fb-marks") || "{}") || {}; } catch (err) { marksStore = {}; }
+    var currentMarks = [];
+    var markBtn = document.getElementById("markBtn");
+    function marksBookId() { return (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin"; }
+    function marksAreCatalog(id) { return id === "builtin" || isCatalogId(id); }
+    function loadMarksFor(id) {
+      currentMarks = [];
+      var srcArr = null;
+      if (marksAreCatalog(id)) srcArr = marksStore[id] || null;
+      else {
+        var e = null;
+        try { e = findShelfEntry(id); } catch (err) {}
+        srcArr = (e && e.marks) || null;
+      }
+      if (srcArr) srcArr.forEach(function (v) {
+        var n = parseInt(v, 10);
+        if (isFinite(n) && n >= 0 && n < N && currentMarks.indexOf(n) < 0) currentMarks.push(n);
+      });
+      currentMarks.sort(function (a, b) { return a - b; });
+      refreshMarkChrome();
+    }
+    function saveMarks() {
+      var id = marksBookId();
+      if (marksAreCatalog(id)) {
+        if (currentMarks.length) marksStore[id] = currentMarks.slice();
+        else delete marksStore[id];
+        try { localStorage.setItem("fb-marks", JSON.stringify(marksStore)); } catch (err) {}
+      } else {
+        var e = null;
+        try { e = findShelfEntry(id); } catch (err) {}
+        if (e) e.marks = currentMarks.slice();
+      }
+    }
+    function isPageMarked(idx) { return currentMarks.indexOf(idx) >= 0; }
+    function refreshMarkChrome() {
+      if (!markBtn) return;
+      var m = isPageMarked(currentFirst());
+      markBtn.classList.toggle("marked", m);
+      markBtn.setAttribute("aria-pressed", m ? "true" : "false");
+      markBtn.setAttribute("aria-label", m ? "Unmark this spread" : "Mark this spread");
+      markBtn.title = m ? "Unmark this spread" : "Mark this spread";
+    }
+    if (markBtn) markBtn.addEventListener("click", function () {
+      var idx = currentFirst();
+      var p = currentMarks.indexOf(idx);
+      if (p >= 0) currentMarks.splice(p, 1); else currentMarks.push(idx);
+      currentMarks.sort(function (a, b) { return a - b; });
+      saveMarks();
+      refreshMarkChrome();
+      if (sheet.classList.contains("open")) buildStrip();
+    });
+    var marksListEl = document.getElementById("marksList");
+    var marksClearBtn = document.getElementById("marksClear");
+    function refreshMarksBar() {
+      if (!marksListEl) return;
+      marksListEl.innerHTML = "";
+      if (!currentMarks.length) {
+        var em = document.createElement("span");
+        em.className = "marksEmpty";
+        em.textContent = "None yet \u2014 tap the star in the reader to mark a spread.";
+        marksListEl.appendChild(em);
+        if (marksClearBtn) marksClearBtn.hidden = true;
+        return;
+      }
+      if (marksClearBtn) marksClearBtn.hidden = false;
+      currentMarks.slice().sort(function (a, b) { return a - b; }).forEach(function (idx) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "markChip";
+        chip.textContent = labelMode === "spreads" ? singleName(idx) : ("Page " + (idx + 1));
+        chip.setAttribute("aria-label", "Go to " + chip.textContent);
+        chip.addEventListener("click", function () {
+          closeSheet();
+          ensureIndices([idx, idx + 1], function () { goTo(idx); });
+        });
+        marksListEl.appendChild(chip);
+      });
+    }
+    if (marksClearBtn) marksClearBtn.addEventListener("click", function () {
+      currentMarks = [];
+      saveMarks();
+      refreshMarkChrome();
+      buildStrip();
+    });
+
+    /* ---- Read to me (device speechSynthesis) ----
+       Availability is discovered, never assumed: no speechSynthesis,
+       or a device that reports zero voices, renders the Settings row
+       as "Not available on this device" and the pill never appears.
+       The voice picker is rebuilt from THIS device's voices whenever
+       the list changes (voiceschanged), device-language voices first,
+       then English, each labeled with its OS name; the first entry is
+       always "Device default". The saved choice persists as
+       name+language and is honored only while a matching voice exists
+       on the current device — otherwise the picker silently shows
+       Device default as the effective selection. Speed persists as a
+       portable rate choice. There is deliberately no pitch control
+       and no gender switch: the API labels neither. Speech starts
+       only from a tap (the pill), follows settled flips while active,
+       and the Settings toggle turning off cancels it at once. */
+    var speechCapable = false;
+    try { speechCapable = ("speechSynthesis" in window) && !!window.speechSynthesis && typeof window.speechSynthesis.speak === "function"; } catch (err) { speechCapable = false; }
+    var readAvailable = speechCapable ? null : false;   // null = voices not known yet
+    var readOn = false;
+    try { readOn = localStorage.getItem("fb-read-aloud") === "1"; } catch (err) {}
+    var readSpeed = "normal";
+    try { var savedSpeed = localStorage.getItem("fb-read-speed"); if (["slower", "normal", "faster"].indexOf(savedSpeed) >= 0) readSpeed = savedSpeed; } catch (err) {}
+    var savedVoice = null;
+    try { var svRaw = localStorage.getItem("fb-read-voice"); if (svRaw) savedVoice = JSON.parse(svRaw); } catch (err) { savedVoice = null; }
+    var voiceList = [];
+    var narrationActive = false;
+    var utterGen = 0;
+    var lastSpokenKey = "";
+    var readAvailTimer = null;
+    var listenBtn = document.getElementById("listenBtn");
+    var readAloudEl = document.getElementById("readAloud");
+    var voicePickEl = document.getElementById("voicePick");
+    function readRate() { return readSpeed === "slower" ? 0.85 : readSpeed === "faster" ? 1.2 : 1.0; }
+    function collectVoices() { try { return window.speechSynthesis.getVoices() || []; } catch (err) { return []; } }
+    function effectiveVoice() {
+      if (!voicePickEl || !voicePickEl.value) return null;
+      var parts = voicePickEl.value.split("|");
+      for (var i = 0; i < voiceList.length; i++) {
+        if (voiceList[i].name === parts[0] && (voiceList[i].lang || "") === (parts[1] || "")) return voiceList[i];
+      }
+      return null;
+    }
+    function populateVoices() {
+      if (!speechCapable) { readAvailable = false; updateReadSettingsUI(); return; }
+      var vs = collectVoices();
+      if (!vs.length) {
+        if (readAvailable === null && !readAvailTimer) {
+          readAvailTimer = setTimeout(function () {
+            readAvailTimer = null;
+            if (readAvailable === null && !collectVoices().length) { readAvailable = false; updateReadSettingsUI(); }
+          }, 1600);
+        }
+        return;
+      }
+      if (readAvailTimer) { clearTimeout(readAvailTimer); readAvailTimer = null; }
+      voiceList = vs.slice();
+      readAvailable = true;
+      if (voicePickEl) {
+        var dl = (navigator.language || "en").toLowerCase();
+        var dlP = dl.split("-")[0];
+        function rank(v) {
+          var l = (v.lang || "").toLowerCase();
+          if (l === dl) return 0;                          // exact device locale
+          if (l === dlP || l.indexOf(dlP + "-") === 0) return 1;   // same language, other region
+          if (l.indexOf("en") === 0) return 2;             // other English
+          return 3;
+        }
+        var sorted = voiceList.map(function (v, i) { return [rank(v), i, v]; })
+          .sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; })
+          .map(function (x) { return x[2]; });
+        voicePickEl.innerHTML = "";
+        var d0 = document.createElement("option");
+        d0.value = "";
+        d0.textContent = "Device default";
+        voicePickEl.appendChild(d0);
+        sorted.forEach(function (v) {
+          var o = document.createElement("option");
+          o.value = v.name + "|" + (v.lang || "");
+          o.textContent = v.lang ? (v.name + " (" + v.lang + ")") : v.name;
+          voicePickEl.appendChild(o);
+        });
+        var eff = "";
+        if (savedVoice && savedVoice.name) {
+          for (var i = 0; i < sorted.length; i++) {
+            if (sorted[i].name === savedVoice.name && (!savedVoice.lang || sorted[i].lang === savedVoice.lang)) { eff = sorted[i].name + "|" + (sorted[i].lang || ""); break; }
+          }
+        }
+        voicePickEl.value = eff;
+      }
+      updateReadSettingsUI();
+    }
+    function updateReadSettingsUI() {
+      var vr = document.getElementById("voiceRow"), sr = document.getElementById("speedRow"), note = document.getElementById("readNote");
+      if (readAvailable === false) {
+        if (readAloudEl) readAloudEl.disabled = true;
+        if (vr) vr.hidden = true;
+        if (sr) sr.hidden = true;
+        if (note) note.hidden = false;
+      } else {
+        if (readAloudEl) readAloudEl.disabled = false;
+        if (vr) vr.hidden = false;
+        if (sr) sr.hidden = false;
+        if (note) note.hidden = true;
+      }
+      refreshListenChrome();
+    }
+    function updateListenPill() {
+      if (!listenBtn) return;
+      var speaking = false;
+      try { speaking = !!(window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)); } catch (err) {}
+      var active = narrationActive && speaking;
+      listenBtn.dataset.state = active ? "stop" : "play";
+      listenBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      listenBtn.setAttribute("aria-label", active ? "Stop reading aloud" : "Read this page aloud");
+      var t = listenBtn.querySelector(".pillTxt");
+      if (t) t.textContent = active ? "Stop" : "Listen";
+    }
+    function refreshListenChrome() {
+      if (!listenBtn) return;
+      var show = readOn && readAvailable === true && bookHasText();
+      listenBtn.hidden = !show;
+      if (!show && narrationActive) stopNarration();
+      updateListenPill();
+      refreshCrowded();
+    }
+    function visibleSpeechKey() { return marksBookId() + ":" + visibleTextIdxs().join(","); }
+    function speakVisible() {
+      if (!readOn || readAvailable !== true || !speechCapable) return;
+      var parts = [];
+      visibleTextIdxs().forEach(function (i) {
+        var t = pageTexts[i];
+        if (t && t.trim()) parts.push(t.trim());
+      });
+      lastSpokenKey = visibleSpeechKey();
+      try { window.speechSynthesis.cancel(); } catch (err) {}
+      if (!parts.length) { updateListenPill(); return; }
+      var u;
+      try { u = new SpeechSynthesisUtterance(parts.join("\n\n")); } catch (err) { return; }
+      var v = effectiveVoice();
+      if (v) { u.voice = v; if (v.lang) u.lang = v.lang; }
+      u.rate = readRate();
+      var gen = ++utterGen;
+      u.onend = function () { if (gen === utterGen) updateListenPill(); };
+      u.onerror = function () { if (gen === utterGen) updateListenPill(); };
+      try { window.speechSynthesis.speak(u); } catch (err) {}
+      updateListenPill();
+    }
+    function maybeRespeak() {
+      if (!narrationActive || !readOn || readAvailable !== true) return;
+      if (visibleSpeechKey() === lastSpokenKey) return;
+      speakVisible();
+    }
+    function stopNarration() {
+      narrationActive = false;
+      utterGen++;
+      lastSpokenKey = "";
+      if (speechCapable) { try { window.speechSynthesis.cancel(); } catch (err) {} }
+      updateListenPill();
+    }
+    if (listenBtn) listenBtn.addEventListener("click", function () {
+      if (!readOn || readAvailable !== true) return;
+      var speaking = false;
+      try { speaking = !!(window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)); } catch (err) {}
+      if (narrationActive && speaking) { stopNarration(); return; }
+      narrationActive = true;
+      lastSpokenKey = "";
+      speakVisible();
+    });
+    if (readAloudEl) {
+      readAloudEl.checked = readOn;
+      readAloudEl.addEventListener("change", function () {
+        readOn = !!readAloudEl.checked;
+        try { localStorage.setItem("fb-read-aloud", readOn ? "1" : "0"); } catch (err) {}
+        if (!readOn) stopNarration();
+        refreshListenChrome();
+      });
+    }
+    if (voicePickEl) voicePickEl.addEventListener("change", function () {
+      if (!voicePickEl.value) savedVoice = null;
+      else { var p = voicePickEl.value.split("|"); savedVoice = { name: p[0], lang: p[1] || "" }; }
+      try {
+        if (savedVoice) localStorage.setItem("fb-read-voice", JSON.stringify(savedVoice));
+        else localStorage.removeItem("fb-read-voice");
+      } catch (err) {}
+    });
+    var speedSeg = document.getElementById("speedSeg");
+    function paintSpeedSeg() {
+      if (!speedSeg) return;
+      var btns = speedSeg.querySelectorAll("button[data-speed]");
+      for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-speed") === readSpeed ? "true" : "false");
+    }
+    if (speedSeg) speedSeg.addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("button[data-speed]") : null;
+      if (!b) return;
+      readSpeed = b.getAttribute("data-speed");
+      try { localStorage.setItem("fb-read-speed", readSpeed); } catch (err) {}
+      paintSpeedSeg();
+    });
+    paintSpeedSeg();
+    if (speechCapable) {
+      try { window.speechSynthesis.addEventListener("voiceschanged", populateVoices); }
+      catch (err) { try { window.speechSynthesis.onvoiceschanged = populateVoices; } catch (err2) {} }
+    }
+    populateVoices();
+    updateReadSettingsUI();
+
+    /* ---- Zoom (magnifier) ----
+       A flat, full-screen closeup of exactly what's on stage: the
+       visible pages at their book aspect, sourced through effSrc so
+       replacements — and the originals while Compare is on — are
+       what zoom. Pinch / drag pan / wheel / double-tap / + / −
+       buttons drive one transform; Close (×, Escape, device back)
+       returns to the book untouched at the same spread. The state
+       is per-open and always starts fitted. While open, the
+       slideshow stands down (slideBlocked) and the reader's arrow
+       keys are swallowed by the keydown guard. */
+    var zoomIsOpen = false;
+    var zoomScale = 1, zoomTX = 0, zoomTY = 0, zoomBaseW = 0, zoomBaseH = 0, zoomHist = false;
+    var zoomView = document.getElementById("zoomView");
+    var zoomStage = document.getElementById("zoomStage");
+    var zoomContent = document.getElementById("zoomContent");
+    var zoomTitle = document.getElementById("zoomTitle");
+    var zoomPct = document.getElementById("zoomPct");
+    function applyZoom() {
+      if (!zoomContent) return;
+      zoomContent.style.transform = "translate(" + zoomTX + "px," + zoomTY + "px) scale(" + zoomScale + ")";
+      if (zoomView) zoomView.dataset.scale = String(Math.round(zoomScale * 100) / 100);
+      if (zoomPct) zoomPct.textContent = Math.round(zoomScale * 100) + "%";
+    }
+    function clampZoomPan() {
+      if (zoomScale <= 1.001) { zoomTX = 0; zoomTY = 0; return; }
+      var sw = zoomStage.clientWidth, sh = zoomStage.clientHeight;
+      var mx = Math.max(0, (zoomBaseW * zoomScale - sw) / 2) + 24;
+      var my = Math.max(0, (zoomBaseH * zoomScale - sh) / 2) + 24;
+      zoomTX = Math.max(-mx, Math.min(mx, zoomTX));
+      zoomTY = Math.max(-my, Math.min(my, zoomTY));
+    }
+    function setZoomScale(s) {
+      zoomScale = Math.max(1, Math.min(4, s));
+      clampZoomPan();
+      applyZoom();
+    }
+    function fitZoomContent() {
+      if (!zoomStage || !zoomContent) return;
+      var imgs = zoomContent.querySelectorAll("img");
+      if (!imgs.length) return;
+      var availW = Math.max(60, zoomStage.clientWidth - 20);
+      var availH = Math.max(60, zoomStage.clientHeight - 20);
+      var pw = Math.min(availW / imgs.length, availH * bookAspect);
+      pw = Math.max(40, pw);
+      var ph = pw / bookAspect;
+      for (var i = 0; i < imgs.length; i++) { imgs[i].style.width = pw + "px"; imgs[i].style.height = ph + "px"; }
+      zoomBaseW = pw * imgs.length;
+      zoomBaseH = ph;
+      clampZoomPan();
+      applyZoom();
+    }
+    function openZoom() {
+      if (zoomIsOpen || !zoomView) return;
+      var sp = document.getElementById("settingsPanel");
+      if (sp && !sp.hidden && typeof setSettings === "function") setSettings(false);
+      zoomContent.innerHTML = "";
+      visibleTextIdxs().forEach(function (i) {
+        var im = document.createElement("img");
+        im.alt = "";
+        im.src = pageSrc(effSrc(i));
+        zoomContent.appendChild(im);
+      });
+      zoomTitle.textContent = label();
+      zoomScale = 1; zoomTX = 0; zoomTY = 0;
+      zoomView.hidden = false;
+      zoomIsOpen = true;
+      clearSlideTimer();
+      fitZoomContent();
+      applyZoom();
+      try { history.pushState({ fbZoom: 1 }, ""); zoomHist = true; } catch (err) { zoomHist = false; }
+    }
+    function closeZoomView(from) {
+      if (!zoomIsOpen) return;
+      zoomIsOpen = false;
+      zoomView.hidden = true;
+      zoomScale = 1; zoomTX = 0; zoomTY = 0;
+      if (slideSec) scheduleSlide();
+      if (zoomHist && from !== "pop") {
+        zoomHist = false;
+        try { history.back(); } catch (err) {}
+      } else zoomHist = false;
+    }
+    var zoomBtn = document.getElementById("zoomBtn");
+    if (zoomBtn) zoomBtn.addEventListener("click", openZoom);
+    var zoomCloseBtn = document.getElementById("zoomClose");
+    if (zoomCloseBtn) zoomCloseBtn.addEventListener("click", function () { closeZoomView(); });
+    var zoomInBtn = document.getElementById("zoomIn");
+    if (zoomInBtn) zoomInBtn.addEventListener("click", function () { setZoomScale(zoomScale * 1.3); });
+    var zoomOutBtn = document.getElementById("zoomOut");
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", function () { setZoomScale(zoomScale / 1.3); });
+    var zoomResetBtn = document.getElementById("zoomReset");
+    if (zoomResetBtn) zoomResetBtn.addEventListener("click", function () { zoomTX = 0; zoomTY = 0; setZoomScale(1); });
+    window.addEventListener("popstate", function () { if (zoomIsOpen) closeZoomView("pop"); });
+    (function () {
+      if (!zoomStage) return;
+      var ptrs = {};
+      var gStart = null;
+      var lastTap = 0;
+      function ptrList() { return Object.keys(ptrs).map(function (k) { return ptrs[k]; }); }
+      function beginGesture() {
+        var l = ptrList();
+        if (l.length === 1) gStart = { n: 1, x: l[0].x, y: l[0].y, tx: zoomTX, ty: zoomTY, moved: false, t: performance.now() };
+        else if (l.length === 2) {
+          var dx = l[1].x - l[0].x, dy = l[1].y - l[0].y;
+          gStart = { n: 2, dist: Math.max(10, Math.sqrt(dx * dx + dy * dy)), mx: (l[0].x + l[1].x) / 2, my: (l[0].y + l[1].y) / 2, s: zoomScale, tx: zoomTX, ty: zoomTY, moved: true };
+        } else gStart = null;
+      }
+      zoomStage.addEventListener("pointerdown", function (e) {
+        ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+        try { zoomStage.setPointerCapture(e.pointerId); } catch (err) {}
+        beginGesture();
+      });
+      zoomStage.addEventListener("pointermove", function (e) {
+        if (!ptrs[e.pointerId]) return;
+        ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+        if (!gStart) return;
+        var l = ptrList();
+        if (gStart.n === 2 && l.length === 2) {
+          var dx = l[1].x - l[0].x, dy = l[1].y - l[0].y;
+          var dist = Math.max(10, Math.sqrt(dx * dx + dy * dy));
+          zoomScale = Math.max(1, Math.min(4, gStart.s * dist / gStart.dist));
+          zoomTX = gStart.tx + ((l[0].x + l[1].x) / 2 - gStart.mx);
+          zoomTY = gStart.ty + ((l[0].y + l[1].y) / 2 - gStart.my);
+          clampZoomPan();
+          applyZoom();
+        } else if (gStart.n === 1 && l.length === 1) {
+          var ddx = l[0].x - gStart.x, ddy = l[0].y - gStart.y;
+          if (Math.abs(ddx) + Math.abs(ddy) > 6) gStart.moved = true;
+          if (gStart.moved && zoomScale > 1) {
+            zoomTX = gStart.tx + ddx;
+            zoomTY = gStart.ty + ddy;
+            clampZoomPan();
+            applyZoom();
+          }
+        }
+      });
+      function endPtr(e) {
+        var wasTap = false;
+        var tapScale = zoomScale;
+        if (gStart && gStart.n === 1 && ptrs[e.pointerId] && !gStart.moved && performance.now() - gStart.t < 350) wasTap = true;
+        delete ptrs[e.pointerId];
+        if (wasTap) {
+          var now = performance.now();
+          if (now - lastTap < 350) {
+            lastTap = 0;
+            if (tapScale > 1.05) { zoomTX = 0; zoomTY = 0; setZoomScale(1); }
+            else setZoomScale(2);
+          } else lastTap = now;
+        }
+        if (ptrList().length) beginGesture(); else gStart = null;
+      }
+      zoomStage.addEventListener("pointerup", endPtr);
+      zoomStage.addEventListener("pointercancel", function (e) {
+        delete ptrs[e.pointerId];
+        if (ptrList().length) beginGesture(); else gStart = null;
+      });
+      zoomStage.addEventListener("wheel", function (e) {
+        e.preventDefault();
+        setZoomScale(zoomScale * (e.deltaY < 0 ? 1.12 : 0.89));
+      }, { passive: false });
+      zoomStage.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    })();
+
+    /* Book switch: Compare and narration never carry across books;
+       marks reload for the incoming book. */
+    function resetReaderExtras(id) {
+      compareOn = false;
+      stopNarration();
+      origImgCache = {};
+      loadMarksFor(id);
+      refreshCompareChrome();
+      refreshListenChrome();
+    }
+    loadMarksFor("builtin");
+    refreshCompareChrome();
+    refreshListenChrome();
+    /* ================= end Compare / Read to me / Marks / Zoom ================= */
 
     /* ---- Print guides toggle ---- */
     var guidesBtn = document.getElementById("guidesBtn");
@@ -2505,6 +3804,7 @@
     window.addEventListener("resize", function () {
       scheduleFit();
       if (sheet.classList.contains("open")) setTimeout(buildStrip, 260);
+      if (typeof zoomIsOpen !== "undefined" && zoomIsOpen && typeof fitZoomContent === "function") fitZoomContent();
     });
 
     /* Folder of images. The manifest book stays the default until a folder arrives. */
@@ -2730,6 +4030,9 @@
       if (bfc) { bfc.hidden = true; bfc.textContent = ""; }
       var bfb = document.getElementById("wizBookFileBtn");
       if (bfb) bfb.setAttribute("aria-pressed", "false");
+      wizFrontCover = null;
+      wizBackCover = null;
+      wizCoverUi();
       wizSource = null;
       wizStep = 1;
       wizChosen.hidden = true;
@@ -2746,6 +4049,9 @@
       pendingPdfFile = null;
       pendingFolderFiles = null;
       wizBookData = null;
+      wizFrontCover = null;
+      wizBackCover = null;
+      wizCoverUi();
       wizSource = null;
       wizEl.hidden = true;
       if (slideSec) scheduleSlide();
@@ -2783,6 +4089,9 @@
       wizObserver.observe(loadFill, { attributes: true, attributeFilter: ["style"] });
       wizObserver.observe(noticeEl, { childList: true, characterData: true, subtree: true });
       wizSettled = wizLoadDone;
+      pendingCovers = { front: wizFrontCover, back: wizBackCover };
+      wizFrontCover = null;
+      wizBackCover = null;
       if (wizSource === "pdf") {
         var f = pendingPdfFile;
         pendingPdfFile = null;
@@ -2803,7 +4112,11 @@
         var strong = document.createElement("strong");
         strong.textContent = "\u201C" + (info.title || "Your book") + "\u201D";
         doneMsg.appendChild(strong);
-        doneMsg.appendChild(document.createTextNode(" is ready \u2014 " + info.count + (info.count === 1 ? " page." : " pages.")));
+        if (info.coversNote) {
+          doneMsg.appendChild(document.createTextNode(" is ready \u2014 " + info.content + (info.content === 1 ? " page" : " pages") + " + " + info.coversNote + "."));
+        } else {
+          doneMsg.appendChild(document.createTextNode(" is ready \u2014 " + info.count + (info.count === 1 ? " page." : " pages.")));
+        }
         document.getElementById("wizDone").hidden = false;
         var note = document.getElementById("wizDoneNote");
         var noteText = info.note || (info.blank ? "A blank page was added so the last opening has a facing page." : "");
@@ -2861,26 +4174,138 @@
       };
       reader.readAsText(f);
     };
-    function consumeBookFile() {
+    function consumeBookFile(span) {
       var bf = wizBookData;
       wizBookData = null;
       if (!bf) return { info: null, note: "" };
       if (!bf.found) return { info: null, note: "No book data found in that file \u2014 importing without it." };
+      /* Page sections map to the book's CONTENT pages: attached
+         covers sit outside that numbering and carry no text. span
+         says how many cover pages the running load wrapped around
+         the content ({front:0|1, back:0|1}); without covers this is
+         exactly the old whole-book mapping. */
+      span = span || {};
+      var off = span.front ? 1 : 0;
+      var limit = PAGES.length - off - (span.back ? 1 : 0);
+      if (limit < 0) limit = 0;
+      var unit = (off || span.back) ? " content pages" : " pages";
       var over = [];
       Object.keys(bf.pages).forEach(function (k) {
         var n = parseInt(k, 10);
-        if (n >= 1 && n <= PAGES.length) pageTexts[n - 1] = bf.pages[k] ? bf.pages[k] : null;
+        if (n >= 1 && n <= limit) pageTexts[off + n - 1] = bf.pages[k] ? bf.pages[k] : null;
         else over.push(n);
       });
       over.sort(function (a, b) { return a - b; });
       var note = "";
-      if (over.length === 1) note = "Book file has text for page " + over[0] + ", but this book has " + PAGES.length + " pages \u2014 extra text ignored.";
-      else if (over.length > 1) note = "Book file has text for pages " + over.join(", ") + ", but this book has " + PAGES.length + " pages \u2014 extra text ignored.";
+      if (over.length === 1) note = "Book file has text for page " + over[0] + ", but this book has " + limit + unit + " \u2014 extra text ignored.";
+      else if (over.length > 1) note = "Book file has text for pages " + over.join(", ") + ", but this book has " + limit + unit + " \u2014 extra text ignored.";
       var info = null;
       if (bf.author || bf.about || bf.status) {
         info = { author: bf.author || "", about: bf.about || "", status: bf.status || "none", links: [] };
       }
       return { info: info, note: note };
+    }
+    /* ---- Custom covers (Options step) ----
+       Two optional pickers attach a front and/or a back cover image
+       to the import, either without the other. The files are held
+       here until Load, when wizStartLoad hands them to the loaders
+       through pendingCovers; a loader paints each with the folder
+       pages' own standards (paintSlice: long side capped, JPEG,
+       letterboxed into the book's shape) and wraps it around the
+       content — front cover first, back cover last. A pick can be
+       undone with its Remove (×) before loading. Drag-and-drop
+       imports never pass through here, so they never grow covers. */
+    var wizFrontCover = null;
+    var wizBackCover = null;
+    var pendingCovers = null;
+    function takePendingCovers() {
+      var c = pendingCovers;
+      pendingCovers = null;
+      return c || { front: null, back: null };
+    }
+    var wizFrontCoverBtn = document.getElementById("wizFrontCoverBtn");
+    var wizBackCoverBtn = document.getElementById("wizBackCoverBtn");
+    var wizFrontCoverChosen = document.getElementById("wizFrontCoverChosen");
+    var wizBackCoverChosen = document.getElementById("wizBackCoverChosen");
+    var frontCoverPick = document.getElementById("frontCoverPick");
+    var backCoverPick = document.getElementById("backCoverPick");
+    function wizCoverUi() {
+      document.getElementById("wizFrontCoverName").textContent = wizFrontCover ? "Front cover: " + (wizFrontCover.name || "image") : "";
+      document.getElementById("wizBackCoverName").textContent = wizBackCover ? "Back cover: " + (wizBackCover.name || "image") : "";
+      wizFrontCoverChosen.hidden = !wizFrontCover;
+      wizBackCoverChosen.hidden = !wizBackCover;
+      wizFrontCoverBtn.setAttribute("aria-pressed", wizFrontCover ? "true" : "false");
+      wizBackCoverBtn.setAttribute("aria-pressed", wizBackCover ? "true" : "false");
+      wizPhMark();
+    }
+    /* The placeholder strips under each cover picker: a tap attaches
+       that design as the cover (a descriptor, painted at load time
+       by paintCoverFile), and the strip shows which one is attached.
+       Picking a real file afterwards simply replaces it. */
+    function wizPhMark() {
+      [["wizFrontPhThumbs", wizFrontCover], ["wizBackPhThumbs", wizBackCover]].forEach(function (pair) {
+        var box = document.getElementById(pair[0]);
+        if (!box) return;
+        var cur = pair[1];
+        var thumbs = box.querySelectorAll(".phThumb");
+        for (var i = 0; i < thumbs.length; i++) {
+          thumbs[i].setAttribute("aria-pressed", (cur && cur.__ph && cur.__ph.id === thumbs[i].getAttribute("data-ph")) ? "true" : "false");
+        }
+      });
+    }
+    buildPhThumbs(document.getElementById("wizFrontPhThumbs"), function (ph) {
+      wizFrontCover = { __ph: ph, name: ph.name + " placeholder" };
+      wizCoverUi();
+    });
+    buildPhThumbs(document.getElementById("wizBackPhThumbs"), function (ph) {
+      wizBackCover = { __ph: ph, name: ph.name + " placeholder" };
+      wizCoverUi();
+    });
+    wizFrontCoverBtn.onclick = function () { frontCoverPick.click(); };
+    wizBackCoverBtn.onclick = function () { backCoverPick.click(); };
+    frontCoverPick.onchange = function () {
+      var f = frontCoverPick.files && frontCoverPick.files[0];
+      frontCoverPick.value = "";
+      if (f) { wizFrontCover = f; wizCoverUi(); }
+    };
+    backCoverPick.onchange = function () {
+      var f = backCoverPick.files && backCoverPick.files[0];
+      backCoverPick.value = "";
+      if (f) { wizBackCover = f; wizCoverUi(); }
+    };
+    document.getElementById("wizFrontCoverRemove").onclick = function () { wizFrontCover = null; wizCoverUi(); };
+    document.getElementById("wizBackCoverRemove").onclick = function () { wizBackCover = null; wizCoverUi(); };
+    /* Paint one attached cover into a page: the full frame (a cover
+       is never split like a wide page), at the folder loader's
+       standards — paintSlice caps the long side at 1600, encodes
+       JPEG, and letterboxes into the running load's aspect. An
+       unreadable image resolves null and the import goes ahead
+       without that cover. */
+    function paintCoverFile(file) {
+      return new Promise(function (resolve) {
+        if (!file) { resolve(null); return; }
+        // A placeholder pick is not a file: it is drawn on the spot,
+        // at the running load's aspect, labeled as cover art to come.
+        if (file.__ph) { resolve(placeholderData(file.__ph, "Cover art to come", loadAspect || 1)); return; }
+        var reader = new FileReader();
+        reader.onerror = function () { resolve(null); };
+        reader.onload = function () {
+          var im = new Image();
+          im.onerror = function () { resolve(null); };
+          im.onload = function () {
+            if (!im.naturalWidth || !im.naturalHeight) { resolve(null); return; }
+            resolve(paintSlice(im, 0, 0, im.naturalWidth, im.naturalHeight));
+          };
+          im.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    function coversNoteFor(front, back) {
+      if (front && back) return "front and back covers";
+      if (front) return "front cover";
+      if (back) return "back cover";
+      return "";
     }
     document.getElementById("wizStart").onclick = function () { wizEl.hidden = true; if (slideSec) scheduleSlide(); if (typeof syncOverlay === "function") syncOverlay(); };
     document.getElementById("wizClose2").onclick = function () { wizEl.hidden = true; if (slideSec) scheduleSlide(); if (typeof syncOverlay === "function") syncOverlay(); };
@@ -3113,6 +4538,7 @@
       pageImgs.push(newPageImg(src));
       pageNames.push(name || null);
       pageTexts.push(text || null);
+      pageIns.push(false);
     }
     function dropTempBlank() {
       if (!tempBlank) return;
@@ -3120,6 +4546,7 @@
       pageImgs.pop();
       pageNames.pop();
       pageTexts.pop();
+      pageIns.pop();
       tempBlank = false;
     }
     function ensureEven() {
@@ -3227,6 +4654,21 @@
       var gen = ++pdfGen;
       var settled = wizSettled;
       wizSettled = null;
+      var covers = takePendingCovers();
+      var frontSrc = null, backSrc = null, coversPrepped = false;
+      function effCoverOn() { return coverOn || !!frontSrc; }
+      function prepCovers() {
+        if (coversPrepped || (!covers.front && !covers.back)) return Promise.resolve();
+        coversPrepped = true;
+        return Promise.all([
+          covers.front ? paintCoverFile(covers.front).then(function (s) { frontSrc = s; }) : Promise.resolve(),
+          covers.back ? paintCoverFile(covers.back).then(function (s) { backSrc = s; }) : Promise.resolve()
+        ]).then(function () {
+          if (gen !== pdfGen) return;
+          if (frontSrc) pushPage(frontSrc, "Cover");
+          if (!coverOn) pushPage(BLANK);
+        });
+      }
       folderGen++;
       if (livePdf) { try { livePdf.destroy(); } catch (err) {} livePdf = null; }
       pdfName = file.name || "PDF";
@@ -3254,7 +4696,9 @@
           pageImgs = [];
           pageNames = [];
           pageTexts = [];
-          if (!coverOn) pushPage(BLANK);
+          pageIns = [];
+          autoBlankIdx = -1;
+          if (!coverOn && !covers.front) pushPage(BLANK);
           var opened = false;
           var total = doc.numPages;
           loadBar.hidden = false;
@@ -3262,17 +4706,23 @@
           function finish() {
             if (gen !== pdfGen) return;
             dropTempBlank();
-            if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; }
-            showBook(!opened, coverOn);
+            var padded = false;
+            if (backSrc) {
+              // The back cover is the book's last page: an even count
+              // takes its blank facing page BEFORE it, never after.
+              if (PAGES.length % 2 === 0) { pushPage(BLANK); blankNote = "blank page added"; padded = true; }
+              pushPage(backSrc, "Back Cover");
+            } else if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; padded = true; }
+            showBook(!opened, effCoverOn());
             restorePlace();
-            var bfRes = settled ? consumeBookFile() : { info: null, note: "" };
-            registerShelfImport({ title: customTitle || pdfName.replace(/\.pdf$/i, ""), cover: PAGES[coverOn ? 0 : 1] || PAGES[0], pdf: pdfName, custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes.info });
+            var bfRes = settled ? consumeBookFile({ front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 }) : { info: null, note: "" };
+            registerShelfImport({ title: customTitle || pdfName.replace(/\.pdf$/i, ""), cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: pdfName, custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } });
             refreshTextChrome();
             loadBar.hidden = true;
             if (!PAGES.length) reportNotice("That PDF has no pages.");
             else if (bfRes.note) reportNotice(bfRes.note);
             else { noticeEl.textContent = ""; noticeEl.style.display = "none"; }
-            if (settled) { var doneFn = settled; settled = null; doneFn({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, blank: !!blankNote, bfWarn: bfRes.note, msg: "That PDF has no pages." }); }
+            if (settled) { var doneFn = settled; settled = null; doneFn({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, bfWarn: bfRes.note, msg: "That PDF has no pages." }); }
           }
           function step(n) {
             if (gen !== pdfGen) return;
@@ -3284,17 +4734,26 @@
                 loadAspect = pdfSplit(baseVp, layout) ? (baseVp.width / 2) / baseVp.height : baseVp.width / baseVp.height;
                 bookAspect = loadAspect;
               }
+              // Attached covers wrap OUTSIDE the PDF's pages: they are
+              // painted at step 1, once page 1 has fixed the load
+              // aspect, and prepCovers puts the front cover (plus the
+              // inside blank, when the PDF's own first page is not
+              // the cover) ahead of page 1's parts — the first-page
+              // cover option keeps its meaning, with no duplicate.
+              var prep = n === 1 ? prepCovers() : Promise.resolve();
               // Paint the page and lift its text layer side by side;
               // the two arrays line up part for part.
-              return Promise.all([paintPdf(page, layout), extractPdfText(page, layout)]).then(function (res) {
-                return { parts: res[0], texts: res[1] };
+              return prep.then(function () {
+                return Promise.all([paintPdf(page, layout), extractPdfText(page, layout)]).then(function (res) {
+                  return { parts: res[0], texts: res[1] };
+                });
               });
             }).then(function (out) {
               if (gen !== pdfGen) return;
               dropTempBlank();
               out.parts.forEach(function (p, pix) { pushPage(p, "Page " + n, out.texts && out.texts[pix]); });
               ensureEven();
-              showBook(!opened, coverOn);
+              showBook(!opened, effCoverOn());
               opened = true;
               loadFill.style.width = Math.round((n / total) * 100) + "%";
               step(n + 1);
@@ -3316,6 +4775,9 @@
       var gen = ++folderGen;
       var settled = wizSettled;
       wizSettled = null;
+      var covers = takePendingCovers();
+      var frontSrc = null, backSrc = null;
+      function effCoverOn() { return coverOn || !!frontSrc; }
       stopPdf();
       pdfName = "";
       customTitle = "";
@@ -3339,7 +4801,8 @@
       pageImgs = [];
       pageNames = [];
       pageTexts = [];
-      if (!coverOn) pushPage(BLANK);
+      pageIns = [];
+      autoBlankIdx = -1;
       var opened = false;
       loadBar.hidden = false;
       loadFill.style.width = "0%";
@@ -3353,17 +4816,23 @@
         if (gen !== folderGen) return;
         if (i >= files.length) {
           dropTempBlank();
-          if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; }
-          showBook(!opened, coverOn);
+          var padded = false;
+          if (backSrc) {
+            // The back cover is the book's last page: an even count
+            // takes its blank facing page BEFORE it, never after.
+            if (PAGES.length % 2 === 0) { pushPage(BLANK); blankNote = "blank page added"; padded = true; }
+            pushPage(backSrc, "Back Cover");
+          } else if (PAGES.length % 2) { pushPage(BLANK); blankNote = "blank page added"; padded = true; }
+          showBook(!opened, effCoverOn());
           restorePlace();
-          var bfRes2 = settled ? consumeBookFile() : { info: null, note: "" };
+          var bfRes2 = settled ? consumeBookFile({ front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 }) : { info: null, note: "" };
           if (bfRes2.note) warnings.push(bfRes2.note);
-          registerShelfImport({ title: customTitle || "Untitled folder book", cover: PAGES[coverOn ? 0 : 1] || PAGES[0], pdf: "", custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes2.info });
+          registerShelfImport({ title: customTitle || "Untitled folder book", cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: "", custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes2.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } });
           refreshTextChrome();
           opened = true;
           loadBar.hidden = true;
           say();
-          if (settled) { var doneFn2 = settled; settled = null; doneFn2({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, blank: !!blankNote, note: noticeEl.textContent, bfWarn: bfRes2.note, msg: "None of those images could be read." }); }
+          if (settled) { var doneFn2 = settled; settled = null; doneFn2({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, note: noticeEl.textContent, bfWarn: bfRes2.note, msg: "None of those images could be read." }); }
           return;
         }
         var ready = (i === 0 && !loadAspect) ? peekDims(files[0]).then(function (d) {
@@ -3376,7 +4845,7 @@
           dropTempBlank();
           parts.forEach(function (p) { pushPage(p, files[i].name); });
           ensureEven();
-          showBook(!opened, coverOn);
+          showBook(!opened, effCoverOn());
           opened = true;
           loadFill.style.width = Math.round(((i + 1) / files.length) * 100) + "%";
           step(i + 1);
@@ -3386,7 +4855,29 @@
         });
         });
       }
-      step(0);
+      if (covers.front || covers.back) {
+        // Covers paint at the book's aspect, so settle it first (the
+        // same peek step 0 would do for page 1), then wrap: front
+        // cover, the inside blank when the first image is not the
+        // cover, then the content pages step() streams in.
+        var aspectReady = !loadAspect ? peekDims(files[0]).then(function (d) {
+          if (d && d.h) { loadAspect = (d.w / d.h >= 1.45) ? (d.w / 2) / d.h : d.w / d.h; bookAspect = loadAspect; }
+        }) : Promise.resolve();
+        aspectReady.then(function () {
+          var jobs = [];
+          if (covers.front) jobs.push(paintCoverFile(covers.front).then(function (s) { frontSrc = s; if (!s) warnings.push("Could not read the front cover image \u2014 importing without it."); }));
+          if (covers.back) jobs.push(paintCoverFile(covers.back).then(function (s) { backSrc = s; if (!s) warnings.push("Could not read the back cover image \u2014 importing without it."); }));
+          return Promise.all(jobs);
+        }).then(function () {
+          if (gen !== folderGen) return;
+          if (frontSrc) pushPage(frontSrc, "Cover");
+          if (!coverOn) pushPage(BLANK);
+          step(0);
+        });
+      } else {
+        if (!coverOn) pushPage(BLANK);
+        step(0);
+      }
     }
 
     var turnPick = document.getElementById("turnPick");
@@ -3807,7 +5298,8 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
-      if (infoIsOpen) closeInfoCard();
+      if (typeof zoomIsOpen !== "undefined" && zoomIsOpen) closeZoomView();
+      else if (infoIsOpen) closeInfoCard();
       else if (textIsOpen) closeTextPanel();
       else if (!wizEl.hidden && wizStep < 4) closeWizard();
       else if (shelfIsOpen) closeShelf();
@@ -3918,6 +5410,14 @@
       };
       try { localStorage.setItem("fb-book-meta", JSON.stringify(metaStore)); } catch (err) {}
     }
+    /* Seed snapshots: entry.pages / entry.text drift in-session
+       (they mirror the open book's final layout, inserts included),
+       but the stored-insert rebuild in loadArtOverrides weaves over
+       the SEEDED arrays — so the seeds are banked untouched here. */
+    CATALOG.forEach(function (entry) {
+      if (entry.pages) entry.seedPages = entry.pages.slice();
+      if (entry.text) entry.seedText = entry.text.slice();
+    });
     CATALOG.forEach(function (entry) {
       var m = metaStore[entry.id];
       if (!m) return;
@@ -3952,7 +5452,7 @@
           b.type = "button";
           b.className = "sbookOpen";
           b.setAttribute("aria-label", "Open " + entry.title);
-          var meta = entry.source === "built-in" ? BOOK.pages.length + " pages · Built-in"
+          var meta = entry.source === "built-in" ? (entry.id === currentEntryId ? PAGES.length : BOOK.pages.length) + " pages · Built-in"
             : entry.source === "import" ? entry.pages.length + " pages · This visit"
             : entry.pages.length + " pages · Shelf book";
           var cov = document.createElement("span");
@@ -4005,6 +5505,7 @@
     function openShelf() {
       closeSheet();
       closeTextPanel();
+      if (typeof stopNarration === "function") stopNarration();
       setSettings(false);
       buildShelf();
       shelfEl.hidden = false;
@@ -4082,7 +5583,7 @@
         rowEl.appendChild(vv);
         stats.appendChild(rowEl);
       }
-      var count = entry.source === "built-in" ? BOOK.pages.length : (entry.pages ? entry.pages.length : 0);
+      var count = entry.id === currentEntryId ? PAGES.length : (entry.source === "built-in" ? BOOK.pages.length : (entry.pages ? entry.pages.length : 0));
       if (count) addStat("Pages", String(count));
       addStat("Format", formatOf(entry));
       addStat("Source", sourceLabel(entry.source));
@@ -4189,30 +5690,38 @@
       if (bf.format) { applyFormatToEntry(entry, bf.format); metaChanged = true; }
       if (metaChanged && inCat) saveBookMeta(id, entry);
       if (bf.status) setBookStatus(id, bf.status);
-      var pageCount = id === "builtin"
+      var pageCount = isOpen ? PAGES.length
+        : id === "builtin"
         ? ((typeof BOOK !== "undefined" && BOOK.pages) ? BOOK.pages.length : 0)
-        : (entry.pages ? entry.pages.length : (isOpen ? PAGES.length : 0));
+        : (entry.pages ? entry.pages.length : 0);
       var over = [];
       var textChanged = false;
+      /* Attached covers sit outside the book file's page numbering,
+         exactly as at import: sections land on content pages only. */
+      var spanF = entry.coverSpan ? entry.coverSpan.front : 0;
+      var spanB = entry.coverSpan ? entry.coverSpan.back : 0;
+      var textLimit = pageCount - spanF - spanB;
+      if (textLimit < 0) textLimit = 0;
       Object.keys(bf.pages).forEach(function (k) {
         var n = parseInt(k, 10);
-        if (n < 1 || n > pageCount) { over.push(n); return; }
+        if (n < 1 || n > textLimit) { over.push(n); return; }
+        var idx = spanF + n - 1;
         var val = bf.pages[k] ? bf.pages[k] : null;
         textChanged = true;
         if (inCat) {
           if (id !== "builtin") {
             entry.text = entry.text || [];
             while (entry.text.length < pageCount) entry.text.push(null);
-            entry.text[n - 1] = val;
+            entry.text[idx] = val;
           }
           textStore[id] = textStore[id] || {};
-          textStore[id][String(n - 1)] = val || "";
+          textStore[id][String(idx)] = val || "";
         } else {
           entry.texts = entry.texts || [];
           while (entry.texts.length < pageCount) entry.texts.push(null);
-          entry.texts[n - 1] = val;
+          entry.texts[idx] = val;
         }
-        if (isOpen) pageTexts[n - 1] = val;
+        if (isOpen) pageTexts[idx] = val;
       });
       if (textChanged && inCat) saveTextStore();
       if (isOpen) {
@@ -4231,8 +5740,9 @@
       // land the overrun note (the re-render leaves the note alone
       // only in instant mode, so set it after, once).
       openInfoCard(id, true);
-      if (over.length === 1) icShowNote("File had text for page " + over[0] + " \u2014 this book has " + pageCount + " pages, extra ignored.");
-      else if (over.length > 1) icShowNote("File had text for pages " + over.join(", ") + " \u2014 this book has " + pageCount + " pages, extra ignored.");
+      var noteCount = (spanF || spanB) ? textLimit + " content pages" : pageCount + " pages";
+      if (over.length === 1) icShowNote("File had text for page " + over[0] + " \u2014 this book has " + noteCount + ", extra ignored.");
+      else if (over.length > 1) icShowNote("File had text for pages " + over.join(", ") + " \u2014 this book has " + noteCount + ", extra ignored.");
       else icShowNote("");
     }
     /* The artifact's public share URL, verbatim — a book link is this
@@ -4268,6 +5778,7 @@
       importSeq++;
       var entry = {
         id: "import-" + importSeq,
+        source: "import",
         title: info.title || "Untitled book",
         cover: info.cover || PAGES[0],
         pages: PAGES.slice(),
@@ -4277,11 +5788,15 @@
         custom: info.custom || "",
         keyBase: info.keyBase || ("import-" + importSeq),
         aspect: info.aspect || 1,
-        info: info.info || null
+        info: info.info || null,
+        coverSpan: info.coverSpan || null,
+        insArr: pageIns.slice(),
+        autoIdx: autoBlankIdx
       };
       shelfImports.push(entry);
       currentEntryId = entry.id;
       applyEdition();
+      if (typeof resetReaderExtras === "function") resetReaderExtras(entry.id);
       if (shelfIsOpen) buildShelf();
     }
     function findShelfEntry(id) {
@@ -4306,6 +5821,8 @@
       if (sheet.classList.contains("open")) closeSheet();
       if (entry.source === "built-in") {
         PAGES = BOOK.pages.slice();
+        pageIns = PAGES.map(function () { return false; });
+        autoBlankIdx = -1;
         pageNames = PAGES.map(function () { return null; });
         // The built-in book is wordless unless its manifest ever grows
         // a text array of its own; today it has none, by design.
@@ -4316,6 +5833,8 @@
         bookKeyBase = BUILTIN_KEY;
       } else if (entry.source === "import") {
         PAGES = entry.pages.slice();
+        pageIns = entry.insArr ? entry.insArr.slice() : PAGES.map(function () { return false; });
+        autoBlankIdx = typeof entry.autoIdx === "number" ? entry.autoIdx : -1;
         pageNames = entry.names.slice();
         pageTexts = entry.texts ? entry.texts.slice() : PAGES.map(function () { return null; });
         pdfName = entry.pdf;
@@ -4323,23 +5842,30 @@
         bookAspect = entry.aspect || 1;
         bookKeyBase = entry.keyBase;
       } else {
-        PAGES = entry.pages.slice();
+        // Seeded arrays here: stored inserts are woven back over
+        // them by loadArtOverrides, never over the entry's
+        // final-layout mirror.
+        PAGES = (entry.seedPages || entry.pages).slice();
+        pageIns = PAGES.map(function () { return false; });
+        autoBlankIdx = -1;
         pageNames = PAGES.map(function () { return null; });
-        pageTexts = entry.text ? entry.text.slice() : PAGES.map(function () { return null; });
+        pageTexts = entry.seedText ? entry.seedText.slice() : (entry.text ? entry.text.slice() : PAGES.map(function () { return null; }));
         pdfName = "";
         customTitle = entry.title;
         bookAspect = entry.aspect || 1;
         bookKeyBase = "shelf:" + entry.id;
       }
-      // The reader's local text edits ride on top of the seeded text,
-      // and any replaced page art is restored over the seeded pages
-      // (async — IndexedDB — it patches and re-renders when it lands).
-      applyTextOverrides(entry.id);
+      // The reader's local edits ride on top of the seeded book:
+      // loadArtOverrides rebuilds any stored inserted pages first,
+      // then lands the text overrides and marks (both keyed to the
+      // final layout), then any replaced page art — async, it
+      // patches and re-renders when it lands.
       loadArtOverrides(entry.id);
+      if (typeof resetReaderExtras === "function") resetReaderExtras(entry.id);
       pageImgs = PAGES.map(newPageImg);
       currentEntryId = entry.id;
       applyEdition();
-      blankNote = "";
+      blankNote = autoBlankIdx >= 0 ? "blank page added" : "";
       tempBlank = false;
       coverOpened = true;
       loadAspect = null;
@@ -4355,10 +5881,6 @@
     }
     shelfBtn.addEventListener("click", function () {
       if (shelfIsOpen) closeShelf(); else openShelf();
-    });
-    document.getElementById("shelfBtn2").addEventListener("click", function () {
-      setSettings(false);
-      openShelf();
     });
     document.getElementById("shelfBack").addEventListener("click", function () { closeShelf(); });
     document.getElementById("shelfImport").addEventListener("click", function () {
