@@ -27,6 +27,10 @@ Captured from the working viewer on `3D-Flip-BookVizon-v9`. The hero book is the
 
 ![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611081345)
 
+**3D shelf** — the same library standing on a shelf: drag or step along it, and Open pulls the focused book out.
+
+![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611081350)
+
 **Mid-book** — the first story spread, pages 6–7.
 
 ![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611081324)
