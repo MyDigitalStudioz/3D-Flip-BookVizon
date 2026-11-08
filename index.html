@@ -265,6 +265,9 @@
   #shelfBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.34);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35)}
   #shelfBtn svg{width:20px;height:20px;fill:#f4f1ea;display:block}
   #shelfBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
+  #pagesTopBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.34);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35)}
+  #pagesTopBtn svg{width:19px;height:19px;fill:#f4f1ea;display:block}
+  #pagesTopBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
   #shelf{position:absolute;inset:0;z-index:15;background:linear-gradient(180deg,rgba(26,24,22,.94),rgba(18,17,16,.97));display:flex;flex-direction:column;overflow:hidden}
   #shelf[hidden]{display:none}
   #shelfHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 4px}
@@ -473,11 +476,12 @@
   #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
   #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
   @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{display:none}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
+  @media (max-width:560px){body.hdr-pills #editionBadge{display:none}body.hdr-crowded #banner{gap:6px}body.hdr-crowded #leftTools{gap:6px}body.hdr-crowded #tools{gap:6px}body.hdr-crowded #textBtn>span{display:none}body.hdr-crowded #compareBtn .cmpShort{display:none}}
 </style></head>
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">3D-Flip-BookVizon-v8</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f4f1ea" fill-rule="evenodd" d="M8.99 4.16 L9.62 1.67 L14.38 1.67 L15.01 4.16 L15.42 4.33 L17.62 3.01 L20.99 6.38 L19.67 8.58 L19.84 8.99 L22.33 9.62 L22.33 14.38 L19.84 15.01 L19.67 15.42 L20.99 17.62 L17.62 20.99 L15.42 19.67 L15.01 19.84 L14.38 22.33 L9.62 22.33 L8.99 19.84 L8.58 19.67 L6.38 20.99 L3.01 17.62 L4.33 15.42 L4.16 15.01 L1.67 14.38 L1.67 9.62 L4.16 8.99 L4.33 8.58 L3.01 6.38 L6.38 3.01 L8.58 4.33 Z M8.70 12.00 A3.3 3.3 0 1 0 15.30 12.00 A3.3 3.3 0 1 0 8.70 12.00 Z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHead">Settings</span><span class="setGroup">Reading</span><label id="turnLabel">Page turn <select id="turnPick" aria-label="Page turn"><option value="magazine">Magazine</option><option value="hardcover" selected>Hardcover</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="pagesBtn" class="setBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Pages</span></button><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
+    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">3D-Flip-BookVizon-v8</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><button id="pagesTopBtn" type="button" aria-label="Pages" title="Pages" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f4f1ea" fill-rule="evenodd" d="M8.99 4.16 L9.62 1.67 L14.38 1.67 L15.01 4.16 L15.42 4.33 L17.62 3.01 L20.99 6.38 L19.67 8.58 L19.84 8.99 L22.33 9.62 L22.33 14.38 L19.84 15.01 L19.67 15.42 L20.99 17.62 L17.62 20.99 L15.42 19.67 L15.01 19.84 L14.38 22.33 L9.62 22.33 L8.99 19.84 L8.58 19.67 L6.38 20.99 L3.01 17.62 L4.33 15.42 L4.16 15.01 L1.67 14.38 L1.67 9.62 L4.16 8.99 L4.33 8.58 L3.01 6.38 L6.38 3.01 L8.58 4.33 Z M8.70 12.00 A3.3 3.3 0 1 0 15.30 12.00 A3.3 3.3 0 1 0 8.70 12.00 Z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHead">Settings</span><span class="setGroup">Reading</span><label id="turnLabel">Page turn <select id="turnPick" aria-label="Page turn"><option value="magazine">Magazine</option><option value="hardcover" selected>Hardcover</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="pagesBtn" class="setBtn" type="button" aria-label="Pages" title="Pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Pages</span></button><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
@@ -2104,9 +2108,14 @@
       if (now) strip.scrollLeft = Math.max(0, now.offsetLeft - strip.clientWidth / 2 + now.clientWidth / 2);
       if (typeof refreshMarksBar === "function") refreshMarksBar();
     }
-    function openSheet() { if (typeof closeTextPanel === "function") closeTextPanel(); buildStrip(); sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false"); }
-    function closeSheet() { if (artEditing) exitArtEdit(); sheet.classList.remove("open"); sheet.setAttribute("aria-hidden", "true"); if (slideSec) scheduleSlide(); }
+    var pagesTopBtn = document.getElementById("pagesTopBtn");
+    function syncPagesTopBtn() { if (pagesTopBtn) pagesTopBtn.setAttribute("aria-expanded", sheet.classList.contains("open") ? "true" : "false"); }
+    function openSheet() { if (typeof closeTextPanel === "function") closeTextPanel(); buildStrip(); sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false"); syncPagesTopBtn(); }
+    function closeSheet() { if (artEditing) exitArtEdit(); sheet.classList.remove("open"); sheet.setAttribute("aria-hidden", "true"); syncPagesTopBtn(); if (slideSec) scheduleSlide(); }
     document.getElementById("pagesBtn").onclick = function () {
+      if (sheet.classList.contains("open")) closeSheet(); else openSheet();
+    };
+    if (pagesTopBtn) pagesTopBtn.onclick = function () {
       if (sheet.classList.contains("open")) closeSheet(); else openSheet();
     };
     document.getElementById("sheetClose").onclick = closeSheet;
@@ -3048,6 +3057,7 @@
       textBtn.hidden = !has;
       if (!has && textIsOpen) closeTextPanel();
       if (textIsOpen) updateTextPanel();
+      if (typeof refreshCrowded === "function") refreshCrowded();
     }
     function visibleTextIdxs() {
       if (focusMode) {
@@ -3267,17 +3277,21 @@
       }
       render();
     });
-    /* Banner crowding at phone width: when the Text, Compare, and
-       Listen pills are all competing with the counter, the edition
-       badge (the same status the shelf dot and info card carry)
-       steps aside so the one-row header never wraps. */
+    /* Banner crowding at phone width: the header's right cluster
+       carries three icon buttons (shelf, Pages, settings), so the
+       edition badge (the same status the shelf dot and info card
+       carry) steps aside as soon as any pill joins the counter,
+       and with two or more pills the Text and Compare pills go
+       icon-only — the same treatment the Listen pill already gets
+       at phone width — so the one-row header never wraps or spills. */
     function refreshCrowded() {
       var n = 0;
       if (textBtn && !textBtn.hidden) n++;
       if (compareBtn && !compareBtn.hidden) n++;
       var lb = document.getElementById("listenBtn");
       if (lb && !lb.hidden) n++;
-      document.body.classList.toggle("hdr-crowded", n >= 3);
+      document.body.classList.toggle("hdr-pills", n >= 1);
+      document.body.classList.toggle("hdr-crowded", n >= 2);
     }
 
     /* ---- Mark a page ---- */
@@ -5309,6 +5323,7 @@
     // so several settings can be adjusted in one visit.
     importBtn.addEventListener("click", function () { setSettings(false); });
     document.getElementById("pagesBtn").addEventListener("click", function () { setSettings(false); });
+    document.getElementById("pagesTopBtn").addEventListener("click", function () { setSettings(false); });
     fsBtn.addEventListener("click", function () { setSettings(false); });
 
     /* ---- Bookshelf home ----
@@ -5328,6 +5343,11 @@
     function shelfPages(slug) {
       var out = [];
       for (var i = 1; i <= 6; i++) out.push("shelf/" + slug + "/0" + i + ".jpg");
+      return out;
+    }
+    function shelfPagesN(slug, n) {
+      var out = [];
+      for (var i = 1; i <= n; i++) out.push("shelf/" + slug + "/" + pad2(i) + ".jpg");
       return out;
     }
     var CATALOG = [
@@ -5383,7 +5403,50 @@
           "But the little red boat held fast to her rope and dreamed of waves and faraway shores.",
           "Tomorrow, her captain promised, the wind would be fair — and the little red boat would sail at last."],
         info: { author: "BookVizion Studio", format: "Square (1:1)", status: "test", links: [],
-          about: "A small red sailboat bobs at the harbor wall among the flags and gulls, dreaming of the morning it will sail out to sea." } }
+          about: "A small red sailboat bobs at the harbor wall among the flags and gulls, dreaming of the morning it will sail out to sea." } },
+      { id: "the-night-i-met-santa", title: "The Night I Met Santa", cover: "shelf/santa/01.jpg", source: "built-in", pages: shelfPagesN("santa", 36),
+        text: [
+          null,
+          null,
+          "Copyright © 2026 Jack Farrell All rights reserved. No part of this book may be reproduced or transmitted in any form or by any means, electronic or mechanical, including photocopying, recording, or by any information storage and retrieval system, without permission in writing from the publisher or author. This is a work of fiction. Names, characters, places, and incidents either are the product of the author’s imagination or are used fictitiously, and any resemblance to actual persons, living or dead, is entirely coincidental. First illustrated edition, 2026. Book design by Jon Farrell. www.jon-beatz.com",
+          "Written by The Night I Met Santa was written for his family so that wonder would never grow old. This book brings his poem to life, page by page, picture by picture. For my family, with love. Jon, Jackie, and Lorrin— Who first heard this story on Christmas Eve and still believe in the magic downstairs. Collin, Emma, Stella, and Amelia— who just might hear a noise among the toys one night soon.",
+          "One Christmas Eve, a curious child hears a noise downstairs among the toys. What begins as a tiptoe peek turns into something unforgettable. A quiet hour with Santa himself.",
+          "Stories, laughter, hot cocoa instead of milk, and one small wish for Christmas that isn’t gifts at all...",
+          "I searched and I peeked when I first heard the noise. Something or someone was in with the toys. I slithered and crawled for a peek of a glimpse. It must be some fairies or holiday imps.",
+          "I got up the nerve to go to the door, a door that was decorated, bolted and locked.",
+          "I didn’t know it when I entered the room. To my surprise the amazement or even the shock.",
+          "Now I’m usually calm, not very loud, or even known to be a ranter. But what do you say when you sneak up on Santa?",
+          "My jaw dropped when our eyes finally met. I knew right then, it was a moment I would never forget.",
+          "For there he was in all his splendor, brilliant white hair, red coat with suspenders.",
+          "He was down on the floor between boxes, gifts and ribbons galore. I couldn’t move, I stayed very still. Finally he whispered, “Sit over here. Have a moment to kill.”",
+          null,
+          "Oh, what a feeling, such a thrill. We chatted and laughed what seemed like an hour.",
+          "But with laughs, stories and chatter, who cares, it didn’t much matter.",
+          "He spoke of many places, people and things. From toys to music to bright diamond rings. Coats made of wool, ties made of silk.",
+          "He even revealed his passion for hot cocoa instead of cold milk",
+          "When I heard all the noise up in the roof, it hit me right then. I needed some proof.",
+          "Where can I go? What can I get? I know, a photo. That’s my best bet.",
+          "I flew out the door and was back in a flash. But oh no, the hour had already passed.",
+          "And from the noise on top of the roof. I realized that I was still without proof.",
+          "I turned around slowly. I needed to know, did he leave me a hint, a tip or a clue? Did he forget his hat or maybe a shoe? Now what am I supposed to do?",
+          "I know, I’ll look up the flue. I dashed to the flue but nothing was there. I looked over here and I looked over there. When I saw something on top of the chair, my proof I thought was just laying right there.",
+          "It wasn’t a shoe, hat or a coat. I couldn’t believe it, the old guy. He left me a note. I fell on the chair and started to stare. What it said, I didn’t care.",
+          null,
+          "I tore open the note that Santa had wrote. The words jumped out as to get my attention. And there was one thing he told me to mention. More than cakes, cocoa or milk. Shirts made of cotton or ties made of silk. Hats, stockings or a new coat. What he wants is simply a note.",
+          "He said I’ve had enough eggnogs, cider and soups. My belt’s getting harder to fit in the loops. And one last thing, please do me a favor. Always love Christmas, act like a kid and pray to your Savior.",
+          null,
+          null,
+          "to my family and loved ones — for keeping this poem, for believing in Christmas, and for sitting still long enough to hear a story about the night I met Santa. May you always find a little wonder downstairs when the house gets quiet. God bless.",
+          null,
+          "Christmas Eve comes every year, but some nights stay with you forever. This was one of them. May the magic of this night stay close long after the season has gone.",
+          null,
+          null,
+          null
+        ],
+        info: { author: "Jack Farrell", format: "Square (1:1)", status: "final", links: [
+            { label: "Buy the hardcover", url: "https://www.lulu.com/shop/jack-farrell/the-night-i-met-santa/hardcover/product-v82ejwq.html" },
+            { label: "Buy the paperback", url: "https://www.lulu.com/shop/jack-farrell/the-night-i-met-santa/paperback/product-454zdy8.html" } ],
+          about: "Jack Farrell wrote this Christmas poem for his family, so that wonder would never grow old. On Christmas Eve, a young boy in holly pajamas creeps downstairs — and finds Santa himself at work beside the tree." } }
     ];
     var shelfImports = [];   // visit-only entries: {id,title,cover,pages,names,pdf,custom,keyBase,aspect}
     var importSeq = 0;
@@ -5452,7 +5515,7 @@
           b.type = "button";
           b.className = "sbookOpen";
           b.setAttribute("aria-label", "Open " + entry.title);
-          var meta = entry.source === "built-in" ? (entry.id === currentEntryId ? PAGES.length : BOOK.pages.length) + " pages · Built-in"
+          var meta = entry.source === "built-in" ? (entry.pages ? entry.pages.length : (entry.id === currentEntryId ? PAGES.length : BOOK.pages.length)) + " pages · Built-in"
             : entry.source === "import" ? entry.pages.length + " pages · This visit"
             : entry.pages.length + " pages · Shelf book";
           var cov = document.createElement("span");
@@ -5583,7 +5646,7 @@
         rowEl.appendChild(vv);
         stats.appendChild(rowEl);
       }
-      var count = entry.id === currentEntryId ? PAGES.length : (entry.source === "built-in" ? BOOK.pages.length : (entry.pages ? entry.pages.length : 0));
+      var count = entry.id === currentEntryId ? PAGES.length : (entry.source === "built-in" ? (entry.pages ? entry.pages.length : BOOK.pages.length) : (entry.pages ? entry.pages.length : 0));
       if (count) addStat("Pages", String(count));
       addStat("Format", formatOf(entry));
       addStat("Source", sourceLabel(entry.source));
@@ -5820,17 +5883,24 @@
       hideLeaf();
       if (sheet.classList.contains("open")) closeSheet();
       if (entry.source === "built-in") {
-        PAGES = BOOK.pages.slice();
+        // The manifest book (Pippa) carries its pages on BOOK itself;
+        // a bundled built-in with its own page list (Santa) seeds
+        // from its catalog entry instead, exactly like a shelf book.
+        var ownPages = entry.seedPages || entry.pages;
+        PAGES = ownPages ? ownPages.slice() : BOOK.pages.slice();
         pageIns = PAGES.map(function () { return false; });
         autoBlankIdx = -1;
         pageNames = PAGES.map(function () { return null; });
-        // The built-in book is wordless unless its manifest ever grows
-        // a text array of its own; today it has none, by design.
-        pageTexts = (typeof BOOK !== "undefined" && BOOK.text) ? BOOK.text.slice() : PAGES.map(function () { return null; });
+        // The manifest book is wordless unless its manifest ever grows
+        // a text array of its own; today it has none, by design. A
+        // built-in entry's own text array (Santa's poem) wins when
+        // the entry carries one.
+        var ownText = entry.seedText || entry.text;
+        pageTexts = ownText ? ownText.slice() : ((typeof BOOK !== "undefined" && BOOK.text) ? BOOK.text.slice() : PAGES.map(function () { return null; }));
         pdfName = "";
-        customTitle = "";
+        customTitle = entry.id === "builtin" ? "" : entry.title;
         bookAspect = entry.aspect || 1;
-        bookKeyBase = BUILTIN_KEY;
+        bookKeyBase = entry.id === "builtin" ? BUILTIN_KEY : "builtin:" + entry.id;
       } else if (entry.source === "import") {
         PAGES = entry.pages.slice();
         pageIns = entry.insArr ? entry.insArr.slice() : PAGES.map(function () { return false; });
