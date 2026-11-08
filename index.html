@@ -16,7 +16,16 @@
   try {
     var start = "shelf";
     try { if (localStorage.getItem("fb-start-view") === "book") start = "book"; } catch (err) {}
-    if (/[#&]book=[A-Za-z0-9_-]+/.test(location.hash || "")) start = "book";
+    var bm = /[#&]book=([A-Za-z0-9_-]+)/.exec(location.hash || "");
+    if (bm) {
+      start = "book";
+      /* Deep link to a DIFFERENT book than the one the markup paints
+         first (the built-in): gate the stage from the very first
+         frame (boot-book CSS below) so no frame of the wrong book
+         can show while the target loads. The main script owns the
+         reveal — see finishLanding / openShelfBook. */
+      if (bm[1] !== "builtin") document.documentElement.classList.add("boot-book");
+    }
     if (start === "shelf") document.documentElement.classList.add("boot-shelf");
   } catch (err) {}
 })();
@@ -34,9 +43,15 @@
   #banner{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:#191919;z-index:30}
   #tools{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;min-width:0}
   #counter{background:rgba(20,20,20,.62);color:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.28)}
-  /* The title shares the single header row: it may shrink and end in
-     an ellipsis, but it never wraps the bar onto a second line. */
-  #mark{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 6px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.45)}
+  /* The book title is the header's FIRST line, on its own row above
+     the page counter (owner's call, 2026-11-08: header only — the
+     Pages sheet no longer carries it). Because it owns a whole row
+     inside #headStack, the header-crowding behavior (pills joining
+     the counter row, the badge stepping aside) can never push it
+     out: it may shrink and end in an ellipsis, but it is always
+     there, at phone width too. */
+  #headStack{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
+  #mark{display:block;color:#e8b34b;font-size:13.5px;font-weight:650;line-height:1.2;letter-spacing:.01em;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 6px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.45)}
   /* Edition badge: what this copy declares itself to be. Gold means
      the approved final (it always has in this workflow), so Final
      wears it; Test drops to a muted silver-gray that clearly reads
@@ -190,6 +205,16 @@
      book's opening spread has decoded — no frame of the outgoing
      book's pages, cover, or leaf can show during a switch. */
   #stage.switching #bookWrap,#stage.switching #scrollView{visibility:hidden}
+  /* Boot gate (see the head script): a deep link to a book other
+     than the built-in keeps every book surface unpainted from the
+     first frame until the main script's reveal gate lets the
+     target book through — the stage shows the plain backdrop only. */
+  html.boot-book #bookWrap,html.boot-book #scrollView{visibility:hidden}
+  /* Switch feedback: while the reveal gate waits on the incoming
+     book, the stage shows the plain backdrop plus this one small
+     label naming the INCOMING book — never a frame of any other. */
+  #switchNote{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;max-width:calc(100% - 48px);background:rgba(20,20,20,.72);color:#f4f1ea;border:1px solid rgba(244,241,234,.3);border-radius:10px;padding:8px 14px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+  #switchNote[hidden]{display:none}
   /* Lightbox treatment for a reader's own image: cover fit, dimmed and
      lightly blurred so the book stays the lit hero; scaled a touch so
      the blur never shows a soft edge against the stage. */
@@ -662,6 +687,10 @@
      but non-interactive and invisible, so nothing of the stage can
      swallow a tap aimed at an overlay. The class is synced in JS. */
   body.overlay-open .arrow{pointer-events:none!important;display:none!important}
+  /* The stage's own tools (mark / zoom) stand down with the arrows:
+     reader controls have no meaning under an overlay, and the
+     shelf's translucent head otherwise lets them ghost through. */
+  body.overlay-open #stageTools,html.boot-shelf #stageTools{display:none!important}
   #settingsPanel input[type="range"]{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:rgba(244,241,234,.22);outline-offset:4px}
   #settingsPanel input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#242424;border:2px solid #e8b34b;cursor:pointer}
   #settingsPanel input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#242424;border:2px solid #e8b34b;cursor:pointer}
@@ -763,7 +792,7 @@
   #zoomStage:active{cursor:grabbing}
   #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
   #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
-  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{display:none}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
+  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:12.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
   @media (max-width:560px){body.hdr-pills #editionBadge{display:none}body.hdr-crowded #banner{gap:6px}body.hdr-crowded #leftTools{gap:6px}body.hdr-crowded #tools{gap:6px}body.hdr-crowded #textBtn>span{display:none}body.hdr-crowded #compareBtn .cmpShort{display:none}}
 
   /* ---- 3D shelf view (Shelf view: 3D) ----
@@ -931,9 +960,10 @@
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">Harlow’s Accidental Journey</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
+    <div id="banner"><div id="headStack"><strong id="mark">Harlow’s Accidental Journey</strong><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span></div><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
+      <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
       <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3CopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3Back" type="button">&#8592; Back to shelf</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
@@ -1009,6 +1039,13 @@
     }
     var viewer = document.getElementById("viewer");
     var stage = document.getElementById("stage");
+    /* Boot gate, main-script half: the head script's boot-book
+       class already kept the stage unpainted; adopt the same
+       .switching gate the mid-flow switch uses, so the built-in
+       book rendered below (fit/render) can never paint a frame
+       before finishLanding routes the deep-linked target through
+       openShelfBook's reveal gate. */
+    if (document.documentElement.classList.contains("boot-book")) stage.classList.add("switching");
     var bookWrap = document.getElementById("bookWrap");
     var bookEl = document.getElementById("book");
     var glideEl = document.getElementById("glide");
@@ -1351,6 +1388,10 @@
     }
     function slideTo(side) {
       focus = side;
+      // A focus slide changes the reader's page without a render,
+      // and render() is the usual placeSave caller — save here too
+      // or the remembered place keeps the spread's left page.
+      placeSave();
       tweenCam(camTargetFor(flipped, side), REDUCED ? 180 : 500);
       counter.textContent = label();
       if (typeof updateTextPanel === "function") updateTextPanel();
@@ -1466,7 +1507,31 @@
     function placeKey() { return "fb-place:" + bookKeyBase + ":" + N; }
     function placeSave() {
       if (placeHold || !rememberPlace) return;
-      try { localStorage.setItem(placeKey(), String(flipped)); } catch (err) {}
+      try {
+        localStorage.setItem(placeKey(), String(flipped));
+        // The spread alone loses the reader's exact page in the
+        // single-page (focus) layout: leaving on a right-hand page
+        // restored to the spread's left page, one page back. Bank
+        // the focused side too so the place comes back exactly.
+        localStorage.setItem(placeKey() + ":focus", focus ? "1" : "0");
+      } catch (err) {}
+    }
+    function placeFocusRead() {
+      if (!rememberPlace) return null;
+      try {
+        var v = localStorage.getItem(placeKey() + ":focus");
+        if (v === null) return null;
+        return v === "1" ? 1 : 0;
+      } catch (err) { return null; }
+    }
+    // The focused side only has meaning mid-book in the focus
+    // layout; covers and the spread layout always land focus 0.
+    // isSingle() (the predicate fit() derives focusMode from) is
+    // consulted rather than the focusMode flag itself: at boot the
+    // place is restored before the first fit() has raised it.
+    function placeFocusFor(fl) {
+      var f = placeFocusRead();
+      return (f === 1 && isSingle() && fl > 0 && fl < HALF) ? 1 : 0;
     }
     function placeRead() {
       if (!rememberPlace) return null;
@@ -1482,7 +1547,7 @@
       placeHold = false;
       if (v === null) return;
       flipped = Math.max(0, Math.min(HALF, v));
-      focus = 0;
+      focus = placeFocusFor(flipped);
       render();
       fit();
       if (turnMode === "scroll" && typeof scrollToPage === "function") {
@@ -4165,19 +4230,14 @@
     var stripEditBtn = document.getElementById("stripEditBtn");
     var sheetTitleEl = document.getElementById("sheetTitle");
     var sheetSubEl = document.getElementById("sheetSub");
-    /* The Pages sheet always names the book it belongs to — the
-       open book, taken from the same header label that names it on
-       screen (minus the print suffix) — so the sheet can never
-       silently describe a different book than the one open. The
-       "tap one…" guidance moves to the sub-line. */
-    function sheetBookTitle() {
-      var m = document.getElementById("mark");
-      var t = m ? (m.textContent || "").trim() : "";
-      t = t.replace(/\s+\u2014\s+NOT FOR PRINT$/, "");
-      return t || "Current book";
-    }
+    /* The Pages sheet header is just "Pages" (owner's call,
+       2026-11-08, superseding the 2026-11-07 rule that the sheet
+       titled itself with the book's name): the book's title now
+       lives in the reader header only, on the line above the page
+       counter, so the sheet no longer repeats it. The "tap one…"
+       guidance stays on the sub-line. */
     function paintSheetTitle() {
-      if (sheetTitleEl) sheetTitleEl.textContent = (artEditing ? "Edit pages" : "Pages") + " \u2014 " + sheetBookTitle();
+      if (sheetTitleEl) sheetTitleEl.textContent = artEditing ? "Edit pages" : "Pages";
       if (sheetSubEl) sheetSubEl.textContent = artEditing ? "Tap a page to choose it" : "Tap one to jump there";
     }
     var stripNoteEl = document.getElementById("stripNote");
@@ -5953,6 +6013,7 @@
         if (!openTitle && typeof BOOK !== "undefined" && BOOK.title) openTitle = BOOK.title;
         markEl.textContent = openTitle || markHome;
       }
+      markEl.title = markEl.textContent;
       document.title = markEl.textContent;
     }
     var pdfPick = document.getElementById("pdfPick");
@@ -6420,7 +6481,7 @@
       if (back) return "back cover";
       return "";
     }
-    document.getElementById("wizStart").onclick = function () { restoreReturnFocus("wizard", wizEl, document.getElementById("settingsBtn")); wizEl.hidden = true; if (slideSec) scheduleSlide(); if (typeof syncOverlay === "function") syncOverlay(); };
+    document.getElementById("wizStart").onclick = function () { restoreReturnFocus("wizard", wizEl, document.getElementById("settingsBtn")); wizEl.hidden = true; /* "Start reading" means the reader: when the wizard was launched over the open shelf, the loaded book waits behind it — close the shelf too, or the tap lands back on the shelf instead of in the book. */ if (typeof shelfIsOpen !== "undefined" && shelfIsOpen && typeof closeShelf === "function") closeShelf(); if (slideSec) scheduleSlide(); if (typeof syncOverlay === "function") syncOverlay(); };
     document.getElementById("wizClose2").onclick = function () { restoreReturnFocus("wizard", wizEl, document.getElementById("settingsBtn")); wizEl.hidden = true; if (slideSec) scheduleSlide(); if (typeof syncOverlay === "function") syncOverlay(); };
     pdfPick.onchange = function () {
       var f = pdfPick.files && pdfPick.files[0];
@@ -9141,9 +9202,20 @@
     }
     function closeInfoCard() {
       if (!infoIsOpen) return;
-      restoreReturnFocus("info", infoEl, (shelfBackBtn && !shelfBackBtn.hidden) ? shelfBackBtn : shelfOptsBtn);
+      /* Fallback chain: the shelf controls only exist in shelf
+         state — a card closed in the reader (its invoker was a
+         quick-menu row, gone with the menu) must land on the
+         quick-menu button instead of dropping focus to the body. */
+      var infoFb = (shelfBackBtn && !shelfBackBtn.hidden) ? shelfBackBtn : shelfOptsBtn;
+      /* Lift the overlay guard BEFORE restoring focus: while the
+         card counts as open, body.overlay-open keeps the reader's
+         controls display:none, so every fallback tests unfocusable
+         and focus falls to the body. The card itself only hides
+         after its flip-out, so focus still leaves before it goes. */
       infoIsOpen = false;
       syncOverlay();
+      if (!focusableNow(infoFb)) { var qb = document.getElementById("quickBtn"); if (focusableNow(qb)) infoFb = qb; }
+      restoreReturnFocus("info", infoEl, infoFb);
       if (REDUCED) { infoEl.hidden = true; infoEl.classList.remove("flipIn", "flipOut"); return; }
       infoEl.classList.remove("flipIn");
       infoEl.classList.add("flipOut");
@@ -9356,6 +9428,77 @@
        so back-to-back switches can never flash an in-between
        book either. */
     var bookSwitchGen = 0;
+    var switchNoteEl = document.getElementById("switchNote");
+    var switchTitleEl = document.getElementById("switchTitle");
+    function showSwitchNote(title) {
+      if (switchTitleEl) switchTitleEl.textContent = title || "";
+      if (switchNoteEl) switchNoteEl.hidden = false;
+    }
+    function hideSwitchNote() { if (switchNoteEl) switchNoteEl.hidden = true; }
+    /* Reveal gate (hardened, 2026-11-08): a switch — or a deep-link
+       boot — reveals the stage only when EVERY image of the
+       incoming book's opening spread is both loaded (complete with
+       pixels) AND decoded, and the base <img> elements that will
+       actually paint the spread have their image in hand too.
+       decode() alone was not enough: it can settle before the
+       bitmap is really paintable, and the old fixed timers (1.5s /
+       2.5s) revealed the stage blind on slow connections — the
+       outgoing book's last composite is exactly what showed
+       through. There is deliberately NO blind deadline now: a
+       watchdog re-checks every 120ms and re-issues decode() for
+       any image whose decode has gone quiet, so a stalled load
+       holds the plain backdrop (plus the "Opening …" label) for
+       exactly as long as it stalls, and the reveal lands the
+       moment the target spread is truly ready. An image that
+       finished loading BROKEN (complete, no pixels) is the target
+       book's own page — it settles the gate rather than blanking
+       the reader forever. isCurrent() lets a newer switch retire
+       this gate silently. */
+    function waitSpreadReady(idxs, baseImgs, isCurrent, done) {
+      var targets = [];
+      idxs.forEach(function (ix) {
+        if (ix === null || ix < 0 || ix >= N) return;
+        var im = null;
+        try { im = (typeof effImg === "function") ? effImg(ix) : pageImgs[ix]; } catch (err) { im = pageImgs[ix]; }
+        if (im && targets.indexOf(im) < 0) targets.push({ im: im, decoded: false, pendingSince: 0 });
+      });
+      var bases = [];
+      (baseImgs || []).forEach(function (b) { if (b) bases.push(b); });
+      if (!targets.length && !bases.length) { done(); return; }
+      var timer = null;
+      function settled(t) {
+        var im = t.im;
+        if (!im.complete) return false;
+        if (im.naturalWidth === 0) return true;
+        if (!im.decode) return true;
+        return t.decoded;
+      }
+      function kick(t) {
+        var im = t.im;
+        if (!im.decode || t.decoded || !im.complete || im.naturalWidth === 0) return;
+        var now = Date.now();
+        if (t.pendingSince && now - t.pendingSince < 800) return;
+        t.pendingSince = now;
+        im.decode().then(function () { t.decoded = true; }, function () { t.pendingSince = 0; });
+      }
+      function basesReady() {
+        for (var i = 0; i < bases.length; i++) {
+          var b = bases[i];
+          if (b.getAttribute("src") && !b.complete) return false;
+        }
+        return true;
+      }
+      function check() {
+        if (!isCurrent()) { if (timer) clearInterval(timer); return; }
+        targets.forEach(kick);
+        for (var i = 0; i < targets.length; i++) if (!settled(targets[i])) return;
+        if (!basesReady()) return;
+        if (timer) clearInterval(timer);
+        done();
+      }
+      timer = setInterval(check, 120);
+      check();
+    }
     function openShelfBook(id) {
       if (id === currentEntryId) { recordBookOpened(id); noteBookOpened(); closeShelf(); return; }
       var entry = findShelfEntry(id);
@@ -9363,7 +9506,11 @@
       noteBookOpened();
       var mySwitch = ++bookSwitchGen;
       stage.classList.add("switching");
-      setTimeout(function () { if (mySwitch === bookSwitchGen) stage.classList.remove("switching"); }, 2500);
+      showSwitchNote(entry.title);
+      /* No blind reveal timer: only waitSpreadReady below may lift
+         .switching, and only once the incoming spread is loaded
+         AND decoded. On a slow connection the stage simply holds
+         the backdrop + "Opening …" label until then. */
       // Bank the outgoing book's place under its own key before the swap.
       placeSave();
       stopPdf();
@@ -9445,34 +9592,32 @@
       restorePlace();
       fit();
       // Reveal the stage only once the incoming book's opening
-      // spread has actually decoded — until then .switching keeps
-      // every book surface unpainted, so the outgoing book cannot
-      // linger for a beat under the new one. A guard timer reveals
-      // anyway (the reader never stays blank), and a newer switch
-      // supersedes this reveal.
+      // spread is loaded AND decoded (see waitSpreadReady) — until
+      // then .switching keeps every book surface unpainted, so no
+      // frame of the outgoing book can linger under the new one,
+      // however slow the load. A newer switch supersedes this
+      // reveal through the generation check.
       var openIdxs = [];
+      var openBases = [];
       if (turnMode === "scroll") {
         if (scrollCurIdx >= 0 && scrollCurIdx < N) openIdxs.push(scrollCurIdx);
       } else {
         var liS = flipped === 0 ? null : 2 * flipped - 1;
         var riS = flipped === HALF ? null : 2 * flipped;
-        if (liS !== null) openIdxs.push(liS);
-        if (riS !== null) openIdxs.push(riS);
+        if (liS !== null) { openIdxs.push(liS); openBases.push(imgL); }
+        if (riS !== null) { openIdxs.push(riS); openBases.push(imgR); }
       }
       var switchRevealed = false;
       function revealSwitch() {
         if (switchRevealed || mySwitch !== bookSwitchGen) return;
         switchRevealed = true;
         stage.classList.remove("switching");
+        document.documentElement.classList.remove("boot-book");
+        hideSwitchNote();
       }
-      var decs = [];
-      openIdxs.forEach(function (ix) {
-        var im = pageImgs[ix];
-        if (im && im.decode) decs.push(im.decode().catch(function () {}));
-      });
-      if (decs.length && typeof Promise !== "undefined") Promise.all(decs).then(revealSwitch);
-      else revealSwitch();
-      setTimeout(revealSwitch, 1500);
+      waitSpreadReady(openIdxs, openBases, function () {
+        return mySwitch === bookSwitchGen && currentEntryId === entry.id;
+      }, revealSwitch);
     }
     shelfBtn.addEventListener("click", function () {
       if (shelfIsOpen) closeShelf(); else openShelf();
@@ -9584,8 +9729,20 @@
     applyMark();
     applyEdition();
     var savedPlace = placeRead();
-    if (savedPlace !== null) { flipped = Math.max(0, Math.min(HALF, savedPlace)); focus = 0; }
+    var savedFocus = 0;
+    if (savedPlace !== null) { flipped = Math.max(0, Math.min(HALF, savedPlace)); savedFocus = placeFocusFor(flipped); }
     fit();
+    // The boot fit() above is the first one: raising focusMode
+    // frames the left page first, so a remembered right-hand page
+    // is re-applied only now that the layout has settled — the
+    // value was captured before fit()'s render could re-save it.
+    if (savedFocus) {
+      focus = 1;
+      setCam(camTargetFor(flipped, focus));
+      counter.textContent = label();
+      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+    }
     if (turnMode === "scroll") {
       var svp2 = null;
       try { var svRaw2 = parseInt(localStorage.getItem("fb-scrollpage:" + placeKey()), 10); if (isFinite(svRaw2)) svp2 = svRaw2; } catch (err) {}
@@ -9605,12 +9762,26 @@
       if (linkId) {
         noteBookOpened();
         if (linkId !== currentEntryId) openShelfBook(linkId);
-      } else if (startView === "shelf") {
-        openShelf();
+        else {
+          /* Deep link to the book already in the reader: same-book
+             reopen stays instant — lift the boot gate now. */
+          document.documentElement.classList.remove("boot-book");
+          stage.classList.remove("switching");
+          hideSwitchNote();
+        }
       } else {
-        // Landed straight into the reader (Start view: Last book):
-        // the current book is open behind any later shelf visit.
-        noteBookOpened();
+        /* No (valid) deep link: any boot gate was speculative —
+           lift it so the normal landing paints as before. */
+        document.documentElement.classList.remove("boot-book");
+        stage.classList.remove("switching");
+        hideSwitchNote();
+        if (startView === "shelf") {
+          openShelf();
+        } else {
+          // Landed straight into the reader (Start view: Last book):
+          // the current book is open behind any later shelf visit.
+          noteBookOpened();
+        }
       }
       // Boot-view handoff: the landing above now owns the view (the
       // shelf is unhidden with body.shelf-open, or the reader stands),
