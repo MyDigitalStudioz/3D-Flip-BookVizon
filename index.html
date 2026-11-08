@@ -1077,7 +1077,14 @@
        leaf is PAPER: the existing subtle flex and shading, unchanged.
        setupTurn picks the material per turn, so tap, arrow, and
        drag turns all share the profile. The difference is meant to
-       be a whisper: duration +18%, shadow +35%, flex on/off. */
+       be a whisper: duration +18%, shadow +35%, flex on/off.
+       The board's FACE also stays flat: no bend gradient across the
+       sheet and no bright tip kiss are painted on a turning board —
+       a rigid board barely shades as it swings, so its face reads
+       as one flat plane of art. Only the shadows UNDER and CAST BY
+       the leaf keep the firmer board weight; the cast shadow tracks
+       the rigid sheet's tip (flex 0, so no paper-lag in its
+       projection). Paper turns keep their roll shading untouched. */
     var leafMaterial = "paper";
     var leafFlex = 1;
     var leafDurMul = 1;
@@ -2060,12 +2067,17 @@
           ctx.closePath(); ctx.clip();
           band(1, sw, [[0, op], [1, 0]]);
           ctx.restore();
-          ctx.save();
-          ctx.beginPath();
-          c.flipClip.forEach(function (q, ix) { var b = toBook(q); if (ix === 0) ctx.moveTo(b.x, b.y); else ctx.lineTo(b.x, b.y); });
-          ctx.closePath(); ctx.clip();
-          band(-1, sw * 0.75, [[0, op], [0.15, 0.05], [0.35, op], [1, 0]]);
-          ctx.restore();
+          // The band on the leaf's own face is the paper roll. A board
+          // turn skips it: the cover's face stays flat and unshaded,
+          // while the under-leaf band above keeps the firmer shadow.
+          if (leafMaterial !== "board") {
+            ctx.save();
+            ctx.beginPath();
+            c.flipClip.forEach(function (q, ix) { var b = toBook(q); if (ix === 0) ctx.moveTo(b.x, b.y); else ctx.lineTo(b.x, b.y); });
+            ctx.closePath(); ctx.clip();
+            band(-1, sw * 0.75, [[0, op], [0.15, 0.05], [0.35, op], [1, 0]]);
+            ctx.restore();
+          }
         }
       }
       var s = Math.sin(Math.PI * p);
@@ -2103,18 +2115,24 @@
       if (glOK) {
         // translate book coords into the canvas window (margin offset)
         var mx = parseFloat(canvas.dataset.mx || 0), my = parseFloat(canvas.dataset.my || 0);
-        drawLeafGL(theta, lagSign, s * 0.13, mx, my, s);
+        // Board face FLAT: leafFlex is 0 for board turns, so the GL
+        // sheet gets zero face shading and zero tip bend here (the
+        // flat fallback leaf's face shades gate the same way below).
+        // Paper turns (leafFlex 1) are unchanged.
+        drawLeafGL(theta, lagSign, s * 0.13 * leafFlex, mx, my, s * leafFlex);
       } else {
         leafFB.style.transform = "rotateY(" + theta + "deg)";
-        var fs = (s * 0.13).toFixed(3);
+        var fs = (s * 0.13 * leafFlex).toFixed(3);
         fbShades[0].style.opacity = fs; fbShades[1].style.opacity = fs;
       }
       if (lagSign > 0) { shadeR.style.opacity = (s * 0.34).toFixed(3); shadeL.style.opacity = (s * 0.20).toFixed(3); }
       else { shadeL.style.opacity = (s * 0.34).toFixed(3); shadeR.style.opacity = (s * 0.20).toFixed(3); }
       // cast shadow: a soft band on the pages beneath, tracking the leaf tip's
-      // ground projection (same bend integral as the GL sheet), peaking mid-turn
+      // ground projection (same bend integral as the GL sheet), peaking mid-turn.
+      // For board turns leafFlex is 0, so lagR is 0 and tipDx is the rigid
+      // sheet's plain projection — no paper-lag in the cast shadow.
       var thR = theta * Math.PI / 180;
-      var lagR = lagSign * FLEX_RAD * s;
+      var lagR = lagSign * FLEX_RAD * leafFlex * s;
       var tipDx;
       if (Math.abs(lagR) < 1e-4) tipDx = pageSize * Math.cos(thR);
       else tipDx = (pageSize / lagR) * (Math.sin(thR + lagR) - Math.sin(thR));
@@ -5094,7 +5112,14 @@
        ENGLISH ONLY — only voices whose lang is en / en-* are
        listed and every non-English voice is removed (the books
        are English; the filter follows the book's language,
-       English for now). Compact / enhanced twins are deduped by
+       English for now). Round 4 narrows that pool to US ENGLISH
+       ONLY (en-US): the regional editions (en-GB, en-AU, en-IE,
+       en-IN, en-ZA, …) leave the picker; "Device default" stays
+       on top, Samantha stays the resolved default, and the
+       Novelty group stays (its voices are en-US). A saved pick
+       that is no longer en-US falls back to the default
+       resolution through the usual saved-voice clearing.
+       Compact / enhanced twins are deduped by
        base name + language, the enhanced or premium variant
        winning; the order is "Device default", the quality
        voices A–Z, then the novelty set grouped last under a
@@ -5111,7 +5136,7 @@
        NOVELTY pick is cleared once (one-time migration — the
        owner's saved Kathy was round 1's doing, not his), and a
        saved pick that no longer exists on this device (or is no
-       longer English) is cleared, after which the Samantha
+       longer en-US, round 4) is cleared, after which the Samantha
        default applies again. Before the first utterance, an empty voice list is
        awaited (voiceschanged / poll, 1.5s timeout) so a deliberate
        pick resolves against the real list, not a race. Speed persists as a
@@ -5154,8 +5179,8 @@
        voice on the owner's phone while three novelty voices whose
        spellings weren't on its list (Bahh, Kathy, Superstar)
        survived. Round 2 excluded nothing by name or quality, and
-       round 3's only exclusion is language (English only — see
-       pickerVoices): compact/enhanced twins are deduped by base
+       round 3's only exclusion is language (round 4: en-US only —
+       see pickerVoices): compact/enhanced twins are deduped by base
        name (the enhanced/premium variant wins), and the known
        novelty set is grouped last under its own divider instead of
        being filtered out. A voice's base name is its OS name with
@@ -5179,17 +5204,19 @@
       if (s.indexOf("compact") >= 0) return 0;
       return 1;
     }
-    /* The book's language is English: the picker offers ONLY the
-       English voices (round 3) — every non-English voice is
-       removed, with no fallback to the full list, so a device
-       with no English voices gets an empty picker (Device
-       default only). Deduped by base name + language with the
-       best variant kept. (The filter follows the book's
-       language, which is English for now.) */
+    /* The book's language is US English: the picker offers ONLY
+       en-US voices (round 4 — narrowed from round 3's any-English
+       rule, which let regional editions like Daniel en-GB, Karen
+       en-AU, Moira en-IE, Rishi en-IN and Tessa en-ZA ride along).
+       Every non-en-US voice is removed, with no fallback to the
+       full list, so a device with no en-US voices gets an empty
+       picker (Device default only). The Novelty set survives
+       because its voices are en-US. Deduped by base name +
+       language with the best variant kept. */
     function pickerVoices(list) {
       var pool = [];
       for (var i = 0; i < (list || []).length; i++) {
-        if ((list[i].lang || "").toLowerCase().replace(/_/g, "-").split("-")[0] === "en") pool.push(list[i]);
+        if (langNorm(list[i].lang) === "en-us") pool.push(list[i]);
       }
       var byKey = {}, order = [];
       for (var j = 0; j < pool.length; j++) {
@@ -5205,7 +5232,7 @@
        exactly as chosen, and a deliberate "Device default" choice
        (explicitDefault) leaves utterance.voice UNSET, as in
        round 2. With NO deliberate pick, the default is SAMANTHA:
-       voiceList is already English-only and deduped with the
+       voiceList is already en-US-only and deduped with the
        best variant winning, so its Samantha entry IS the
        enhanced/premium object when one exists, else the compact
        one. Fallback chain when no Samantha exists on the device:
