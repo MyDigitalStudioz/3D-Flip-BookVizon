@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v8 (GitHub default is main). v7 and v6 are frozen restore points. `main` stays at the shipped BEST-25d book (the v7 build) until a v8 change is approved to merge.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v9 (GitHub default is main). v8, v7 and v6 are frozen restore points. `main` is synced to the v9 build — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, reading modes, quick menu, book search, Harlow page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
@@ -17,23 +17,23 @@
 
 Double-click `index.html` to open the viewer with no server. The page images also ride along in `images/pages-data.js`, and the page loads that file before the first turn, on disk and on a website. A turn uses those in-memory pages, so it does not flicker while a JPEG downloads. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/hero.jpg?v=20261101-1)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611080410)
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v5`. The live book is now the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages still serves `main`.
+Captured from the working viewer on `3D-Flip-BookVizon-v9`. The live book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, synced from the v9 working line.
 
 **Cover** — the book closed on the dark stage.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/hero.jpg?v=20261101-1)
+![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611080410)
 
-**Mid-book** — the v5 capture below. On BEST-25d the first story spread is pages 6–7.
+**Mid-book** — the first story spread, pages 6–7.
 
-![Story spread, pages 4 and 5](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/spread.jpg?v=20261101-1)
+![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611080410)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/3D-Flip-BookVizon-v5/media/mobile.jpg?v=20261101-1)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=202611080410)
 
 ## What's inside
 
@@ -43,7 +43,7 @@ Captured from the working viewer on `3D-Flip-BookVizon-v5`. The live book is now
 - `vendor/pdfjs/` — pdf.js 3.11.174 (Apache-2.0) as classic scripts. The worker script is loaded in the page so a double-click uses the main-thread worker. Newer pdf.js builds are ES modules and will not run from disk.
 - `media/` — the README shots. `hero.jpg` is also the social preview.
 
-The pages are the shipped BEST-25d print set at 1750×1750. The banner reads BEST-25d. The Lulu trim is 8.5 inches. These pictures are the trim face.
+The pages are the shipped BEST-25d print set at 1750×1750. The banner reads the open book's title. The Lulu trim is 8.5 inches. These pictures are the trim face.
 
 ## Design language
 
