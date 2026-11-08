@@ -1,7 +1,26 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/png" href="images/favicon.png">
 <link rel="apple-touch-icon" href="images/favicon.png"><title>Harlow's Accidental Journey — 3D-Flip-BookVizon-v8</title>
+<script>
+/* Boot view decision — made BEFORE first paint. The landing choice
+   (Start view preference, with a #book= deep link winning) normally
+   waits for the main script, which itself waits for the embedded
+   page data — so the reader skeleton painted first and then swapped
+   to the shelf. This mirrors that decision synchronously: when the
+   shelf is the landing, <html> carries boot-shelf and the CSS below
+   paints the shelf (and quiets the reader's banner chrome) from the
+   very first frame. The main script removes the class as it takes
+   over the landing, so nothing about the live page changes. */
+(function () {
+  try {
+    var start = "shelf";
+    try { if (localStorage.getItem("fb-start-view") === "book") start = "book"; } catch (err) {}
+    if (/[#&]book=[A-Za-z0-9_-]+/.test(location.hash || "")) start = "book";
+    if (start === "shelf") document.documentElement.classList.add("boot-shelf");
+  } catch (err) {}
+})();
+</script>
 <style>
   html,body{margin:0;height:100%;background:#191919;color:#f4f1ea;font:15px/1.3 "Segoe UI",sans-serif}
   #viewer{position:relative;min-height:100%;height:100%;background:#191919;display:flex;flex-direction:column}
@@ -32,6 +51,13 @@
      the reader, not the shelf — hide them (visibility, so the banner
      keeps its height and nothing jumps) while the shelf is open. */
   body.shelf-open #counter,body.shelf-open #mark,body.shelf-open #textBtn,body.shelf-open #compareBtn,body.shelf-open #listenBtn,body.shelf-open #editionBadge{visibility:hidden}
+  /* Boot-shelf (see the head script): before the main script runs,
+     the shelf is the painted view and the reader's banner chrome
+     stays quiet, exactly as body.shelf-open presents it after the
+     handoff. The class is removed at landing, so these rules never
+     govern the live page. */
+  html.boot-shelf #shelf[hidden]{display:flex}
+  html.boot-shelf #counter,html.boot-shelf #mark,html.boot-shelf #textBtn,html.boot-shelf #compareBtn,html.boot-shelf #listenBtn,html.boot-shelf #editionBadge{visibility:hidden}
   #notice{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:8;background:rgba(20,20,20,.88);color:#f4f1ea;border-radius:10px;padding:8px 12px;font-size:13px;pointer-events:none}
   #wiz{position:absolute;inset:0;z-index:30;background:rgba(10,10,10,.62);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
   #wiz[hidden]{display:none}
@@ -156,6 +182,13 @@
   .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:64px;height:96px;margin:0;padding:0;border:0;outline:0;box-shadow:none;background:transparent;color:#fff;font-size:52px;cursor:pointer;line-height:1;pointer-events:auto;appearance:none;-webkit-appearance:none}
   .arrow:hover,.arrow:focus,.arrow:focus-visible,.arrow:active{border:0;outline:0;box-shadow:none;background:transparent}
   #prev{left:8px}#next{right:8px}
+  /* Keyboard focus: every control answers Tab with the app's gold
+     ring (mouse and touch focus stay clean — :focus-visible only
+     fires for keyboard-style focus). The page-turn arrows keep their
+     no-box rule from above, so their indicator is the glyph itself
+     lit gold with a soft halo instead of an outline. */
+  button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #e8b34b;outline-offset:2px}
+  .arrow:focus-visible{outline:0;color:#e8b34b;text-shadow:0 0 16px rgba(232,179,75,.95),0 0 4px rgba(0,0,0,.85)}
   body.expanded #viewer{position:fixed;inset:0;height:100%;height:100dvh;z-index:50}
   body.expanded #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end}
   body.expanded #counter,body.expanded #mark,body.expanded #textBtn,body.expanded #compareBtn,body.expanded #listenBtn{display:none}
@@ -274,6 +307,41 @@
   #shelfTitle{font-size:24px;font-weight:700;letter-spacing:.02em;color:#e8b34b;margin:0}
   #shelfSub{font-size:13px;color:#cfc9bd;margin:3px 0 0}
   #shelfBack{flex:0 0 auto;min-height:40px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;cursor:pointer}
+  /* ---- Shelf options popover ----
+     The shelf's own controls live on the shelf, anchored to its
+     header — never in the reader's Settings panel. The trigger wears
+     the shelf header's 10px-rectangle button style; the panel speaks
+     the Settings panel's language (charcoal card, hairline border,
+     gold selected state). */
+  #shelfHeadActions{display:flex;gap:8px;align-items:flex-start;position:relative;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
+  #shelfOptsBtn{flex:0 0 auto;min-height:40px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;cursor:pointer}
+  #shelfOptsBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
+  #shelfOptsPanel{position:absolute;top:calc(100% + 10px);right:0;z-index:30;width:272px;max-width:calc(100vw - 24px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left;box-sizing:border-box}
+  #shelfOptsPanel[hidden]{display:none}
+  .shelfOptsHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .shelfOptsTitle{font-weight:700;font-size:15px;letter-spacing:.02em}
+  #shelfOptsClose{flex:0 0 auto;width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer}
+  #shelfOptsClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
+  .shelfOptsGroup{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4;margin-top:4px}
+  .shelfOptBtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:42px;padding:8px 12px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .shelfOptBtn[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22);color:#e8b34b;font-weight:600}
+  .shelfOptBtn .optCheck{visibility:hidden;font-size:13px;line-height:1;flex:0 0 auto}
+  .shelfOptBtn[aria-pressed="true"] .optCheck{visibility:visible}
+  #shelfOptsPanel{max-height:calc(100dvh - 110px);overflow-y:auto}
+  #hiddenList{display:flex;flex-direction:column;gap:6px}
+  .hiddenRow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;color:#f4f1ea}
+  .hiddenRow span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .hiddenRestore{flex:0 0 auto;min-height:38px;padding:6px 14px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .hiddenEmpty{font-size:13px;color:#b9b2a4}
+  .arrRow{display:flex;justify-content:center;gap:8px;margin-top:7px}
+  .arrBtn{min-width:44px;min-height:44px;padding:6px 10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:16px;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .arrBtn[disabled]{opacity:.35;cursor:default}
+  .shelfEmpty{padding:32px 18px;text-align:center;font-size:14px;line-height:1.5;color:#cfc9bd;margin:0}
+  /* Phone width: the title block and the two header actions no longer
+     fit on one row — the actions take their own full-width row under
+     the title instead of pushing Back to book off the right edge. The
+     popover stays anchored to the actions row's right edge. */
+  @media (max-width:560px){#shelfHead{flex-wrap:wrap}#shelfHeadActions{flex:1 1 100%;justify-content:flex-end}}
   #shelfScroll{flex:1;overflow-y:auto;padding:10px 14px 6px;-webkit-overflow-scrolling:touch}
   .shelfRow{position:relative;display:flex;gap:16px;justify-content:center;padding:6px 2px 0;margin-bottom:8px}
   /* The plank is anchored to the TOP of the row, not the bottom:
@@ -366,6 +434,14 @@
   #icNote{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:#f0c66d}
   #icNote[hidden]{display:none}
   #icBack{width:100%;margin-top:16px;min-height:44px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+  #icRemove,#icHide{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
+  #icRemove[hidden],#icHide[hidden]{display:none}
+  #icConfirm{margin-top:10px;border:1px solid rgba(232,179,75,.45);background:rgba(232,179,75,.1);border-radius:10px;padding:10px 12px}
+  #icConfirm[hidden]{display:none}
+  #icConfirm p{margin:0 0 10px;font-size:13.5px;line-height:1.45;color:#f4f1ea}
+  .icConfirmRow{display:flex;gap:8px}
+  #icConfirmYes{flex:1 1 0;min-height:42px;padding:8px 12px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;touch-action:manipulation}
+  #icConfirmNo{flex:1 1 0;min-height:42px;padding:8px 12px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
 
   /* ---- Interface consistency: no native white/blue controls ----
      Every Settings and wizard control speaks the viewer's language:
@@ -485,7 +561,7 @@
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><button id="shelfBack" type="button">Back to book</button></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot"><p id="shelfNote">Books you import sit on this shelf for this visit. A fresh visit starts again with the books that live here.</p><button id="shelfImport" type="button">Import a book&hellip;</button></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><div id="shelfHeadActions"><button id="shelfOptsBtn" type="button" aria-haspopup="true" aria-expanded="false">Shelf options</button><button id="shelfBack" type="button">Back to book</button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Finished only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot"><p id="shelfNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p><button id="shelfImport" type="button">Import a book&hellip;</button></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -535,7 +611,7 @@
       <div id="textBar"><span id="textTitle">Page text</span><span id="textActions"><button id="textEdit" type="button">Edit</button><button id="textSave" type="button" hidden>Save</button><button id="textCancel" type="button" hidden>Cancel</button><button id="textClose" type="button" aria-label="Close page text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
       <div id="textBody"></div>
     </div>
-    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><button id="icCopy" type="button" hidden>Copy link to this book</button><input id="icCopyField" type="text" readonly hidden aria-label="Link to this book — select the text and copy it"><button id="icUpdate" type="button">Update from book file&hellip;</button><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
+    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><button id="icCopy" type="button" hidden>Copy link to this book</button><input id="icCopyField" type="text" readonly hidden aria-label="Link to this book — select the text and copy it"><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
   <script src="images/manifest.js"></script>
@@ -1875,6 +1951,17 @@
       }
       if (e.key === "Escape" && sheet.classList.contains("open")) { closeSheet(); return; }
       if (e.repeat || e.altKey || e.ctrlKey || e.metaKey) return;
+      // Keys belong to whatever has focus. While a form control is in
+      // use — typing a book title, editing page text, working a
+      // select — the navigation keys are the control's, not the
+      // reader's (an arrow key in the title field used to turn the
+      // page behind the wizard). The same stand-down applies while a
+      // blocking overlay is up: Settings, the wizard, the shelf, or
+      // the info card — exactly the overlays that hide the on-screen
+      // arrows — so keyboard and touch follow one rule.
+      var kt = e.target;
+      if (kt && (kt.tagName === "INPUT" || kt.tagName === "TEXTAREA" || kt.tagName === "SELECT" || kt.isContentEditable)) return;
+      if (!settingsPanel.hidden || !wizEl.hidden || shelfIsOpen || infoIsOpen) return;
       if (e.key === "ArrowLeft") { e.preventDefault(); flipPrev(); }
       else if (e.key === "ArrowRight") { e.preventDefault(); flipNext(); }
       else if (e.key === "Home") { e.preventDefault(); goTo(0); }
@@ -2277,6 +2364,114 @@
         } catch (err) { cb(null); }
       });
     }
+    /* ---- Imported books, saved on this device (fb-imports) ----
+       An imported book used to live only in this tab. Now the whole
+       book — every page image (custom covers, inserted pages, and
+       replacement art included, because entry.pages always mirrors
+       the book's current pages), page text, title, format, and the
+       rest of its shelf-entry state (originals for replaced art,
+       marks, cover span, status inside info) — is stored in
+       IndexedDB under the stable id assigned at first import, in a
+       store that mirrors the art store's pattern above. Startup
+       restores every record onto the shelf; every later change to
+       the book re-saves its record. If IndexedDB is unavailable or
+       a save fails (quota, some file:// cases), the import simply
+       stays visit-only and the wizard's Done step says so. */
+    var impDb = null, impDbFailed = false;
+    function impDbOpen(cb) {
+      if (impDb) { cb(impDb); return; }
+      if (impDbFailed || !window.indexedDB) { impDbFailed = true; cb(null); return; }
+      var req;
+      try { req = window.indexedDB.open("fb-imports", 1); } catch (err) { impDbFailed = true; cb(null); return; }
+      req.onupgradeneeded = function () { try { req.result.createObjectStore("books"); } catch (err) {} };
+      req.onsuccess = function () { impDb = req.result; cb(impDb); };
+      req.onerror = function () { impDbFailed = true; cb(null); };
+      req.onblocked = function () { impDbFailed = true; cb(null); };
+    }
+    impDbOpen(function () {});   // settle availability early
+    function impRecord(entry) {
+      var infoCopy = null;
+      if (entry.info) { try { infoCopy = JSON.parse(JSON.stringify(entry.info)); } catch (err) { infoCopy = entry.info; } }
+      var origCopy = {};
+      if (entry.artOrig) Object.keys(entry.artOrig).forEach(function (k) { origCopy[k] = entry.artOrig[k]; });
+      return {
+        id: entry.id,
+        title: entry.title || "Untitled book",
+        cover: entry.cover || (entry.pages && entry.pages[0]) || "",
+        pages: entry.pages ? entry.pages.slice() : [],
+        names: entry.names ? entry.names.slice() : [],
+        texts: entry.texts ? entry.texts.slice() : [],
+        pdf: entry.pdf || "",
+        custom: entry.custom || "",
+        keyBase: entry.keyBase || entry.id,
+        aspect: (typeof entry.aspect === "number" && entry.aspect > 0) ? entry.aspect : 1,
+        info: infoCopy,
+        coverSpan: entry.coverSpan || null,
+        insArr: entry.insArr ? entry.insArr.slice() : [],
+        autoIdx: (typeof entry.autoIdx === "number") ? entry.autoIdx : -1,
+        artOrig: origCopy,
+        marks: entry.marks ? entry.marks.slice() : [],
+        formatKey: entry.formatKey || null,
+        seedAspect: (entry.seedAspect === undefined ? null : entry.seedAspect),
+        seedFormat: (entry.seedFormat === undefined ? null : entry.seedFormat)
+      };
+    }
+    function impIdbSaveEntry(entry, cb) {
+      var done = false;
+      function finish(ok) { if (!done) { done = true; if (cb) cb(ok); } }
+      impDbOpen(function (db) {
+        if (!db) { finish(false); return; }
+        try {
+          var tx = db.transaction("books", "readwrite");
+          tx.objectStore("books").put(impRecord(entry), entry.id);
+          tx.oncomplete = function () { finish(true); };
+          tx.onerror = function () { finish(false); };
+          tx.onabort = function () { finish(false); };
+        } catch (err) { finish(false); }
+      });
+    }
+    function impIdbDelete(id, cb) {
+      impDbOpen(function (db) {
+        if (!db) { if (cb) cb(false); return; }
+        try {
+          var tx = db.transaction("books", "readwrite");
+          tx.objectStore("books").delete(id);
+          tx.oncomplete = function () { if (cb) cb(true); };
+          tx.onerror = function () { if (cb) cb(false); };
+          tx.onabort = function () { if (cb) cb(false); };
+        } catch (err) { if (cb) cb(false); }
+      });
+    }
+    function impIdbLoadAll(cb) {
+      impDbOpen(function (db) {
+        if (!db) { cb([]); return; }
+        try {
+          var req = db.transaction("books", "readonly").objectStore("books").getAll();
+          req.onsuccess = function () { cb(req.result || []); };
+          req.onerror = function () { cb([]); };
+        } catch (err) { cb([]); }
+      });
+    }
+    function persistImportEntry(entry, cb) {
+      if (!entry || entry.source !== "import") { if (cb) cb(false); return; }
+      impIdbSaveEntry(entry, function (ok) {
+        entry.persisted = !!ok;
+        if (cb) cb(!!ok);
+      });
+    }
+    /* Fire-and-forget re-save after a later change (art, text,
+       marks, status, structure, book-file update). The shelf is
+       rebuilt when it lands so a caption that depended on the save
+       (visit-only becoming saved, or the reverse) stays honest. */
+    function queuePersistImport(entry) {
+      if (!entry || entry.source !== "import") return;
+      persistImportEntry(entry, function () {
+        if (shelfIsOpen && typeof buildShelf === "function") { try { buildShelf(); } catch (err) {} }
+      });
+    }
+    function isPersistedImportId(id) {
+      try { var e = findShelfEntry(id); return !!(e && e.source === "import" && e.persisted); } catch (err) { return false; }
+    }
     /* The override record, v2: { pages: {idx: replacementSrc},
        ins: {idx: insertedSrc} } — both keyed by FINAL page index.
        An inserted page that also wears replacement art stores its
@@ -2476,7 +2671,7 @@
       artReplaced[idx] = true;
       if (entry && entry.pages) entry.pages[idx] = dataUrl;
       if (entry && idx === 0) entry.cover = dataUrl;
-      if (isCatalogId(id)) artIdbSave(id);
+      if (isCatalogId(id)) artIdbSave(id); else if (entry && entry.source === "import") queuePersistImport(entry);
       render();
       if (sheet.classList.contains("open")) buildStrip();
       if (shelfIsOpen) buildShelf();
@@ -2495,7 +2690,7 @@
         if (idx === 0) entry.cover = orig;
         if (entry.artOrig) delete entry.artOrig[idx];
       }
-      if (isCatalogId(id)) artIdbSave(id);
+      if (isCatalogId(id)) artIdbSave(id); else if (entry && entry.source === "import") queuePersistImport(entry);
       render();
       if (sheet.classList.contains("open")) buildStrip();
       if (shelfIsOpen) buildShelf();
@@ -2631,6 +2826,7 @@
       origImgCache = {};
       syncStructToEntry(artEntry());
       if (isCatalogId(artBookId())) artIdbSave(artBookId());
+      else { var se = artEntry(); if (se && se.source === "import") queuePersistImport(se); }
       placeSave();
       artSelIdx = selIdx;
       render();
@@ -3043,7 +3239,7 @@
     function bankImportTexts(id) {
       if (typeof shelfImports === "undefined" || !shelfImports) return;
       for (var bi = 0; bi < shelfImports.length; bi++) {
-        if (shelfImports[bi].id === id) { shelfImports[bi].texts = pageTexts.slice(); return; }
+        if (shelfImports[bi].id === id) { shelfImports[bi].texts = pageTexts.slice(); queuePersistImport(shelfImports[bi]); return; }
       }
     }
     function bookHasText() {
@@ -3326,7 +3522,7 @@
       } else {
         var e = null;
         try { e = findShelfEntry(id); } catch (err) {}
-        if (e) e.marks = currentMarks.slice();
+        if (e) { e.marks = currentMarks.slice(); queuePersistImport(e); }
       }
     }
     function isPageMarked(idx) { return currentMarks.indexOf(idx) >= 0; }
@@ -4131,6 +4327,8 @@
         } else {
           doneMsg.appendChild(document.createTextNode(" is ready \u2014 " + info.count + (info.count === 1 ? " page." : " pages.")));
         }
+        if (info.saved) doneMsg.appendChild(document.createTextNode(" Saved on this device \u2014 it will be on your shelf next visit."));
+        else if (info.saved === false) doneMsg.appendChild(document.createTextNode(" Couldn't save on this device \u2014 this visit only."));
         document.getElementById("wizDone").hidden = false;
         var note = document.getElementById("wizDoneNote");
         var noteText = info.note || (info.blank ? "A blank page was added so the last opening has a facing page." : "");
@@ -4730,13 +4928,14 @@
             showBook(!opened, effCoverOn());
             restorePlace();
             var bfRes = settled ? consumeBookFile({ front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 }) : { info: null, note: "" };
-            registerShelfImport({ title: customTitle || pdfName.replace(/\.pdf$/i, ""), cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: pdfName, custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } });
+            registerShelfImport({ title: customTitle || pdfName.replace(/\.pdf$/i, ""), cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: pdfName, custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } }, function (saved) {
             refreshTextChrome();
             loadBar.hidden = true;
             if (!PAGES.length) reportNotice("That PDF has no pages.");
             else if (bfRes.note) reportNotice(bfRes.note);
             else { noticeEl.textContent = ""; noticeEl.style.display = "none"; }
-            if (settled) { var doneFn = settled; settled = null; doneFn({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, bfWarn: bfRes.note, msg: "That PDF has no pages." }); }
+            if (settled) { var doneFn = settled; settled = null; doneFn({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, bfWarn: bfRes.note, saved: saved, msg: "That PDF has no pages." }); }
+            });
           }
           function step(n) {
             if (gen !== pdfGen) return;
@@ -4841,12 +5040,13 @@
           restorePlace();
           var bfRes2 = settled ? consumeBookFile({ front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 }) : { info: null, note: "" };
           if (bfRes2.note) warnings.push(bfRes2.note);
-          registerShelfImport({ title: customTitle || "Untitled folder book", cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: "", custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes2.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } });
+          registerShelfImport({ title: customTitle || "Untitled folder book", cover: PAGES[(coverOn || frontSrc) ? 0 : 1] || PAGES[0], pdf: "", custom: customTitle, keyBase: bookKeyBase, aspect: bookAspect, info: bfRes2.info, coverSpan: { front: frontSrc ? 1 : 0, back: backSrc ? 1 : 0 } }, function (saved) {
           refreshTextChrome();
           opened = true;
           loadBar.hidden = true;
           say();
-          if (settled) { var doneFn2 = settled; settled = null; doneFn2({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, note: noticeEl.textContent, bfWarn: bfRes2.note, msg: "None of those images could be read." }); }
+          if (settled) { var doneFn2 = settled; settled = null; doneFn2({ ok: PAGES.length > 0, title: markEl.textContent, count: PAGES.length, content: PAGES.length - (frontSrc ? 1 : 0) - (backSrc ? 1 : 0) - (padded ? 1 : 0), coversNote: coversNoteFor(frontSrc, backSrc), blank: !!blankNote, note: noticeEl.textContent, bfWarn: bfRes2.note, saved: saved, msg: "None of those images could be read." }); }
+          });
           return;
         }
         var ready = (i === 0 && !loadAspect) ? peekDims(files[0]).then(function (d) {
@@ -4960,8 +5160,8 @@
        Status is a property of the BOOK, not the viewer: each book's
        catalog info carries a seed status, the reader can change it
        from the book's info card, and the choice persists per book id
-       (fb-book-status — built-ins only; an import's status lasts the
-       visit, like the import itself). The banner badge simply reads
+       (fb-book-status — built-ins only; a saved import's status is stored
+       with its book on this device). The banner badge simply reads
        the open book's status: test → TEST PAGES (silver-gray),
        review → REVIEW (steel blue), print → PRINT (copper),
        final → FINAL (gold), none → no badge. This replaces the old
@@ -5000,7 +5200,7 @@
       if (inCatalog) {
         statusStore[id] = st;
         try { localStorage.setItem("fb-book-status", JSON.stringify(statusStore)); } catch (err) {}
-      }
+      } else if (e && e.source === "import") queuePersistImport(e);
       if (typeof currentEntryId !== "undefined" && id === currentEntryId) applyEdition();
       if (shelfIsOpen) buildShelf();
     }
@@ -5316,6 +5516,7 @@
       else if (infoIsOpen) closeInfoCard();
       else if (textIsOpen) closeTextPanel();
       else if (!wizEl.hidden && wizStep < 4) closeWizard();
+      else if (typeof shelfOptsOpen !== "undefined" && shelfOptsOpen) closeShelfOpts();
       else if (shelfIsOpen) closeShelf();
       else if (!settingsPanel.hidden) setSettings(false);
     });
@@ -5448,7 +5649,7 @@
             { label: "Buy the paperback", url: "https://www.lulu.com/shop/jon-farrell/the-night-i-met-santa-softcover/paperback/product-454zdy8.html" } ],
           about: "A heartfelt Christmas picture book about the night a boy met Santa. Painted gouache illustrations, warm storytelling, and a keepsake gift for family and friends." } }
     ];
-    var shelfImports = [];   // visit-only entries: {id,title,cover,pages,names,pdf,custom,keyBase,aspect}
+    var shelfImports = [];   // imported entries: {id,title,cover,pages,names,texts,pdf,custom,keyBase,aspect,info,coverSpan,insArr,autoIdx,artOrig,marks,persisted} — saved ones are restored from fb-imports at startup
     var importSeq = 0;
     var currentEntryId = "builtin";
     /* ---- Per-book meta overrides (fb-book-meta) ----
@@ -5498,17 +5699,299 @@
     function shelfEntries() {
       var out = CATALOG.slice();
       shelfImports.forEach(function (e) {
-        out.push({ id: e.id, title: e.title, cover: e.cover, source: "import", pages: e.pages, info: e.info || null, aspect: e.aspect || null, text: e.texts || null });
+        out.push({ id: e.id, title: e.title, cover: e.cover, source: "import", pages: e.pages, info: e.info || null, aspect: e.aspect || null, text: e.texts || null, persisted: !!e.persisted });
       });
       return out;
     }
+    /* ---- Shelf options: sort + show ----
+       The shelf's own view preferences, persisted like the reader's
+       (fb-shelf-sort / fb-shelf-show). Sort: "shelf" is the curated
+       catalog order (the default, today's behavior), "az" is by
+       title, "recent" puts the most recently opened book first, and
+       "status" runs Final, Print, Review, Test, None. Show: "all"
+       (the default) or "final" — Finished only, just the books whose
+       per-book status is Final. Recently-read stamps persist for
+       catalog books (fb-book-last-opened, alongside fb-book-status
+       and friends); a session import's stamp lasts the visit, like
+       the import itself. Books never opened sort after opened ones,
+       in shelf order, and every tie keeps shelf order. */
+    var shelfSortMode = "shelf";
+    var shelfShowMode = "all";
+    try {
+      var svShelfSort = localStorage.getItem("fb-shelf-sort");
+      if (["shelf", "az", "recent", "status"].indexOf(svShelfSort) >= 0) shelfSortMode = svShelfSort;
+      var svShelfShow = localStorage.getItem("fb-shelf-show");
+      if (svShelfShow === "all" || svShelfShow === "final") shelfShowMode = svShelfShow;
+    } catch (err) {}
+    var shelfLastOpened = {};
+    try { shelfLastOpened = JSON.parse(localStorage.getItem("fb-book-last-opened") || "{}") || {}; } catch (err) { shelfLastOpened = {}; }
+    var shelfImportLastOpened = {};
+    var shelfOpenStamp = 0;
+    Object.keys(shelfLastOpened).forEach(function (k) {
+      var v = shelfLastOpened[k];
+      if (typeof v === "number" && v > shelfOpenStamp) shelfOpenStamp = v;
+    });
+    function lastOpenedFor(id) {
+      if (Object.prototype.hasOwnProperty.call(shelfLastOpened, id)) return shelfLastOpened[id];
+      if (Object.prototype.hasOwnProperty.call(shelfImportLastOpened, id)) return shelfImportLastOpened[id];
+      return 0;
+    }
+    function recordBookOpened(id) {
+      if (!id) return;
+      // Strictly increasing stamps keep the order true even when two
+      // books are opened inside the same millisecond.
+      var stamp = Date.now();
+      if (stamp <= shelfOpenStamp) stamp = shelfOpenStamp + 1;
+      shelfOpenStamp = stamp;
+      if (isCatalogId(id) || isPersistedImportId(id)) {
+        shelfLastOpened[id] = stamp;
+        try { localStorage.setItem("fb-book-last-opened", JSON.stringify(shelfLastOpened)); } catch (err) {}
+      } else {
+        shelfImportLastOpened[id] = stamp;
+      }
+    }
+    /* ---- Hidden books, shelf order, Arrange ----
+       A built-in book cannot be deleted from the app, so its card
+       offers Hide instead: the id joins fb-hidden-books (per-device,
+       reversible), the book leaves the shelf, and Shelf options
+       lists it with a Restore button — hiding never touches the
+       book's data or its place in the shelf order, and a hidden book
+       that is open in the reader stays open (Back to book works).
+       The shelf order itself can be rearranged: fb-shelf-order is a
+       stored list of book ids (built-ins and imports together);
+       entries missing from it append at the end in their natural
+       order, and stored ids that no longer exist are ignored.
+       Arrange is a popover toggle: while it is on, the shelf shows
+       every non-hidden book in shelf order with move-earlier /
+       move-later buttons, and turning it off restores the normal
+       sorted/filtered shelf. */
+    var hiddenIds = [];
+    try { var svHidden = JSON.parse(localStorage.getItem("fb-hidden-books") || "[]"); if (Array.isArray(svHidden)) hiddenIds = svHidden.filter(function (x) { return typeof x === "string"; }); } catch (err) { hiddenIds = []; }
+    var shelfOrder = [];
+    try { var svOrder = JSON.parse(localStorage.getItem("fb-shelf-order") || "[]"); if (Array.isArray(svOrder)) shelfOrder = svOrder.filter(function (x) { return typeof x === "string"; }); } catch (err) { shelfOrder = []; }
+    var arrangeOn = false;
+    function isHiddenBook(id) { return hiddenIds.indexOf(id) >= 0; }
+    function saveHiddenBooks() { try { localStorage.setItem("fb-hidden-books", JSON.stringify(hiddenIds)); } catch (err) {} }
+    function saveShelfOrder() { try { localStorage.setItem("fb-shelf-order", JSON.stringify(shelfOrder)); } catch (err) {} }
+    function orderedShelfEntries() {
+      var all = shelfEntries();
+      var byId = {};
+      all.forEach(function (e) { byId[e.id] = e; });
+      var out = [], seen = {};
+      shelfOrder.forEach(function (id) { if (byId[id] && !seen[id]) { out.push(byId[id]); seen[id] = 1; } });
+      all.forEach(function (e) { if (!seen[e.id]) { out.push(e); seen[e.id] = 1; } });
+      return out;
+    }
+    function hideBuiltinBook(id) {
+      if (!isCatalogId(id) || isHiddenBook(id)) return;
+      hiddenIds.push(id);
+      saveHiddenBooks();
+      syncShelfOptsUI();
+      if (shelfIsOpen) buildShelf();
+    }
+    function restoreHiddenBook(id) {
+      hiddenIds = hiddenIds.filter(function (x) { return x !== id; });
+      saveHiddenBooks();
+      syncShelfOptsUI();
+      if (shelfIsOpen) buildShelf();
+    }
+    function moveShelfBook(id, dir) {
+      var full = orderedShelfEntries();
+      var fi = -1, i;
+      for (i = 0; i < full.length; i++) if (full[i].id === id) fi = i;
+      if (fi < 0) return;
+      var vis = [];
+      for (i = 0; i < full.length; i++) if (!isHiddenBook(full[i].id)) vis.push(i);
+      var pos = vis.indexOf(fi);
+      var npos = pos + dir;
+      if (pos < 0 || npos < 0 || npos >= vis.length) return;
+      var other = vis[npos];
+      var tmp = full[fi]; full[fi] = full[other]; full[other] = tmp;
+      shelfOrder = full.map(function (e) { return e.id; });
+      saveShelfOrder();
+      buildShelf();
+    }
+    function renderHiddenList() {
+      var box = document.getElementById("hiddenList");
+      if (!box) return;
+      box.innerHTML = "";
+      var shown = 0;
+      hiddenIds.forEach(function (id) {
+        var e = null;
+        try { e = findShelfEntry(id); } catch (err) {}
+        if (!e || !isCatalogId(id)) return;
+        shown++;
+        var row = document.createElement("div");
+        row.className = "hiddenRow";
+        var t = document.createElement("span");
+        t.textContent = e.title;
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "hiddenRestore";
+        b.textContent = "Restore";
+        b.setAttribute("aria-label", "Restore " + e.title + " to the shelf");
+        b.addEventListener("click", function () { restoreHiddenBook(id); });
+        row.appendChild(t);
+        row.appendChild(b);
+        box.appendChild(row);
+      });
+      if (!shown) {
+        var em = document.createElement("span");
+        em.className = "hiddenEmpty";
+        em.textContent = "No hidden books.";
+        box.appendChild(em);
+      }
+    }
+    /* Restore every saved import onto the shelf, then run cb. A
+       record that fails validation (no id, no pages, an id that
+       collides with the catalog) is skipped, never fatal. */
+    function loadPersistedImports(cb) {
+      impIdbLoadAll(function (recs) {
+        (recs || []).forEach(function (rec) {
+          if (!rec || !rec.id || !rec.pages || !rec.pages.length) return;
+          if (isCatalogId(rec.id)) return;
+          for (var ei = 0; ei < shelfImports.length; ei++) if (shelfImports[ei].id === rec.id) return;
+          var n = rec.pages.length;
+          function padArr(a) { var out = []; for (var pi = 0; pi < n; pi++) out.push(a && pi < a.length ? a[pi] : null); return out; }
+          function padIns(a) { var out = []; for (var pj = 0; pj < n; pj++) out.push(!!(a && a[pj])); return out; }
+          shelfImports.push({
+            id: rec.id, source: "import",
+            title: rec.title || "Untitled book",
+            cover: rec.cover || rec.pages[0],
+            pages: rec.pages.slice(),
+            names: padArr(rec.names),
+            texts: padArr(rec.texts),
+            pdf: rec.pdf || "", custom: rec.custom || "",
+            keyBase: rec.keyBase || rec.id,
+            aspect: (typeof rec.aspect === "number" && rec.aspect > 0) ? rec.aspect : 1,
+            info: rec.info || null,
+            coverSpan: rec.coverSpan || null,
+            insArr: padIns(rec.insArr),
+            autoIdx: (typeof rec.autoIdx === "number") ? rec.autoIdx : -1,
+            artOrig: rec.artOrig || {},
+            marks: rec.marks || [],
+            formatKey: rec.formatKey || null,
+            seedAspect: (rec.seedAspect === undefined ? undefined : rec.seedAspect),
+            seedFormat: (rec.seedFormat === undefined ? undefined : rec.seedFormat),
+            persisted: true
+          });
+        });
+        if (cb) cb();
+      });
+    }
+    var SHELF_STATUS_RANK = { final: 0, print: 1, review: 2, test: 3, none: 4 };
+    function visibleShelfEntries() {
+      var items = orderedShelfEntries().map(function (e, i) { return { entry: e, idx: i }; });
+      items = items.filter(function (it) { return !isHiddenBook(it.entry.id); });
+      if (arrangeOn) return items.map(function (it) { return it.entry; });
+      if (shelfShowMode === "final") {
+        items = items.filter(function (it) { return bookStatus(it.entry.id) === "final"; });
+      }
+      if (shelfSortMode === "az") {
+        items.sort(function (a, b) {
+          var ta = (a.entry.title || "").toLowerCase(), tb = (b.entry.title || "").toLowerCase();
+          if (ta < tb) return -1;
+          if (ta > tb) return 1;
+          return a.idx - b.idx;
+        });
+      } else if (shelfSortMode === "recent") {
+        items.sort(function (a, b) {
+          var ta = lastOpenedFor(a.entry.id), tb = lastOpenedFor(b.entry.id);
+          if (!ta !== !tb) return ta ? -1 : 1;
+          if (ta && tb && ta !== tb) return tb - ta;
+          return a.idx - b.idx;
+        });
+      } else if (shelfSortMode === "status") {
+        items.sort(function (a, b) {
+          var ra = SHELF_STATUS_RANK[bookStatus(a.entry.id)];
+          var rb = SHELF_STATUS_RANK[bookStatus(b.entry.id)];
+          if (ra === undefined) ra = 4;
+          if (rb === undefined) rb = 4;
+          if (ra !== rb) return ra - rb;
+          return a.idx - b.idx;
+        });
+      }
+      return items.map(function (it) { return it.entry; });
+    }
+    /* ---- Shelf options popover ----
+       Anchored to the shelf header; closes via its ×, Escape (the
+       shared handler checks shelfOptsOpen before the shelf itself),
+       or a tap anywhere outside it. Picking a sort or show re-renders
+       the shelf under the new rules at once; the panel stays open so
+       both groups can be set in one visit. */
+    var shelfOptsBtn = document.getElementById("shelfOptsBtn");
+    var shelfOptsPanel = document.getElementById("shelfOptsPanel");
+    var shelfOptsOpen = false;
+    function syncShelfOptsUI() {
+      if (!shelfOptsPanel) return;
+      shelfOptsPanel.querySelectorAll("[data-shelf-sort]").forEach(function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-shelf-sort") === shelfSortMode ? "true" : "false");
+      });
+      shelfOptsPanel.querySelectorAll("[data-shelf-show]").forEach(function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-shelf-show") === shelfShowMode ? "true" : "false");
+      });
+      var ab = document.getElementById("arrangeBtn");
+      if (ab) ab.setAttribute("aria-pressed", arrangeOn ? "true" : "false");
+      renderHiddenList();
+    }
+    function setShelfOpts(open) {
+      shelfOptsOpen = !!open;
+      if (shelfOptsPanel) shelfOptsPanel.hidden = !shelfOptsOpen;
+      if (shelfOptsBtn) shelfOptsBtn.setAttribute("aria-expanded", shelfOptsOpen ? "true" : "false");
+      if (shelfOptsOpen) syncShelfOptsUI();
+    }
+    function closeShelfOpts() { setShelfOpts(false); }
+    function setShelfSort(mode) {
+      if (["shelf", "az", "recent", "status"].indexOf(mode) < 0) return;
+      shelfSortMode = mode;
+      try { localStorage.setItem("fb-shelf-sort", mode); } catch (err) {}
+      syncShelfOptsUI();
+      buildShelf();
+    }
+    function setShelfShow(mode) {
+      if (mode !== "all" && mode !== "final") return;
+      shelfShowMode = mode;
+      try { localStorage.setItem("fb-shelf-show", mode); } catch (err) {}
+      syncShelfOptsUI();
+      buildShelf();
+    }
+    if (shelfOptsBtn && shelfOptsPanel) {
+      shelfOptsBtn.addEventListener("click", function () { setShelfOpts(!shelfOptsOpen); });
+      document.getElementById("shelfOptsClose").addEventListener("click", function () { closeShelfOpts(); });
+      shelfOptsPanel.querySelectorAll("[data-shelf-sort]").forEach(function (b) {
+        b.addEventListener("click", function () { setShelfSort(b.getAttribute("data-shelf-sort")); });
+      });
+      shelfOptsPanel.querySelectorAll("[data-shelf-show]").forEach(function (b) {
+        b.addEventListener("click", function () { setShelfShow(b.getAttribute("data-shelf-show")); });
+      });
+      document.addEventListener("pointerdown", function (e) {
+        if (shelfOptsOpen && !shelfOptsPanel.contains(e.target) && !shelfOptsBtn.contains(e.target)) closeShelfOpts();
+      });
+      var arrangeBtnEl = document.getElementById("arrangeBtn");
+      if (arrangeBtnEl) arrangeBtnEl.addEventListener("click", function () {
+        arrangeOn = !arrangeOn;
+        syncShelfOptsUI();
+        buildShelf();
+      });
+      syncShelfOptsUI();
+    }
     function buildShelf() {
-      var entries = shelfEntries();
+      var entries = visibleShelfEntries();
       shelfRowsEl.innerHTML = "";
+      if (!entries.length) {
+        var emptyNote = document.createElement("p");
+        emptyNote.className = "shelfEmpty";
+        emptyNote.textContent = (!arrangeOn && shelfShowMode === "final") ? "No finished books yet \u2014 switch Show to All books to see everything."
+          : hiddenIds.length ? "Every book is hidden \u2014 restore one under Shelf options, Hidden books."
+          : "No books on the shelf.";
+        shelfRowsEl.appendChild(emptyNote);
+        return;
+      }
       for (var r = 0; r < entries.length; r += 3) {
         var row = document.createElement("div");
         row.className = "shelfRow";
-        entries.slice(r, r + 3).forEach(function (entry) {
+        entries.slice(r, r + 3).forEach(function (entry, ci) {
+          var entryPos = r + ci;
           var wrap = document.createElement("div");
           wrap.className = "sbook" + (entry.id === currentEntryId ? " now" : "");
           var b = document.createElement("button");
@@ -5516,7 +5999,7 @@
           b.className = "sbookOpen";
           b.setAttribute("aria-label", "Open " + entry.title);
           var meta = entry.source === "built-in" ? (entry.pages ? entry.pages.length : (entry.id === currentEntryId ? PAGES.length : BOOK.pages.length)) + " pages · Built-in"
-            : entry.source === "import" ? entry.pages.length + " pages · This visit"
+            : entry.source === "import" ? entry.pages.length + (entry.persisted ? " pages · Saved on this device" : " pages · This visit")
             : entry.pages.length + " pages · Shelf book";
           var cov = document.createElement("span");
           cov.className = "covWrap";
@@ -5560,6 +6043,27 @@
           }
           actRow.appendChild(infoBtn);
           wrap.appendChild(actRow);
+          if (arrangeOn) {
+            var arrRow = document.createElement("span");
+            arrRow.className = "arrRow";
+            var mvL = document.createElement("button");
+            mvL.type = "button";
+            mvL.className = "arrBtn";
+            mvL.textContent = "\u2190";
+            mvL.setAttribute("aria-label", "Move " + entry.title + " earlier");
+            mvL.disabled = entryPos === 0;
+            mvL.addEventListener("click", (function (bid) { return function () { moveShelfBook(bid, -1); }; })(entry.id));
+            var mvR = document.createElement("button");
+            mvR.type = "button";
+            mvR.className = "arrBtn";
+            mvR.textContent = "\u2192";
+            mvR.setAttribute("aria-label", "Move " + entry.title + " later");
+            mvR.disabled = entryPos === entries.length - 1;
+            mvR.addEventListener("click", (function (bid2) { return function () { moveShelfBook(bid2, 1); }; })(entry.id));
+            arrRow.appendChild(mvL);
+            arrRow.appendChild(mvR);
+            wrap.appendChild(arrRow);
+          }
           row.appendChild(wrap);
         });
         shelfRowsEl.appendChild(row);
@@ -5570,6 +6074,7 @@
       closeTextPanel();
       if (typeof stopNarration === "function") stopNarration();
       setSettings(false);
+      closeShelfOpts();
       buildShelf();
       shelfEl.hidden = false;
       shelfIsOpen = true;
@@ -5579,6 +6084,7 @@
       clearSlideTimer();
     }
     function closeShelf() {
+      closeShelfOpts();
       shelfEl.hidden = true;
       shelfIsOpen = false;
       syncOverlay();
@@ -5603,8 +6109,10 @@
     icStatusEl.addEventListener("change", function () {
       if (icBookId) setBookStatus(icBookId, icStatusEl.value);
     });
-    function sourceLabel(src) {
-      return src === "built-in" ? "Built-in" : src === "import" ? "Imported — this visit" : "Shelf book";
+    function sourceLabel(src, entry) {
+      if (src === "built-in") return "Built-in";
+      if (src === "import") return (entry && entry.persisted) ? "Imported — saved on this device" : "Imported — this visit";
+      return "Shelf book";
     }
     function formatOf(entry) {
       if (entry.info && entry.info.format) return entry.info.format;
@@ -5649,7 +6157,7 @@
       var count = entry.id === currentEntryId ? PAGES.length : (entry.source === "built-in" ? (entry.pages ? entry.pages.length : BOOK.pages.length) : (entry.pages ? entry.pages.length : 0));
       if (count) addStat("Pages", String(count));
       addStat("Format", formatOf(entry));
-      addStat("Source", sourceLabel(entry.source));
+      addStat("Source", sourceLabel(entry.source, entry));
       stats.hidden = !stats.children.length;
       icBookId = entry.id;
       icStatusEl.value = bookStatus(entry.id);
@@ -5685,6 +6193,29 @@
         copyBtn.hidden = false;
         copyBtn.onclick = function () { copyBookLink(entry.id); };
       }
+      /* Remove (imports) deletes the book and its stored data;
+         Hide (built-ins and shelf books) only takes it off this
+         device's shelf — Shelf options restores it. Built-ins never
+         get Remove, imports never get Hide. */
+      var icRemoveBtn = document.getElementById("icRemove");
+      var icHideBtn = document.getElementById("icHide");
+      var icConfirmBox = document.getElementById("icConfirm");
+      var icConfirmText = document.getElementById("icConfirmText");
+      if (icConfirmBox) icConfirmBox.hidden = true;
+      if (entry.source === "import") {
+        icRemoveBtn.hidden = false;
+        icHideBtn.hidden = true;
+        icHideBtn.onclick = null;
+        icRemoveBtn.onclick = function () {
+          if (icConfirmText) icConfirmText.textContent = "Remove \u201C" + entry.title + "\u201D from this device? Its saved pages will be deleted.";
+          if (icConfirmBox) icConfirmBox.hidden = false;
+        };
+      } else {
+        icRemoveBtn.hidden = true;
+        icRemoveBtn.onclick = null;
+        icHideBtn.hidden = false;
+        icHideBtn.onclick = function () { hideBuiltinBook(entry.id); closeInfoCard(); };
+      }
       infoEl.hidden = false;
       infoIsOpen = true;
       syncOverlay();
@@ -5708,6 +6239,8 @@
     }
     document.getElementById("icClose").addEventListener("click", closeInfoCard);
     document.getElementById("icBack").addEventListener("click", closeInfoCard);
+    document.getElementById("icConfirmYes").addEventListener("click", function () { if (icBookId) removeImportBook(icBookId); });
+    document.getElementById("icConfirmNo").addEventListener("click", function () { document.getElementById("icConfirm").hidden = true; });
     infoEl.addEventListener("click", function (e) { if (e.target === infoEl) closeInfoCard(); });
     /* ---- Update from book file (info card) ----
        The per-book update path: pick a book file, and its title /
@@ -5795,6 +6328,7 @@
         if (bf.format) { bookAspect = entry.aspect || 1; fit(); }
         if (textChanged) refreshTextChrome();
       }
+      if (entry && entry.source === "import") queuePersistImport(entry);
       if (shelfIsOpen) buildShelf();
       icUpdateBtn.textContent = "Updated \u2713";
       setTimeout(function () { icUpdateBtn.textContent = "Update from book file\u2026"; }, 1600);
@@ -5836,11 +6370,14 @@
       }
       fallback();
     }
-    function registerShelfImport(info) {
-      if (!info || !PAGES.length) return;
+    function registerShelfImport(info, cb) {
+      if (!info || !PAGES.length) { if (cb) cb(false); return; }
       importSeq++;
+      // A stable id, unique across visits: timestamp + sequence +
+      // random, assigned once here and stored with the book.
+      var newId = "import-" + Date.now().toString(36) + "-" + importSeq + "-" + Math.floor(Math.random() * 1679616).toString(36);
       var entry = {
-        id: "import-" + importSeq,
+        id: newId,
         source: "import",
         title: info.title || "Untitled book",
         cover: info.cover || PAGES[0],
@@ -5849,17 +6386,58 @@
         texts: pageTexts.slice(),
         pdf: info.pdf || "",
         custom: info.custom || "",
-        keyBase: info.keyBase || ("import-" + importSeq),
+        keyBase: "import:" + newId,
         aspect: info.aspect || 1,
         info: info.info || null,
         coverSpan: info.coverSpan || null,
         insArr: pageIns.slice(),
-        autoIdx: autoBlankIdx
+        autoIdx: autoBlankIdx,
+        artOrig: {},
+        marks: [],
+        persisted: false
       };
       shelfImports.push(entry);
       currentEntryId = entry.id;
+      bookKeyBase = entry.keyBase;
+      recordBookOpened(entry.id);
       applyEdition();
       if (typeof resetReaderExtras === "function") resetReaderExtras(entry.id);
+      if (shelfIsOpen) buildShelf();
+      persistImportEntry(entry, function (ok) {
+        if (shelfIsOpen) buildShelf();
+        if (cb) cb(ok);
+      });
+    }
+    /* Remove an imported book for good: off the shelf, out of
+       IndexedDB, and its other on-device traces swept (place keys
+       under its keyBase, its last-opened stamp, any status override,
+       its shelf-order slot) — after a reload it stays gone. */
+    function removeImportBook(id) {
+      var entry = findShelfEntry(id);
+      if (!entry || entry.source !== "import") return;
+      var kb = entry.keyBase || "";
+      for (var ri = shelfImports.length - 1; ri >= 0; ri--) if (shelfImports[ri].id === id) shelfImports.splice(ri, 1);
+      impIdbDelete(id, function () {});
+      try {
+        var kill = [];
+        for (var li = 0; li < localStorage.length; li++) {
+          var lk = localStorage.key(li);
+          if (lk && kb && lk.indexOf("fb-place:" + kb + ":") === 0) kill.push(lk);
+        }
+        kill.forEach(function (k) { localStorage.removeItem(k); });
+      } catch (err) {}
+      if (Object.prototype.hasOwnProperty.call(shelfLastOpened, id)) {
+        delete shelfLastOpened[id];
+        try { localStorage.setItem("fb-book-last-opened", JSON.stringify(shelfLastOpened)); } catch (err) {}
+      }
+      delete shelfImportLastOpened[id];
+      if (typeof statusStore !== "undefined" && Object.prototype.hasOwnProperty.call(statusStore, id)) {
+        delete statusStore[id];
+        try { localStorage.setItem("fb-book-status", JSON.stringify(statusStore)); } catch (err) {}
+      }
+      var oi = shelfOrder.indexOf(id);
+      if (oi >= 0) { shelfOrder.splice(oi, 1); saveShelfOrder(); }
+      closeInfoCard();
       if (shelfIsOpen) buildShelf();
     }
     function findShelfEntry(id) {
@@ -5869,7 +6447,7 @@
       return null;
     }
     function openShelfBook(id) {
-      if (id === currentEntryId) { closeShelf(); return; }
+      if (id === currentEntryId) { recordBookOpened(id); closeShelf(); return; }
       var entry = findShelfEntry(id);
       if (!entry) { closeShelf(); return; }
       // Bank the outgoing book's place under its own key before the swap.
@@ -5934,6 +6512,7 @@
       if (typeof resetReaderExtras === "function") resetReaderExtras(entry.id);
       pageImgs = PAGES.map(newPageImg);
       currentEntryId = entry.id;
+      recordBookOpened(entry.id);
       applyEdition();
       blankNote = autoBlankIdx >= 0 ? "blank page added" : "";
       tempBlank = false;
@@ -6053,13 +6632,27 @@
     if (savedPlace !== null) { flipped = Math.max(0, Math.min(HALF, savedPlace)); focus = 0; }
     fit();
     if (slideSec) scheduleSlide();
-    var linkId = linkedBookId();
-    if (linkId) {
-      if (linkId !== currentEntryId) openShelfBook(linkId);
-    } else if (startView === "shelf") {
-      openShelf();
+    // The landing waits for saved imports to be restored, so the
+    // shelf (and a deep link) sees the full library from the first
+    // settled frame; a guard timer lands anyway if the store hangs.
+    var landingDone = false;
+    function finishLanding() {
+      if (landingDone) return;
+      landingDone = true;
+      var linkId = linkedBookId();
+      if (linkId) {
+        if (linkId !== currentEntryId) openShelfBook(linkId);
+      } else if (startView === "shelf") {
+        openShelf();
+      }
+      // Boot-view handoff: the landing above now owns the view (the
+      // shelf is unhidden with body.shelf-open, or the reader stands),
+      // so the head script's pre-paint boot-shelf class steps aside.
+      document.documentElement.classList.remove("boot-shelf");
+      document.body.dataset.flipReady = "1";
     }
-    document.body.dataset.flipReady = "1";
+    var landingGuard = setTimeout(finishLanding, 3000);
+    loadPersistedImports(function () { clearTimeout(landingGuard); finishLanding(); });
   }
   // Embedded pages first, on every protocol. file:// used to be the only
   // path that waited for pages-data.js; https skipped it and each turn
