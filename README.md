@@ -58,7 +58,7 @@ What the viewer does:
 - **Imports** — the wizard takes a folder of page images, one interior PDF, or a BookVizion book file (`.md`). Wide images and wide PDF pages split at the fold; an odd page count adds a labeled blank facing page. Imports, replaced art, settings, marks, and your place in every book are kept on this device only.
 - **Proofing tools** — Replace a page's art or a whole spread, Insert pages, Compare against the original art, Trim + safety guides at the Lulu spec (safety line 0.5″ in from the 8.5″ trim), and NOT FOR PRINT on exports unless you turn it off.
 - **Quick menu** — first/last page, slideshow, sound, reading mode, page layout, page labels, safety guides, and book info from one tab. **Expand view** hides the chrome for a bigger stage. **Download PDF** assembles the open book as a PDF, and every book has a **deep link** (`#book=<id>`) plus a Copy link button on its info card.
-- **Sound** — synthesized page-turn effects and background music (music box, piano, or pad), off by default, plus your own audio files if you prefer.
+- **Sound** — a real recorded page turn is the default page-turn effect (a Crisp paper synth, or your own audio file, are the alternatives), and background music is the Rainy window ambience — a real rain recording — or your own audio file. Sound and music are off by default, and one Volume slider governs both.
 
 ## Design language
 
