@@ -17,7 +17,7 @@
 
 Double-click `index.html` to open the viewer with no server. The page images also ride along in `images/pages-data.js`, and the page loads that file before the first turn, on disk and on a website. A turn uses those in-memory pages, so it does not flicker while a JPEG downloads. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081137)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081154)
 
 ## Screenshots
 
@@ -25,15 +25,15 @@ Captured from the working viewer on `3D-Flip-BookVizon-v9`. The live book is the
 
 **Cover** — the book closed on the dark stage.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081137)
+![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081154)
 
 **Mid-book** — the first story spread, pages 6–7.
 
-![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611081137)
+![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611081154)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=202611081137)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=202611081154)
 
 ## What's inside
 
