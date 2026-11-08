@@ -50,8 +50,8 @@
      the counter row, the badge stepping aside) can never push it
      out: it may shrink and end in an ellipsis, but it is always
      there, at phone width too. */
-  #headStack{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
-  #mark{display:block;color:#e8b34b;font-size:13.5px;font-weight:650;line-height:1.2;letter-spacing:.01em;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 6px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.45)}
+  #headStack{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1 1 auto}
+  #mark{display:block;color:#e8b34b;font-size:17.5px;font-weight:650;line-height:1.2;letter-spacing:.01em;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 6px rgba(0,0,0,.6),0 0 2px rgba(0,0,0,.45)}
   /* Edition badge: what this copy declares itself to be. Gold means
      the approved final (it always has in this workflow), so Final
      wears it; Test drops to a muted silver-gray that clearly reads
@@ -725,11 +725,11 @@
   #markBtn.marked svg{fill:#e8b34b;stroke:#e8b34b}
   /* ---- Marked pages (Pages sheet bar + strip stars) ---- */
   #marksBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 14px 0}
+  #marksBar[hidden]{display:none}
   #marksLabel{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4}
   .markChip{min-height:30px;padding:4px 12px;border-radius:10px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #marksClear{min-height:30px;padding:4px 12px;border-radius:10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation}
   #marksClear[hidden]{display:none}
-  .marksEmpty{font-size:12.5px;color:#b9b2a4}
   .mmark{position:absolute;top:3px;right:4px;font-size:13px;line-height:1;color:#e8b34b;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.9);pointer-events:none}
   /* ---- Book search (Pages sheet) ----
      A search field at the top of the Pages sheet, present only
@@ -792,7 +792,7 @@
   #zoomStage:active{cursor:grabbing}
   #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
   #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
-  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:12.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
+  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:16.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
   @media (max-width:560px){body.hdr-pills #editionBadge{display:none}body.hdr-crowded #banner{gap:6px}body.hdr-crowded #leftTools{gap:6px}body.hdr-crowded #tools{gap:6px}body.hdr-crowded #textBtn>span{display:none}body.hdr-crowded #compareBtn .cmpShort{display:none}}
 
   /* ---- 3D shelf view (Shelf view: 3D) ----
@@ -1006,7 +1006,7 @@
       <div class="sheetHandle" aria-hidden="true"></div>
       <div id="sheetBar"><span id="sheetTitleWrap"><span id="sheetTitle">Pages</span><span id="sheetSub">Tap one to jump there</span></span><span id="sheetActions"><button id="stripEditBtn" type="button" aria-pressed="false">Edit</button><button id="sheetClose" type="button" aria-label="Close pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
       <div id="searchBox" hidden><div id="searchField"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21"/></svg><input id="searchInput" type="text" placeholder="Search this book" aria-label="Search this book" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button id="searchClear" type="button" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="searchResults" aria-label="Search results"></div><p id="searchEmpty" hidden>No matches in this book.</p></div>
-      <div id="marksBar"><span id="marksLabel">Marked pages</span><span id="marksList"></span><button id="marksClear" type="button" hidden>Clear all</button></div>
+      <div id="marksBar" hidden><span id="marksLabel">Marked pages</span><span id="marksList"></span><button id="marksClear" type="button" hidden>Clear all</button></div>
       <p id="stripNote" hidden></p>
       <div id="strip"></div>
       <div id="stripActions" hidden><span id="stripSelLabel">Tap a page above to choose it.</span><button id="artReplaceBtn" type="button">Replace art&hellip;</button><button id="artSpreadBtn" type="button" hidden>Replace spread&hellip;</button><button id="artPhBtn" type="button" hidden>Use a placeholder&hellip;</button><button id="artPhSpreadBtn" type="button" hidden>Placeholder spread&hellip;</button><button id="artInsertBeforeBtn" type="button" hidden>Insert before&hellip;</button><button id="artInsertAfterBtn" type="button" hidden>Insert after&hellip;</button><button id="artRemoveBtn" type="button" hidden>Remove inserted page</button><button id="artRevertBtn" type="button" hidden>Revert to original art</button></div>
@@ -5230,19 +5230,18 @@
       if (typeof buildShelf === "function" && shelfIsOpen) buildShelf();
       if (sheet.classList.contains("open")) buildStrip();
     });
+    var marksBarEl = document.getElementById("marksBar");
     var marksListEl = document.getElementById("marksList");
     var marksClearBtn = document.getElementById("marksClear");
     function refreshMarksBar() {
       if (!marksListEl) return;
       marksListEl.innerHTML = "";
       if (!currentMarks.length) {
-        var em = document.createElement("span");
-        em.className = "marksEmpty";
-        em.textContent = "None yet \u2014 tap the star in the reader to mark a spread.";
-        marksListEl.appendChild(em);
+        if (marksBarEl) marksBarEl.hidden = true;
         if (marksClearBtn) marksClearBtn.hidden = true;
         return;
       }
+      if (marksBarEl) marksBarEl.hidden = false;
       if (marksClearBtn) marksClearBtn.hidden = false;
       currentMarks.slice().sort(function (a, b) { return a - b; }).forEach(function (idx) {
         var chip = document.createElement("button");
