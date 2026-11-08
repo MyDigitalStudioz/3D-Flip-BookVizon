@@ -1,31 +1,31 @@
 # 3D Flip BookVizon
 
-> The BookVizion 3D flipbook viewer — hardcover edition, seeded from flipbook18.
+> The BookVizion 3D flipbook viewer — a bookshelf of picture books whose covers turn like stiff board and whose pages bend like paper.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v9 (GitHub default is main). v8, v7 and v6 are frozen restore points. `main` is synced to the v9 build — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, reading modes, quick menu, book search, Harlow page text) on the shipped BEST-25d book.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v9 (GitHub default is main). v8, v7 and v6 are frozen restore points. `main` is synced to the v9 build — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Static site](https://img.shields.io/badge/site-static-blue)
-![Version](https://img.shields.io/badge/version-6.0.0-orange)
+![Version](https://img.shields.io/badge/version-9.0.0-orange)
 
 ## Live preview
 
 **https://mydigitalstudioz.github.io/3D-Flip-BookVizon/**
 
-Double-click `index.html` to open the viewer with no server. The page images also ride along in `images/pages-data.js`, and the page loads that file before the first turn, on disk and on a website. A turn uses those in-memory pages, so it does not flicker while a JPEG downloads. Open PDF, or drop a PDF on the page, reads that file on this computer. It does not fetch a PDF by path.
+The viewer opens on its bookshelf: eight books — two published picture books, *Harlow's Accidental Journey* (the BEST-25d final) and *The Night I Met Santa*, plus six demo books. Pick one and it opens in the reader; a link like `#book=the-night-i-met-santa` opens that book directly. It is one static page — it runs from GitHub Pages or straight off disk by double-clicking `index.html`, with no server and no build step. Harlow's pages also ride along as data URIs in `images/pages-data.js`, loaded before the first turn, so the resident book never waits on a download mid-flip.
 
 ![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081324)
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v9`. The live book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, synced from the v9 working line.
+Captured from the working viewer on `3D-Flip-BookVizon-v9`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, synced from the v9 working line.
 
-**Cover** — the book closed on the dark stage.
+**Bookshelf** — the front door: every book, its status, and its mark count at a glance.
 
-![Harlow cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081324)
+![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611081345)
 
 **Mid-book** — the first story spread, pages 6–7.
 
@@ -37,31 +37,43 @@ Captured from the working viewer on `3D-Flip-BookVizon-v9`. The live book is the
 
 ## What's inside
 
-- `index.html` — the hardcover viewer. This is the only page. The folder button opens a folder of images, or you can drop the folder on the page. Open PDF, beside it, opens one interior PDF the same way. Drop a PDF on the page too.
-- `images/` — the book. Sixty 1750×1750 pages from the BEST-25d print set, `manifest.js`, `pages-data.js`, and the favicon. The HTML loads them by relative path, so this folder stays beside `index.html`.
-- `images/pages-data.js` — those same JPGs as data URIs. `index.html` loads it before the first turn on every protocol. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
-- `vendor/pdfjs/` — pdf.js 3.11.174 (Apache-2.0) as classic scripts. The worker script is loaded in the page so a double-click uses the main-thread worker. Newer pdf.js builds are ES modules and will not run from disk.
+- `index.html` — the whole viewer: bookshelf, reader, import wizard, and settings in a single static page.
+- `images/` — Harlow. Sixty 1750×1750 pages from the BEST-25d print set, `manifest.js`, `pages-data.js`, and the favicon. The HTML loads them by relative path, so this folder stays beside `index.html`.
+- `images/pages-data.js` — those same JPGs as data URIs, loaded before the first turn. Rebuild with `python scripts/build-pages-data.py` after a page image changes.
+- `shelf/` — the other seven books' pages: *The Night I Met Santa* (36 pages) and the six demo books — Pippa and the Red Scarf (12), and five six-page minis (The Lighthouse Keeper's Cat, Bramble's Long Nap, Nixie the Snowy Owl, The Moon Harbor, The Little Red Boat).
+- `vendor/pdfjs/` — pdf.js 3.11.174 (Apache-2.0) as classic scripts, vendored for the import wizard's PDF path so it also works from disk.
 - `media/` — the README shots. `hero.jpg` is also the social preview.
 
-The pages are the shipped BEST-25d print set at 1750×1750. The banner reads the open book's title. The Lulu trim is 8.5 inches. These pictures are the trim face.
+What the viewer does:
+
+- **Five reading modes** — Hardcover (the default 3D turn), Magazine, Swipe, Scroll, and Simple — with page layout Auto, Single, or Double. Covers turn as stiff board, slower and flat-shaded; interior pages bend like paper.
+- **Two shelves, one library** — a Classic grid or a 3D shelf, with sort, cover size, a Final-editions filter, arrange mode, and hide/restore. Each book carries a status — Test, Review, Print, or Final — shown as a colored dot on the shelf and a badge in the reader.
+- **Marks** — star any spread while proofing; the shelf shows a ★ count per book, and the Pages sheet lists the marked spreads as jump chips.
+- **Per-page text** — the Text button opens the open book's story text, page by page (Harlow carries its full text of record). **Read to me** speaks it with the device's en-US voices, Samantha by default, at three speeds.
+- **Search** inside the open book, from the Pages sheet, with jump-to-page results.
+- **Imports** — the wizard takes a folder of page images, one interior PDF, or a BookVizion book file (`.md`). Wide images and wide PDF pages split at the fold; an odd page count adds a labeled blank facing page. Imports, replaced art, settings, marks, and your place in every book are kept on this device only.
+- **Proofing tools** — Replace a page's art or a whole spread, Insert pages, Compare against the original art, Trim + safety guides at the Lulu spec (safety line 0.5″ in from the 8.5″ trim), and NOT FOR PRINT on exports unless you turn it off.
+- **Quick menu** — first/last page, slideshow, sound, reading mode, page layout, page labels, safety guides, and book info from one tab. **Expand view** hides the chrome for a bigger stage. **Download PDF** assembles the open book as a PDF, and every book has a **deep link** (`#book=<id>`) plus a Copy link button on its info card.
+- **Sound** — synthesized page-turn effects and background music (music box, piano, or pad), off by default, plus your own audio files if you prefer.
 
 ## Design language
 
-Charcoal stage (`#191919`), cream page paper, and the painted art full-bleed on the leaf. The bar has a page-turn choice, Hardcover or Magazine, plus a folder button, an Open PDF button, a pages grid, a fullscreen mark, and white side arrows. The book sits centered with a soft shadow. Hardcover is the 3D sheet. Magazine is the corner peel. The choice is remembered on this browser.
+Charcoal stage, cream page paper, and one gold accent (`#e8b34b`) — the same gold as the header title, the Final badge, the mark stars, and the tabs. Controls are rectangular with a 10px corner radius everywhere in menus, panels, and the header (Text, Listen, Compare); only the round icon buttons, the status dots, and the peek tab's grab handle stay circular, by design.
 
-The folder button takes a folder of JPG, PNG, or WebP pages. Files sort by the first number in the name. A wide image is treated as an open spread and split at the fold. The first image is the cover unless that box is unchecked. A missing number is a warning under the book; the pages still turn.
+The reader header names the open book in gold above the page counter — visible even with the Pages sheet open, because the sheet is a bottom sheet and never covers it. Beside the counter sit the Text, Compare, and Listen buttons when the book offers them; the status badge (Final gold, Print copper, Review steel blue, Test silver-gray) steps aside when the header gets crowded. The mark star and zoom live at the stage's top-left and stand down, with the page arrows, whenever an overlay is open.
 
-Open PDF takes one interior PDF. Square and portrait pages stay one page. A wide page, about twice as wide as it is tall, splits at the fold. The panel can force single pages or wide spreads, and the first page can be the cover. The title becomes the file name. NOT FOR PRINT stays on unless that box is unchecked. An odd page count adds a blank facing page and the counter says so. A cover wrap PDF is not a book here.
+The Pages sheet slides up from the peek tab with thumbnails, the marked-pages bar (hidden until a book has a mark), search, and page editing. The quick menu docks bottom-right in the same matte-black, gold-accented skin; Expand view docks bottom-left. A book switch never shows the previous book: the stage holds the plain backdrop with an "Opening <title>…" label until the incoming book's first spread has loaded and decoded.
 
 ## Tech stack
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
-| Viewer | Single-file HTML | `index.html` is the whole hardcover viewer |
-| Page turn | WebGL leaf or corner peel | Hardcover turns the 3D sheet. Magazine peels the corner. |
-| Script | Vanilla JS | Fit, arrows, paging, fullscreen |
-| Book | `images/manifest.js` + 1750 JPGs | Page list and images |
-| PDF | pdf.js 3.11.174, vendored | Renders a local PDF into the same page list |
+| Viewer | Single-file HTML | `index.html` is the whole bookshelf + reader |
+| Page turn | WebGL leaf, two materials | Covers turn as rigid board; interior pages bend as paper |
+| Script | Vanilla JS | Shelf, five reading modes, wizard, search, speech, WebAudio sound |
+| Books | `images/` + `shelf/` page sets | Harlow preloaded via `pages-data.js`; the other seven load from `shelf/` |
+| PDF | pdf.js 3.11.174, vendored | Renders an imported PDF into the same page list |
+| Storage | localStorage + IndexedDB | Settings, place memory, marks, imports, replaced art — on-device only |
 | Host | GitHub Pages | Serves `main` at the preview URL |
 
 This viewer draws the turn itself.
@@ -71,17 +83,27 @@ This viewer draws the turn itself.
 ```
 ├── index.html
 ├── .nojekyll
+├── .gitignore
 ├── images/
 │   ├── manifest.js
 │   ├── pages-data.js
 │   ├── favicon.png
 │   └── 01-front.jpg … 60-back.jpg
+├── shelf/
+│   ├── santa/          (36 pages)
+│   ├── pippa/          (12 pages)
+│   ├── lighthouse/     (6 pages)
+│   ├── bear/           (6 pages)
+│   ├── owl/            (6 pages)
+│   ├── harbor/         (6 pages)
+│   └── boat/           (6 pages)
 ├── scripts/
 │   └── build-pages-data.py
 ├── vendor/
 │   └── pdfjs/
 └── media/
     ├── hero.jpg
+    ├── shelf.jpg
     ├── spread.jpg
     └── mobile.jpg
 ```
@@ -94,6 +116,7 @@ Changes land on new branches. `main` is the published mirror, and GitHub Pages s
 
 | Metric | Value |
 | :--- | :--- |
-| **Stack** | Static HTML · WebGL leaf · GitHub Pages |
+| **Stack** | Static HTML · WebGL leaf · Vanilla JS · GitHub Pages |
+| **Books** | 8 on the shelf — 2 published picture books + 6 demo books |
 | **Preview** | 🌐 [mydigitalstudioz.github.io/3D-Flip-BookVizon](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/) |
 | **Status** | 🟢 Live preview |
