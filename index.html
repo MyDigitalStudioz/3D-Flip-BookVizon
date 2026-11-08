@@ -145,11 +145,14 @@
      on the brightest ground while staying near-invisible on dark
      backdrops — the header still floats, nothing boxy. */
   #settingsBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.34);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35)}
-  #settingsBtn svg{width:21px;height:21px;display:block}
+  #settingsBtn svg{width:21px;height:21px;display:block;fill:none;stroke:#f4f1ea;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   #settingsBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
   #settingsPanel{position:absolute;top:calc(100% + 10px);right:0;z-index:20;width:302px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 90px);overflow-y:auto;background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left}
   #settingsPanel[hidden]{display:none}
   #settingsPanel .setHead{font-weight:700;font-size:15px;letter-spacing:.02em}
+  #settingsPanel .setHeadRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  #settingsClose{flex:0 0 auto;width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer}
+  #settingsClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
   #settingsPanel .setGroup{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4;margin-top:4px}
   #settingsPanel #turnLabel,#settingsPanel .setRow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;color:#f4f1ea;background:none;padding:2px 0;white-space:normal}
   #settingsPanel select{min-width:138px;flex:0 0 auto}
@@ -165,6 +168,17 @@
   .guide .gtag{position:absolute;top:2px;left:2px;font-size:9px;font-weight:700;letter-spacing:.06em;padding:1px 4px;border-radius:3px;color:#fff}
   .guide .gtagT{background:#ff5347}
   .guide .gtagS{background:#b06ee8}
+  /* Scroll mode carries the same proofing overlay per page: the
+     trim line sits on the page's edge and the dashed safety
+     rectangle insets by the same percentages paintGuides computes
+     for the flip spread, so both modes proof identically. */
+  .scGuide{position:absolute;inset:0;z-index:2;pointer-events:none;display:none}
+  body.guides-on .scGuide{display:block}
+  .scGuide .gTrim{position:absolute;border:2px solid rgba(255,83,71,.95)}
+  .scGuide .gSafe{position:absolute;border:2px dashed rgba(176,110,232,.95)}
+  .scGuide .gtag{position:absolute;top:2px;left:2px;font-size:9px;font-weight:700;letter-spacing:.06em;padding:1px 4px;border-radius:3px;color:#fff}
+  .scGuide .gtagT{background:#ff5347}
+  .scGuide .gtagS{background:#b06ee8}
   /* z-index 1 + position makes the stage its own stacking context, so
      the arrows / leaf layers / shelf inside it can never outrank the
      banner (30) and its Settings panel, no matter their inner z-index. */
@@ -214,7 +228,8 @@
   button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #e8b34b;outline-offset:2px}
   .arrow:focus-visible{outline:0;color:#e8b34b;text-shadow:0 0 16px rgba(232,179,75,.95),0 0 4px rgba(0,0,0,.85)}
   body.expanded #viewer{position:fixed;inset:0;height:100%;height:100dvh;z-index:50}
-  body.expanded #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end}
+  body.expanded #banner{display:none}
+  body.expanded #pagesTab,body.expanded #quickBtn,body.expanded #quickMenu{display:none}
   body.expanded #counter,body.expanded #mark,body.expanded #textBtn,body.expanded #compareBtn,body.expanded #listenBtn{display:none}
   body.expanded #stage{height:100%}
   #viewer:fullscreen #banner{position:absolute;top:0;left:0;right:0;background:transparent;justify-content:flex-end;z-index:30}
@@ -419,14 +434,15 @@
      shelf content starts higher. */
   #shelfBack[hidden]{display:none}
   #shelfHeadActions:has(> #shelfBack[hidden]){display:none}
-  /* ---- Shelf options popover ----
+  /* ---- Shelf options panel ----
      The shelf's own controls — never in the reader's Settings
      panel. The trigger is the sliders icon in the header beside the
-     gear (styled with the header icon buttons above); the panel
-     speaks the Settings panel's language (charcoal card, hairline
-     border, gold selected state). */
+     gear (styled with the header icon buttons above); the panel is
+     a full Settings-class box — same width, height cap and skin as
+     the Settings panel (charcoal card, hairline border, gold
+     selected state) — not a small popover. */
   #shelfHeadActions{display:flex;gap:8px;align-items:flex-start;position:relative;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
-  #shelfOptsPanel{position:absolute;top:calc(100% + 10px);right:0;z-index:30;width:272px;max-width:calc(100vw - 24px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left;box-sizing:border-box}
+  #shelfOptsPanel{position:absolute;top:calc(100% + 10px);right:0;z-index:30;width:302px;max-width:calc(100vw - 24px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left}
   #shelfOptsPanel[hidden]{display:none}
   .shelfOptsHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .shelfOptsTitle{font-weight:700;font-size:15px;letter-spacing:.02em}
@@ -437,20 +453,23 @@
   .shelfOptBtn[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22);color:#e8b34b;font-weight:600}
   .shelfOptBtn .optCheck{visibility:hidden;font-size:13px;line-height:1;flex:0 0 auto}
   .shelfOptBtn[aria-pressed="true"] .optCheck{visibility:visible}
-  /* Height cap: the panel's top sits just below the banner (its
-     header-icon trigger lives there now), so the cap subtracts a
-     generous offset plus a safe bottom margin from the dynamic
-     viewport height — an earlier, looser 100dvh - 110px
-     let the panel run past the shelf's bottom edge and get clipped
-     by #shelf's overflow:hidden. Direct children are flex-shrink:0:
-     without that, a flex column under a max-height SQUEEZES its
-     compressible children (the title row vanished and the "Shelf
-     view" label was half-cut on the owner's phone) instead of
-     overflowing into the internal scroll. overscroll-behavior keeps
-     the scroll gesture inside the panel — the shelf behind it never
-     scrolls along. This cap is scoped to this panel only; the
-     Settings panel, wizard, and sheets keep their own height rules. */
-  #shelfOptsPanel{max-height:calc(100dvh - 150px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+  /* Size: the SAME footprint as the Settings panel — 302px wide,
+     capped at 100dvh - 90px tall — so every section fits at full
+     width (the old 272px popover was narrower than its own rows:
+     the Cover size segmented control and the option rows spilled
+     past the panel's edge, and because overflow-y:auto silently
+     enables horizontal scrolling too, a sideways drag could scroll
+     the content inside the box and leave rows clipped). The scroll
+     is now VERTICAL ONLY: overflow-x is hidden outright, children
+     may not exceed the panel's width, and touch-action:pan-y means
+     a horizontal drag inside moves nothing at all. Direct children
+     are flex-shrink:0: without that, a flex column under a
+     max-height SQUEEZES its compressible children (the title row
+     vanished and the "Shelf view" label was half-cut on the
+     owner's phone) instead of overflowing into the internal
+     scroll. overscroll-behavior keeps the scroll gesture inside
+     the panel — the shelf behind it never scrolls along. */
+  #shelfOptsPanel{max-height:calc(100dvh - 90px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
   /* While Shelf options is open, the background carries the same
      lock the app's full-screen menus get by covering the screen:
      the page cannot scroll or pan and the shelf list behind the
@@ -460,8 +479,7 @@
      The JS half is the touchmove guard in setShelfOpts. */
   body.shelf-opts-open{overflow:hidden}
   body.shelf-opts-open #shelfScroll{overflow:hidden}
-  #shelfOptsPanel>*{flex:0 0 auto}
-  @media (max-width:560px){#shelfOptsPanel{max-height:calc(100dvh - 224px)}}
+  #shelfOptsPanel>*{flex:0 0 auto;min-width:0;max-width:100%}
   #hiddenList{display:flex;flex-direction:column;gap:6px}
   .hiddenRow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;color:#f4f1ea}
   .hiddenRow span{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -851,8 +869,8 @@
   #s3ConfirmNo{flex:1;min-height:42px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #s3Read{appearance:none;border:0;cursor:pointer;background:#e8b34b;color:#191919;font:inherit;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px}
   #s3Back{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.35);color:#f2ead9;font:inherit;font-weight:600;font-size:14px;padding:12px 18px;border-radius:10px}
-  #shelfViewSeg,#coverSizeSeg{display:flex;gap:6px}
-  #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{flex:1 1 0;justify-content:center}
+  #shelfViewSeg,#coverSizeSeg{display:flex;gap:6px;min-width:0;max-width:100%}
+  #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{flex:1 1 0;min-width:0;justify-content:center}
   @media (prefers-reduced-motion: reduce){.s3-book,.s3-wrap{transition-duration:.01ms}}
 
   /* ---- Scroll reading mode ----
@@ -865,7 +883,7 @@
   #scrollView{position:absolute;inset:0;z-index:3;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:18px 0 30px;box-sizing:border-box}
   #scrollView[hidden]{display:none}
   #scrollCol{display:flex;flex-direction:column;align-items:center;gap:18px}
-  .scPage{width:min(680px,calc(100% - 28px));background:#2b2b2b;line-height:0;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+  .scPage{position:relative;width:min(680px,calc(100% - 28px));background:#2b2b2b;line-height:0;box-shadow:0 14px 34px rgba(0,0,0,.5)}
   .scPage img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
   @media (max-width:560px){.scPage{width:calc(100% - 20px)}}
   body.mode-scroll #bookWrap{visibility:hidden}
@@ -892,12 +910,28 @@
   #quickMenu[hidden]{display:none}
   .qmItem{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:44px;padding:8px 12px;background:rgba(255,255,255,.05);color:#f4f1ea;border:1px solid transparent;border-radius:10px;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .qmItem:active{border-color:#e8b34b;background:rgba(232,179,75,.16)}
+  /* ---- Expand view tab ----
+     The quick-menu tab's twin at the reader's bottom-left: same
+     matte near-black dock, thin #4a4a4a border, rounded top
+     corners, 35px height, gold glyph. Reader-only under the same
+     rules as the quick tab (stands down for the shelf and for any
+     open overlay), with one deliberate exception: it stays
+     reachable in expanded view, where it becomes the exit. At
+     390px it occupies 14-74px, the Pages tab sits centred and the
+     quick tab mirrors it at the right — no two tabs can meet. */
+  #expandBtn{position:absolute;left:14px;bottom:0;z-index:26;width:60px;height:35px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(16,16,16,.94);color:#e8b34b;border:1px solid #4a4a4a;border-bottom:0;border-radius:12px 12px 0 0;cursor:pointer;font:inherit;box-shadow:0 -4px 18px rgba(0,0,0,.42);box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #expandBtn svg{width:19px;height:19px;stroke:#e8b34b;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
+  #expandBtn[aria-pressed="true"]{border-color:#e8b34b}
+  #expandBtn .icoCollapse{display:none}
+  #expandBtn.is-open .icoCollapse{display:block}
+  #expandBtn.is-open .icoExpand{display:none}
+  body.shelf-open #expandBtn,body.overlay-open #expandBtn,html.boot-shelf #expandBtn{display:none}
 
 </style></head>
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">Harlow’s Accidental Journey</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f4f1ea" fill-rule="evenodd" d="M8.99 4.16 L9.62 1.67 L14.38 1.67 L15.01 4.16 L15.42 4.33 L17.62 3.01 L20.99 6.38 L19.67 8.58 L19.84 8.99 L22.33 9.62 L22.33 14.38 L19.84 15.01 L19.67 15.42 L20.99 17.62 L17.62 20.99 L15.42 19.67 L15.01 19.84 L14.38 22.33 L9.62 22.33 L8.99 19.84 L8.58 19.67 L6.38 20.99 L3.01 17.62 L4.33 15.42 L4.16 15.01 L1.67 14.38 L1.67 9.62 L4.16 8.99 L4.33 8.58 L3.01 6.38 L6.38 3.01 L8.58 4.33 Z M8.70 12.00 A3.3 3.3 0 1 0 15.30 12.00 A3.3 3.3 0 1 0 8.70 12.00 Z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHead">Settings</span><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
+    <div id="banner"><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><strong id="mark">Harlow’s Accidental Journey</strong><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="soft" selected>Soft swish</option><option value="crisp">Crisp paper</option><option value="whoosh">Gentle whoosh</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="musicbox" selected>Music box</option><option value="piano">Soft piano</option><option value="pad">Calm pad</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="volRow">Volume <input id="sndVol" type="range" min="0" max="100" step="1" value="70" aria-label="Volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
@@ -957,7 +991,8 @@
     </div>
     <button id="pagesTab" type="button" aria-label="Pages" title="Pages" aria-expanded="false"><span class="tabPill" aria-hidden="true"></span><span class="tabRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5l7-7 7 7"/></svg></span></button>
     <button id="quickBtn" type="button" aria-label="Quick menu" title="Quick menu" aria-haspopup="true" aria-expanded="false"><svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false"><path d="M2 2h16M2 7h16M2 12h16" stroke="#e8b34b" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-    <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem">First page</button><button id="qmLast" class="qmItem" type="button" role="menuitem">Last page</button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span id="qmSlide">Slideshow: Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span id="qmSound">Sound: Off</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span id="qmLayout">Page layout: Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span id="qmLabels">Page labels: Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem">Book info</button></div>
+    <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem">First page</button><button id="qmLast" class="qmItem" type="button" role="menuitem">Last page</button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span id="qmSlide">Slideshow: Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span id="qmSound">Sound: Off</span></button><button id="qmModeBtn" class="qmItem" type="button" role="menuitem"><span id="qmMode">Reading mode: Hardcover</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span id="qmLayout">Page layout: Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span id="qmLabels">Page labels: Off</span></button><button id="qmGuidesBtn" class="qmItem" type="button" role="menuitem"><span id="qmGuides">Safety guides: Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem">Book info</button></div>
+    <button id="expandBtn" type="button" aria-label="Expand view" title="Expand view" aria-pressed="false"><svg class="icoExpand" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg class="icoCollapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v-5"/></svg></button>
     <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
@@ -1006,6 +1041,14 @@
         t.style.left = t.style.right = t.style.top = t.style.bottom = trimPct + "%";
         s.style.left = s.style.right = s.style.top = s.style.bottom = safePct + "%";
       });
+      if (scrollColEl) {
+        var sgs = scrollColEl.querySelectorAll(".scGuide");
+        for (var gi = 0; gi < sgs.length; gi++) {
+          var gt = sgs[gi].querySelector(".gTrim"), gs = sgs[gi].querySelector(".gSafe");
+          if (gt) gt.style.left = gt.style.right = gt.style.top = gt.style.bottom = trimPct + "%";
+          if (gs) gs.style.left = gs.style.right = gs.style.top = gs.style.bottom = safePct + "%";
+        }
+      }
     }
     var shadeL = document.getElementById("shadeL"), shadeR = document.getElementById("shadeR");
     var canvas = document.getElementById("gl");
@@ -1873,7 +1916,10 @@
         if (focusMode) focus = 0;   // entering portrait: frame the left page first
       }
       var sw = stage.clientWidth, sh = stage.clientHeight;
-      var pad = sw < 560 ? 10 : 24;
+      // Expanded view gives the book the whole screen: the stage
+      // padding shrinks to the phone's slim margin so the book
+      // visibly grows into the space the chrome gave back.
+      var pad = document.body.classList.contains("expanded") ? 10 : (sw < 560 ? 10 : 24);
       var availW = sw - pad * 2, availH = sh - pad * 2;
       if (focusMode) pageW = Math.min(availW, availH * bookAspect);
       else pageW = Math.min(availW / 2, availH * bookAspect);
@@ -2570,8 +2616,14 @@
         im.loading = i < 3 ? "eager" : "lazy";
         im.src = pageSrc(effSrc(i));
         d.appendChild(im);
+        var gd = document.createElement("div");
+        gd.className = "scGuide";
+        gd.setAttribute("aria-hidden", "true");
+        gd.innerHTML = '<div class="gTrim"><span class="gtag gtagT">TRIM</span></div><div class="gSafe"><span class="gtag gtagS">SAFE</span></div>';
+        d.appendChild(gd);
         scrollColEl.appendChild(d);
       }
+      paintGuides();
       scrollSig = scrollSignature();
     }
     function syncScrollView() {
@@ -2667,6 +2719,13 @@
       if (scrollViewEl) scrollViewEl.hidden = !on;
       if (on) buildScrollView();
     }
+    function readingModeName(v) {
+      return v === "magazine" ? "Magazine" : v === "swipe" ? "Swipe" : v === "scroll" ? "Scroll" : v === "simple" ? "Simple" : "Hardcover";
+    }
+    /* Shared Reading mode store: Settings and the quick menu both
+       drive the mode through this one function, so they can never
+       disagree — it syncs the Settings select and the quick-menu
+       row and persists, exactly like setLayoutMode does for layout. */
     function setReadingMode(mode) {
       var anchor = turnMode === "scroll" ? scrollCurIdx : currentFirst();
       turnGen++;
@@ -2679,6 +2738,8 @@
       try { localStorage.setItem("flipbook18-page-turn-v3", mode); } catch (err) {}
       var tp = document.getElementById("turnPick");
       if (tp) tp.value = mode;
+      var qm0 = document.getElementById("qmMode");
+      if (qm0) qm0.textContent = "Reading mode: " + readingModeName(mode);
       if (mode === "scroll") {
         applyScrollVisibility();
         scrollCurIdx = Math.max(0, Math.min(N - 1, anchor));
@@ -2701,6 +2762,7 @@
         return;
       }
       if (e.key === "Escape" && sheet.classList.contains("open")) { closeSheet(); return; }
+      if (e.key === "Escape" && document.body.classList.contains("expanded") && !(document.fullscreenElement || document.webkitFullscreenElement)) { setExpanded(false); return; }
       if (e.repeat || e.altKey || e.ctrlKey || e.metaKey) return;
       // Keys belong to whatever has focus. While a form control is in
       // use — typing a book title, editing page text, working a
@@ -5766,6 +5828,8 @@
     function setGuides(on) {
       document.body.classList.toggle("guides-on", on);
       guidesBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      var qg = document.getElementById("qmGuides");
+      if (qg) qg.textContent = "Safety guides: " + (on ? "On" : "Off");
       try { localStorage.setItem("fb-guides", on ? "1" : "0"); } catch (err) {}
     }
     guidesBtn.onclick = function () { setGuides(!document.body.classList.contains("guides-on")); };
@@ -5784,11 +5848,30 @@
     }
     function scheduleFit() { requestAnimationFrame(function () { requestAnimationFrame(fit); }); }
     function refit() { scheduleFit(); setTimeout(fit, 60); setTimeout(fit, 240); }
+    var expandBtn = document.getElementById("expandBtn");
+    function syncExpandBtn() {
+      if (!expandBtn) return;
+      var on = document.body.classList.contains("expanded") || !!fsElement();
+      expandBtn.classList.toggle("is-open", on);
+      expandBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      expandBtn.setAttribute("aria-label", on ? "Exit expanded view" : "Expand view");
+      expandBtn.title = on ? "Exit expanded view" : "Expand view";
+    }
     function setExpanded(on) {
       document.body.classList.toggle("expanded", on);
       fsShow(on, on ? "Exit expanded view" : (fsRequest ? "Full screen" : "Expand view"));
+      if (on && typeof closeQuickMenu === "function") closeQuickMenu(false);
+      syncExpandBtn();
       refit();
     }
+    if (expandBtn) expandBtn.addEventListener("click", function () {
+      if (fsElement()) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        return;
+      }
+      setExpanded(!document.body.classList.contains("expanded"));
+    });
     if (!fsRequest) fsShow(false, "Expand view");
     fsBtn.onclick = function () {
       if (document.body.classList.contains("expanded")) { setExpanded(false); return; }
@@ -5807,6 +5890,7 @@
     function onFsChange() {
       var inFs = !!fsElement();
       fsShow(inFs, inFs ? "Exit full screen" : (fsRequest ? "Full screen" : "Expand view"));
+      syncExpandBtn();
       refit();
     }
     document.addEventListener("fullscreenchange", onFsChange);
@@ -7371,6 +7455,11 @@
     settingsBtn.addEventListener("click", function () {
       setSettings(settingsPanel.hidden);
     });
+    var settingsCloseBtn = document.getElementById("settingsClose");
+    if (settingsCloseBtn) settingsCloseBtn.addEventListener("click", function () {
+      setSettings(false);
+      try { settingsBtn.focus({ preventScroll: true }); } catch (err) { try { settingsBtn.focus(); } catch (err2) {} }
+    });
     document.addEventListener("pointerdown", function (e) {
       if (!settingsPanel.hidden && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) setSettings(false);
     });
@@ -7434,28 +7523,33 @@
       return idx;
     }
     /* ---- Reader quick menu (☰) ----
-       Seven items: First page, Last page, the slideshow cycle,
-       the master Sound toggle, Page layout, Page labels, and
-       Book info. Slideshow, Sound, Page layout and Page labels
-       are state controls — they update in place and the menu
-       stays open, driving the same shared stores as Settings
-       (setSlideshow / the sound toggles / setLayoutMode /
-       setLabelMode), so menu and Settings always agree; the
-       other three actions close it. Every close path returns
-       focus to the ☰ button. */
+       Nine items: First page, Last page, the slideshow cycle,
+       the master Sound toggle, Reading mode, Page layout, Page
+       labels, Safety guides, and Book info. Slideshow, Sound,
+       Reading mode, Page layout, Page labels and Safety guides
+       are state controls — they
+       update in place and the menu stays open, driving the same
+       shared stores as Settings (setSlideshow / the sound
+       toggles / setReadingMode / setLayoutMode / setLabelMode),
+       so menu and Settings always agree; the other three actions
+       close it. Every close path returns focus to the ☰ button. */
     var quickBtn = document.getElementById("quickBtn");
     var quickMenu = document.getElementById("quickMenu");
     var qmSlideEl = document.getElementById("qmSlide");
     var qmSoundEl = document.getElementById("qmSound");
+    var qmModeEl = document.getElementById("qmMode");
     var qmLayoutEl = document.getElementById("qmLayout");
     var qmLabelsEl = document.getElementById("qmLabels");
+    var qmGuidesEl = document.getElementById("qmGuides");
     var quickOpen = false;
     function quickSoundOn() { return !!(sndFxOn || sndMusicOn); }
     function paintQuickMenu() {
       if (qmSlideEl) qmSlideEl.textContent = "Slideshow: " + (slideSec ? slideSec + "s" : "Off");
       if (qmSoundEl) qmSoundEl.textContent = "Sound: " + (quickSoundOn() ? "On" : "Off");
+      if (qmModeEl) qmModeEl.textContent = "Reading mode: " + readingModeName(turnMode);
       if (qmLayoutEl) qmLayoutEl.textContent = "Page layout: " + layoutDisplayName(layoutMode);
       if (qmLabelsEl) qmLabelsEl.textContent = "Page labels: " + (labelMode === "spreads" ? "On" : "Off");
+      if (qmGuidesEl) qmGuidesEl.textContent = "Safety guides: " + (document.body.classList.contains("guides-on") ? "On" : "Off");
       if (quickBtn) quickBtn.setAttribute("aria-expanded", quickOpen ? "true" : "false");
     }
     function setQuickMenu(open) {
@@ -7489,6 +7583,14 @@
         if (on) { ensureAudio(); startMusic(); } else stopMusic();
         paintQuickMenu();
       });
+      var qmModeBtn = document.getElementById("qmModeBtn");
+      if (qmModeBtn) qmModeBtn.addEventListener("click", function () {
+        var order = ["hardcover", "magazine", "swipe", "scroll", "simple"];
+        var idx = order.indexOf(turnMode);
+        var next = order[(idx + 1) % order.length];
+        setReadingMode(next);
+        paintQuickMenu();
+      });
       var qmLayoutBtn = document.getElementById("qmLayoutBtn");
       if (qmLayoutBtn) qmLayoutBtn.addEventListener("click", function () {
         var order = ["auto", "single", "double"];
@@ -7500,6 +7602,11 @@
       var qmLabelsBtn = document.getElementById("qmLabelsBtn");
       if (qmLabelsBtn) qmLabelsBtn.addEventListener("click", function () {
         setLabelMode(labelMode === "spreads" ? "numbers" : "spreads");
+        paintQuickMenu();
+      });
+      var qmGuidesBtn = document.getElementById("qmGuidesBtn");
+      if (qmGuidesBtn) qmGuidesBtn.addEventListener("click", function () {
+        setGuides(!document.body.classList.contains("guides-on"));
         paintQuickMenu();
       });
       document.getElementById("qmInfo").addEventListener("click", function () {
@@ -8665,6 +8772,7 @@
     }
     function openShelf() {
       closeSheet();
+      if (document.body.classList.contains("expanded")) setExpanded(false);
       closeTextPanel();
       if (typeof stopNarration === "function") stopNarration();
       setSettings(false);
