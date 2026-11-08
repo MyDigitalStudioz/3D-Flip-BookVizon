@@ -93,7 +93,7 @@
   .wizPane{display:flex;flex-direction:column;gap:10px;padding-top:12px}
   .wizPane[hidden]{display:none}
   .wizLead{margin:0;font-size:14px;color:#cfc9bd}
-  .wizChoice{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:12px;padding:10px 14px;font:inherit;font-size:15px;text-align:left;cursor:pointer;box-sizing:border-box}
+  .wizChoice{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:10px 14px;font:inherit;font-size:15px;text-align:left;cursor:pointer;box-sizing:border-box}
   .wizChoice svg{width:22px;height:22px;fill:#f4f1ea;flex:0 0 auto;display:block}
   .wizChoice small{display:block;font-size:12px;color:#b9b2a4;margin-top:2px}
   .wizChoice[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
@@ -106,7 +106,7 @@
   .wizNote{font-size:12px;line-height:1.4;color:#b9b2a4;margin:0}
   .wizOpt{display:flex;align-items:center;gap:8px;font-size:14px;min-height:44px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .wizOpt input[type="checkbox"]{width:18px;height:18px;accent-color:#e8b34b;flex:0 0 auto}
-  #pdfLayout,#bookSize{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:8px;padding:4px 8px;font:inherit}
+  #pdfLayout,#bookSize{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:4px 8px;font:inherit}
   .wizWarn{font-size:13px;line-height:1.45;color:#f0c66d;background:rgba(232,179,75,.12);border:1px solid rgba(232,179,75,.45);border-radius:8px;padding:8px 10px}
   .wizWarn[hidden]{display:none}
   .wizBar{height:8px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
@@ -115,11 +115,11 @@
   #wizDoneMsg strong{color:#e8b34b}
   .wizFoot{display:flex;gap:10px;margin-top:16px}
   .wizFoot[hidden]{display:none}
-  #wizBack{flex:0 0 auto;min-height:46px;padding:8px 18px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;cursor:pointer}
+  #wizBack{flex:0 0 auto;min-height:46px;padding:8px 18px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;cursor:pointer}
   #wizBack[hidden]{display:none}
-  #wizNext{flex:1 1 auto;min-height:46px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+  #wizNext{flex:1 1 auto;min-height:46px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #wizNext[disabled]{opacity:.45;cursor:default}
-  #wizStart,#wizClose2{width:100%;min-height:46px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+  #wizStart,#wizClose2{width:100%;min-height:46px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #pdfPrintSet{width:18px;height:18px;accent-color:#e8b34b;flex:0 0 auto}
   #sndFx,#sndMusic{width:18px;height:18px;accent-color:#e8b34b;flex:0 0 auto}
   #settingsPanel input[type="range"]{flex:1 1 auto;min-width:90px;accent-color:#e8b34b}
@@ -127,7 +127,7 @@
   #loadBar[hidden]{display:none}
   #loadFill{height:100%;width:0;background:#e8b34b}
   #turnLabel{display:flex;align-items:center;gap:6px;color:#f4f1ea;font-size:13px;white-space:nowrap}
-  #turnPick,#layoutPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
+  #turnPick,#layoutPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   #voicePick{max-width:188px;text-overflow:ellipsis}
   #bdColor{width:46px;height:30px;padding:2px;border:1px solid rgba(244,241,234,.45);border-radius:8px;background:#242424;cursor:pointer;flex:0 0 auto}
   #settingsPanel .setRow[hidden],#settingsPanel .setBtn[hidden]{display:none}
@@ -170,6 +170,12 @@
      banner (30) and its Settings panel, no matter their inner z-index. */
   #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;z-index:1}
   #backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;background:#373737}
+  /* Book switch: while a different book is swapped in, the book
+     surfaces keep their layout but paint nothing (see the
+     .switching handling in openShelfBook) until the incoming
+     book's opening spread has decoded — no frame of the outgoing
+     book's pages, cover, or leaf can show during a switch. */
+  #stage.switching #bookWrap,#stage.switching #scrollView{visibility:hidden}
   /* Lightbox treatment for a reader's own image: cover fit, dimmed and
      lightly blurred so the book stays the lit hero; scaled a touch so
      the blur never shows a soft edge against the stage. */
@@ -248,21 +254,21 @@
   #shelfFilterBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 18px 0}
   #shelfFilterBar[hidden]{display:none}
   #shelfFilterChip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#f0c66d;background:rgba(232,179,75,.12);border:1px solid rgba(232,179,75,.55);border-radius:999px;padding:6px 12px}
-  #shelfFilterReset{min-height:32px;padding:5px 13px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #shelfFilterReset{min-height:32px;padding:5px 13px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   /* ---- Replace page art (strip edit mode) ----
      "Edit pages" turns the strip from a navigator into an editor:
      tapping a page selects it (gold outline), the action bar below
      offers Replace / Revert, and a replaced page's thumbnail wears
      a small REPLACED tag. Leaving the sheet leaves edit mode. */
   #sheetActions{display:inline-flex;align-items:center;gap:8px}
-  #stripEditBtn{min-height:34px;padding:6px 14px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap;flex:0 0 auto}
+  #stripEditBtn{min-height:34px;padding:6px 14px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap;flex:0 0 auto}
   #stripEditBtn[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22);color:#e8b34b}
   #stripNote{margin:0;padding:8px 16px 0;font-size:12.5px;line-height:1.45;color:#f0c66d}
   #stripNote[hidden]{display:none}
   #stripActions{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
   #stripActions[hidden]{display:none}
   #stripSelLabel{font-size:13px;color:#cfc9bd;margin-right:auto}
-  #artReplaceBtn,#artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #artReplaceBtn,#artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{min-height:38px;padding:7px 16px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #artReplaceBtn{background:#e8b34b;color:#191919;border:0}
   #artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
   #artRevertBtn[hidden],#artSpreadBtn[hidden],#artPhBtn[hidden],#artPhSpreadBtn[hidden],#artInsertBeforeBtn[hidden],#artInsertAfterBtn[hidden],#artRemoveBtn[hidden]{display:none}
@@ -270,7 +276,7 @@
   #insertBar{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
   #insertBar[hidden]{display:none}
   #insertBarText{font-size:13px;line-height:1.45;color:#f0c66d;margin-right:auto}
-  #insertFileBtn,#insertPhBtn,#insertCancelBtn,#phCancelBtn{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
+  #insertFileBtn,#insertPhBtn,#insertCancelBtn,#phCancelBtn{min-height:38px;padding:7px 16px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
   #insertFileBtn{background:#e8b34b;color:#191919;border:0}
   #phRow{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
   #phRow[hidden]{display:none}
@@ -287,7 +293,7 @@
   #stripOffer{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
   #stripOffer[hidden]{display:none}
   #stripOfferText{font-size:13px;line-height:1.45;color:#f0c66d;margin-right:auto}
-  #stripOfferYes,#stripOfferNo{min-height:38px;padding:7px 16px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #stripOfferYes,#stripOfferNo{min-height:38px;padding:7px 16px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #stripOfferYes{background:#e8b34b;color:#191919;border:0}
   #stripOfferNo{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
   .twrap{position:relative;display:inline-block;line-height:0;border-radius:3px}
@@ -324,7 +330,7 @@
      to the spread where Edit was pressed (see the JS), so a flip
      can't swap the fields mid-edit. */
   #textActions{display:inline-flex;align-items:center;gap:8px}
-  #textEdit,#textSave,#textCancel{min-height:34px;padding:6px 14px;border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #textEdit,#textSave,#textCancel{min-height:34px;padding:6px 14px;border-radius:10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #textEdit,#textCancel{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
   #textSave{background:#e8b34b;color:#191919;border:0}
   #textEdit[hidden],#textSave[hidden],#textCancel[hidden]{display:none}
@@ -444,7 +450,16 @@
      the scroll gesture inside the panel — the shelf behind it never
      scrolls along. This cap is scoped to this panel only; the
      Settings panel, wizard, and sheets keep their own height rules. */
-  #shelfOptsPanel{max-height:calc(100dvh - 150px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #shelfOptsPanel{max-height:calc(100dvh - 150px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+  /* While Shelf options is open, the background carries the same
+     lock the app's full-screen menus get by covering the screen:
+     the page cannot scroll or pan and the shelf list behind the
+     popover cannot be dragged — a drag that starts inside the
+     popover scrolls only the popover's own list (touch-action:
+     pan-y above keeps horizontal drags from panning anything).
+     The JS half is the touchmove guard in setShelfOpts. */
+  body.shelf-opts-open{overflow:hidden}
+  body.shelf-opts-open #shelfScroll{overflow:hidden}
   #shelfOptsPanel>*{flex:0 0 auto}
   @media (max-width:560px){#shelfOptsPanel{max-height:calc(100dvh - 224px)}}
   #hiddenList{display:flex;flex-direction:column;gap:6px}
@@ -509,6 +524,11 @@
   .sbook img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#2b2b2b}
   .sbook .nowTag{position:absolute;top:6px;right:6px;z-index:2;font-size:9px;font-weight:800;letter-spacing:.07em;color:#191919;background:#e8b34b;border-radius:5px;padding:2px 5px}
   .sbook .nowTag[hidden]{display:none}
+  /* Marks badge: a book with marked pages announces itself on its
+     shelf cover — a small gold star + count in the cover's top-left
+     (the READING tag owns the top-right). Rendered by buildShelf
+     only when the count is above zero. */
+  .sbook .markTag{position:absolute;top:6px;left:6px;z-index:2;font-size:9.5px;font-weight:800;letter-spacing:.02em;color:#191919;background:#e8b34b;border-radius:5px;padding:2px 5px;box-shadow:0 1px 4px rgba(0,0,0,.45)}
   .sbook.now .covWrap{outline:2px solid #e8b34b;outline-offset:2px}
   /* Title block: a fixed start below the plank (cover bottom +
      24px clears the plank's underside by ~7px in every row) and a
@@ -550,6 +570,10 @@
   #icStats{margin-top:14px;border-top:1px solid rgba(244,241,234,.16)}
   .icStat{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid rgba(244,241,234,.16);font-size:13.5px}
   .icStatK{color:#b9b2a4;flex:0 0 auto}
+  /* The marks line on both book cards (Classic info card + 3D
+     detail card): shown only when the book has marked pages. */
+  .marksLine{margin:12px 0 0;font-size:13.5px;font-weight:600;color:#e8b34b}
+  .marksLine[hidden]{display:none}
   .icStatV{color:#f4f1ea;text-align:right;font-weight:600}
   #icLinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   /* The card's one editable field: the book's status. Changing it
@@ -594,7 +618,7 @@
      is display:block). */
   #settingsPanel .setBtn{flex-wrap:nowrap}
   #settingsPanel .setBtn span{white-space:nowrap}
-  #fxPick,#musPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer}
+  #fxPick,#musPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   #fxNote,#musNote{font-size:12px;line-height:1.4;color:#b9b2a4}
   #fxNote[hidden],#musNote[hidden]{display:none}
   #settingsPanel input[type="checkbox"],#wiz input[type="checkbox"]{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:6px;background:#191919;border:1.5px solid rgba(244,241,234,.55);position:relative;cursor:pointer;flex:0 0 auto;margin:0;padding:0}
@@ -772,7 +796,7 @@
   .s3-bar-row{display:flex;align-items:center;gap:6px;margin-top:12px}
   .s3-chev{appearance:none;border:0;background:transparent;color:#f2ead9;width:44px;height:44px;font-size:27px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%}
   .s3-chev:disabled{opacity:.3;cursor:default}
-  #s3Open{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.55);color:#f2ead9;font:inherit;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:12px 30px;border-radius:999px}
+  #s3Open{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.55);color:#f2ead9;font:inherit;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:12px 30px;border-radius:10px}
   #s3Open:hover{border-color:#e6c877;color:#e6c877}
   #s3Dashes{display:flex;align-items:center;gap:6px;flex:1 1 280px;max-width:300px;min-width:0;margin-left:auto}
   .s3-dash{appearance:none;border:0;background:transparent;cursor:pointer;flex:1 1 0;min-width:8px;height:24px;padding:0;display:flex;align-items:center}
@@ -825,8 +849,8 @@
   #s3Confirm p{margin:0 0 10px;font-size:13.5px;line-height:1.45}
   #s3ConfirmYes{flex:1;min-height:42px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
   #s3ConfirmNo{flex:1;min-height:42px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
-  #s3Read{appearance:none;border:0;cursor:pointer;background:#e8b34b;color:#191919;font:inherit;font-weight:700;font-size:15px;padding:12px 24px;border-radius:999px}
-  #s3Back{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.35);color:#f2ead9;font:inherit;font-weight:600;font-size:14px;padding:12px 18px;border-radius:999px}
+  #s3Read{appearance:none;border:0;cursor:pointer;background:#e8b34b;color:#191919;font:inherit;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px}
+  #s3Back{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.35);color:#f2ead9;font:inherit;font-weight:600;font-size:14px;padding:12px 18px;border-radius:10px}
   #shelfViewSeg,#coverSizeSeg{display:flex;gap:6px}
   #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{flex:1 1 0;justify-content:center}
   @media (prefers-reduced-motion: reduce){.s3-book,.s3-wrap{transition-duration:.01ms}}
@@ -877,7 +901,7 @@
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3CopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3Back" type="button">&#8592; Back to shelf</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf"><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Info flips a book's card over.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3CopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3Back" type="button">&#8592; Back to shelf</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -934,7 +958,7 @@
     <button id="pagesTab" type="button" aria-label="Pages" title="Pages" aria-expanded="false"><span class="tabPill" aria-hidden="true"></span><span class="tabRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5l7-7 7 7"/></svg></span></button>
     <button id="quickBtn" type="button" aria-label="Quick menu" title="Quick menu" aria-haspopup="true" aria-expanded="false"><svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false"><path d="M2 2h16M2 7h16M2 12h16" stroke="#e8b34b" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem">First page</button><button id="qmLast" class="qmItem" type="button" role="menuitem">Last page</button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span id="qmSlide">Slideshow: Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span id="qmSound">Sound: Off</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span id="qmLayout">Page layout: Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span id="qmLabels">Page labels: Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem">Book info</button></div>
-    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
+    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
   <script src="images/manifest.js"></script>
@@ -5049,6 +5073,22 @@
         if (e) { e.marks = currentMarks.slice(); queuePersistImport(e); }
       }
     }
+    /* How many spreads of a book are marked, read from the same
+       stores the reader writes: fb-marks (marksStore) for catalog
+       books, the shelf entry's own record for imports. The open
+       book answers from its live list, so a count taken right
+       after marking is exact. Feeds the two book cards' marks
+       line and the Classic shelf's cover badge — a book with
+       flagged pages announces itself before it is opened. */
+    function marksCountFor(id) {
+      if (!id) return 0;
+      if (id === marksBookId()) return currentMarks.length;
+      if (marksAreCatalog(id)) return (marksStore[id] || []).length;
+      var e = null;
+      try { e = findShelfEntry(id); } catch (err) {}
+      return (e && e.marks) ? e.marks.length : 0;
+    }
+    function marksLineText(n) { return "\u2605 " + n + (n === 1 ? " marked page" : " marked pages"); }
     function isPageMarked(idx) { return currentMarks.indexOf(idx) >= 0; }
     function refreshMarkChrome() {
       if (!markBtn) return;
@@ -5065,6 +5105,7 @@
       currentMarks.sort(function (a, b) { return a - b; });
       saveMarks();
       refreshMarkChrome();
+      if (typeof buildShelf === "function" && shelfIsOpen) buildShelf();
       if (sheet.classList.contains("open")) buildStrip();
     });
     var marksListEl = document.getElementById("marksList");
@@ -5098,6 +5139,7 @@
       currentMarks = [];
       saveMarks();
       refreshMarkChrome();
+      if (typeof buildShelf === "function" && shelfIsOpen) buildShelf();
       buildStrip();
     });
 
@@ -8004,9 +8046,23 @@
       if (ab) ab.setAttribute("aria-pressed", arrangeOn ? "true" : "false");
       renderHiddenList();
     }
+    /* Background lock while the popover is open (the CSS half is
+       body.shelf-opts-open): a touch drag that starts anywhere
+       outside the popover must not scroll or pan what sits behind
+       it. Drags that start inside the popover are left alone, so
+       its own list scrolls natively, end to end. */
+    function shelfOptsTouchGuard(e) {
+      var t = e.target;
+      if (shelfOptsPanel && t && shelfOptsPanel.contains(t)) return;
+      if (settingsPanel && t && settingsPanel.contains(t)) return;
+      e.preventDefault();
+    }
     function setShelfOpts(open) {
       var wasOpen = shelfOptsOpen;
       shelfOptsOpen = !!open;
+      document.body.classList.toggle("shelf-opts-open", shelfOptsOpen);
+      if (shelfOptsOpen) document.addEventListener("touchmove", shelfOptsTouchGuard, { passive: false });
+      else document.removeEventListener("touchmove", shelfOptsTouchGuard);
       if (shelfOptsPanel) shelfOptsPanel.hidden = !shelfOptsOpen;
       if (shelfOptsBtn) shelfOptsBtn.setAttribute("aria-expanded", shelfOptsOpen ? "true" : "false");
       if (shelfOptsOpen) { rememberReturnFocus("shelfopts", shelfOptsBtn, shelfOptsPanel); syncShelfOptsUI(); if (shelfOptsPanel) shelfOptsPanel.scrollTop = 0; }
@@ -8244,6 +8300,12 @@
       addStat("Source", sourceLabel(entry.source, entry));
       stats.hidden = !stats.children.length;
       document.getElementById("s3Status").value = bookStatus(entry.id);
+      var s3MarksEl = document.getElementById("s3Marks");
+      if (s3MarksEl) {
+        var s3MarkN = marksCountFor(entry.id);
+        s3MarksEl.hidden = !(s3MarkN > 0);
+        s3MarksEl.textContent = s3MarkN > 0 ? marksLineText(s3MarkN) : "";
+      }
       var links = document.getElementById("s3Links"); links.innerHTML = "";
       (info.links || []).forEach(function (l) {
         if (!l || !l.label || !l.url) return;
@@ -8536,6 +8598,14 @@
           tag.textContent = "READING";
           tag.hidden = entry.id !== currentEntryId;
           cov.appendChild(tag);
+          var markCount = marksCountFor(entry.id);
+          if (markCount > 0) {
+            var markBadge = document.createElement("span");
+            markBadge.className = "markTag";
+            markBadge.textContent = "\u2605 " + markCount;
+            markBadge.title = marksLineText(markCount);
+            cov.appendChild(markBadge);
+          }
           var tit = document.createElement("span");
           tit.className = "stit";
           tit.textContent = entry.title;
@@ -8908,6 +8978,12 @@
       stats.hidden = !stats.children.length;
       icBookId = entry.id;
       icStatusEl.value = bookStatus(entry.id);
+      var icMarksEl = document.getElementById("icMarks");
+      if (icMarksEl) {
+        var icMarkN = marksCountFor(entry.id);
+        icMarksEl.hidden = !(icMarkN > 0);
+        icMarksEl.textContent = icMarkN > 0 ? marksLineText(icMarkN) : "";
+      }
       var links = document.getElementById("icLinks");
       links.innerHTML = "";
       (info.links || []).forEach(function (l) {
@@ -9166,11 +9242,20 @@
       for (i = 0; i < shelfImports.length; i++) if (shelfImports[i].id === id) return shelfImports[i];
       return null;
     }
+    /* Book-switch generation: each switch to a DIFFERENT book
+       blanks the stage (the .switching class hides the book
+       surfaces) and only the newest switch may reveal it again,
+       so back-to-back switches can never flash an in-between
+       book either. */
+    var bookSwitchGen = 0;
     function openShelfBook(id) {
       if (id === currentEntryId) { recordBookOpened(id); noteBookOpened(); closeShelf(); return; }
       var entry = findShelfEntry(id);
       if (!entry) { closeShelf(); return; }
       noteBookOpened();
+      var mySwitch = ++bookSwitchGen;
+      stage.classList.add("switching");
+      setTimeout(function () { if (mySwitch === bookSwitchGen) stage.classList.remove("switching"); }, 2500);
       // Bank the outgoing book's place under its own key before the swap.
       placeSave();
       stopPdf();
@@ -9251,6 +9336,35 @@
       closeShelf();
       restorePlace();
       fit();
+      // Reveal the stage only once the incoming book's opening
+      // spread has actually decoded — until then .switching keeps
+      // every book surface unpainted, so the outgoing book cannot
+      // linger for a beat under the new one. A guard timer reveals
+      // anyway (the reader never stays blank), and a newer switch
+      // supersedes this reveal.
+      var openIdxs = [];
+      if (turnMode === "scroll") {
+        if (scrollCurIdx >= 0 && scrollCurIdx < N) openIdxs.push(scrollCurIdx);
+      } else {
+        var liS = flipped === 0 ? null : 2 * flipped - 1;
+        var riS = flipped === HALF ? null : 2 * flipped;
+        if (liS !== null) openIdxs.push(liS);
+        if (riS !== null) openIdxs.push(riS);
+      }
+      var switchRevealed = false;
+      function revealSwitch() {
+        if (switchRevealed || mySwitch !== bookSwitchGen) return;
+        switchRevealed = true;
+        stage.classList.remove("switching");
+      }
+      var decs = [];
+      openIdxs.forEach(function (ix) {
+        var im = pageImgs[ix];
+        if (im && im.decode) decs.push(im.decode().catch(function () {}));
+      });
+      if (decs.length && typeof Promise !== "undefined") Promise.all(decs).then(revealSwitch);
+      else revealSwitch();
+      setTimeout(revealSwitch, 1500);
     }
     shelfBtn.addEventListener("click", function () {
       if (shelfIsOpen) closeShelf(); else openShelf();
