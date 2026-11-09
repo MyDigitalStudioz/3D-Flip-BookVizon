@@ -93,14 +93,14 @@
   /* Shelf mode: the page counter and the open book's title belong to
      the reader, not the shelf — hide them (visibility, so the banner
      keeps its height and nothing jumps) while the shelf is open. */
-  body.shelf-open #counter,body.shelf-open #mark,body.shelf-open #textBtn,body.shelf-open #compareBtn,body.shelf-open #listenBtn,body.shelf-open #editionBadge{visibility:hidden}
+  body.shelf-open #counter,body.shelf-open #mark,body.shelf-open #textBtn,body.shelf-open #compareBtn,body.shelf-open #listenBtn,body.shelf-open #editionBadge,body.shelf-open #artArrangeBtn{visibility:hidden}
   /* Boot-shelf (see the head script): before the main script runs,
      the shelf is the painted view and the reader's banner chrome
      stays quiet, exactly as body.shelf-open presents it after the
      handoff. The class is removed at landing, so these rules never
      govern the live page. */
   html.boot-shelf #shelf[hidden]{display:flex}
-  html.boot-shelf #counter,html.boot-shelf #mark,html.boot-shelf #textBtn,html.boot-shelf #compareBtn,html.boot-shelf #listenBtn,html.boot-shelf #editionBadge{visibility:hidden}
+  html.boot-shelf #counter,html.boot-shelf #mark,html.boot-shelf #textBtn,html.boot-shelf #compareBtn,html.boot-shelf #listenBtn,html.boot-shelf #editionBadge,html.boot-shelf #artArrangeBtn{visibility:hidden}
   /* While the Bookshelf is open (Classic or 3D — one shelf state),
      the Pages peek tab stands down ENTIRELY: the Pages sheet belongs
      to the book in the reader, and on the shelf there is no reader
@@ -225,7 +225,7 @@
   /* z-index 1 + position makes the stage its own stacking context, so
      the arrows / leaf layers / shelf inside it can never outrank the
      banner (30) and its Settings panel, no matter their inner z-index. */
-  #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;z-index:1}
+  #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;z-index:1;-webkit-touch-callout:none}
   #backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;background:#373737}
   /* Book switch: while a different book is swapped in, the book
      surfaces keep their layout but paint nothing (see the
@@ -252,7 +252,22 @@
   #book{position:relative;perspective:2300px}
   #book.single{overflow:hidden}
   .base{position:absolute;top:0;height:100%;z-index:1;background:#2b2b2b;box-shadow:0 24px 55px rgba(0,0,0,.5)}
-  .base img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
+  .base img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
+  /* v12.8 — no long-press hijack on book art: the iOS callout
+     (Share / Save to Photos / Copy) is suppressed on the stage
+     and every page image, so an accidental long-press while
+     reading or arranging does nothing. */
+  #stage,#bookWrap,#book,.base,.base img,#flipLayer,#flipLayer img,#botLayer,#botLayer img,#scrollView,.scPage,.scPage img{-webkit-touch-callout:none}
+  /* v12.9 — no text selection in the reader: a long-press on the
+     on-art text (or anywhere on the page) must never start an iOS
+     text selection — no handles, no loupe, no Copy / Look Up /
+     Translate. The ban covers the whole stage subtree (page
+     layers, scroll pages, and the on-art overlay boxes ride
+     inside it) plus the overlay boxes by name. Form fields keep
+     normal selection and editing: the rule is scoped to the
+     stage, and any input/textarea is explicitly handed back. */
+  #stage,#stage *,#bookWrap,#book,.base,.artOv,.artOv *{-webkit-user-select:none;user-select:none}
+  #stage input,#stage textarea{-webkit-user-select:text;user-select:text}
   .shade{position:absolute;top:0;height:100%;z-index:3;opacity:0;pointer-events:none}
   #shadeL{background:linear-gradient(to left,rgba(0,0,0,.55),rgba(0,0,0,0) 75%)}
   #shadeR{background:linear-gradient(to right,rgba(0,0,0,.55),rgba(0,0,0,0) 75%)}
@@ -337,9 +352,30 @@
   #stripEditBtn[aria-pressed="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22);color:#e8b34b}
   #stripNote{margin:0;padding:8px 16px 0;font-size:12.5px;line-height:1.45;color:#f0c66d}
   #stripNote[hidden]{display:none}
-  #stripActions{display:flex;align-items:center;gap:10px;padding:0 14px 14px;flex-wrap:wrap}
+  #stripActions{padding:2px 14px 14px}
   #stripActions[hidden]{display:none}
-  #stripSelLabel{font-size:13px;color:#cfc9bd;margin-right:auto}
+  #stripSelLabel{display:block;font-size:13px;color:#cfc9bd;margin:0 0 12px}
+  /* REFINEMENT B — Edit-mode action grid: the six page actions as
+     three labelled pairs in an even two-column grid. Group labels
+     use the panels' segment-label style (small muted caps); every
+     button is the same width and height in the sheet's existing
+     button language (10px radius), with a small leading icon per
+     action. A group renders only while at least one of its buttons
+     does — syncEditGroups follows the buttons' hidden flags, which
+     refreshArtSelection owns exactly as before. Remove / Revert
+     keep their plain row below the grid. */
+  .editGroup{margin:0 0 12px}
+  .editGroup.gone{display:none}
+  .editGroupLbl{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4;margin:0 0 6px}
+  .editPair{display:grid;grid-template-columns:1fr 1fr;gap:10px;height:52px}
+  #stripActions .editPair>button{display:flex;align-items:center;gap:8px;justify-content:flex-start;text-align:left;width:100%;height:100%;padding:8px 12px;line-height:1.25}
+  #stripActions .editPair>button[hidden]{display:none}
+  .editPair>button:nth-child(1){grid-column:1}
+  .editPair>button:nth-child(2){grid-column:2}
+  .editPair>button svg{width:17px;height:17px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .editPair>button>span{min-width:0}
+  .editExtra{display:flex;gap:10px;flex-wrap:wrap}
+  .editExtra.gone{display:none}
   #artReplaceBtn,#artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{min-height:38px;padding:7px 16px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #artReplaceBtn{background:#e8b34b;color:#191919;border:0}
   #artRevertBtn,#artSpreadBtn,#artPhBtn,#artPhSpreadBtn,#artInsertBeforeBtn,#artInsertAfterBtn,#artRemoveBtn{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45)}
@@ -482,9 +518,16 @@
   #shelfOptsBtn[aria-expanded="true"]{border-color:#e8b34b;background:rgba(232,179,75,.22)}
   #shelf{position:absolute;inset:0;z-index:15;background:radial-gradient(ellipse 90% 30% at 50% 26%,rgba(232,179,75,.10),rgba(232,179,75,0) 70%),radial-gradient(ellipse 90% 30% at 50% 66%,rgba(232,179,75,.07),rgba(232,179,75,0) 70%),linear-gradient(180deg,#262320,#171514);display:flex;flex-direction:column;overflow:hidden}
   #shelf[hidden]{display:none}
-  #shelfHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 4px}
+  /* Top breathing room: 12px more air above the header block so
+     the title no longer hugs the shelf's top boundary. */
+  #shelfHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:28px 18px 4px}
   #shelfTitle{font-size:24px;font-weight:700;letter-spacing:.02em;color:#e8b34b;margin:0}
   #shelfSub{font-size:13px;color:#cfc9bd;margin:3px 0 0}
+  /* Shelf hint: flowing text — one line wherever the full hint
+     fits; each sentence is an unbreakable unit, so a narrow shelf
+     wraps ONLY at the sentence boundary, never inside a sentence
+     and never stranding a single word. */
+  #shelfSub .hintS{white-space:nowrap}
   #shelfBack{flex:0 0 auto;min-height:40px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;cursor:pointer}
   /* "Back to book" renders only when a book is open in the reader
      behind the shelf (see noteBookOpened in the script); on a cold
@@ -638,6 +681,32 @@
   .sbook .covWrap{position:relative;display:block;border-radius:3px 7px 7px 3px;overflow:hidden;box-shadow:0 10px 22px rgba(0,0,0,.55)}
   .sbook .covWrap::before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(255,255,255,.14) 55%,rgba(0,0,0,.12));z-index:1}
   .sbook img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#2b2b2b}
+  /* Experiment #3 — cover-load polish. Every shelf slot is born
+     wearing a charcoal ghost in the cover's exact slot shape (it
+     fills the cover box, so it follows Cover size and the
+     covers-per-row width exactly); the moment the cover's own
+     thumbnail lands, the cover blur-fades in over the ghost and
+     the ghost fades away (see applyCoverThumb / covResolve).
+     Dark grays only — the ghost borrows the shelf's own palette,
+     never a brand color. While a slot is loading it is not
+     tappable, and its READING tag, marks badge, ⓘ and arrange
+     controls stay hidden — they arrive with their cover. */
+  .covGhost{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(155deg,#3b3b3d 0%,#2d2d2f 52%,#232325 100%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);opacity:1;transition:opacity .38s ease;overflow:hidden}
+  .covGhost::before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(255,255,255,.10) 58%,rgba(0,0,0,.22))}
+  .covGhost::after{content:"";position:absolute;top:-12%;bottom:-12%;left:-40%;width:36%;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.05),rgba(255,255,255,0));animation:covSheen 2.8s ease-in-out infinite}
+  @keyframes covSheen{0%{transform:translateX(0)}55%,100%{transform:translateX(360%)}}
+  @keyframes covFadeIn{from{opacity:0}to{opacity:1}}
+  .covGhost.gone{opacity:0}
+  img.covStage{transition:opacity .5s ease,filter .5s ease}
+  img.covStage.covFast{transition-duration:.22s}
+  img.covStage.covWait{opacity:0;filter:blur(7px)}
+  .sbook.covLoading .sbookOpen{pointer-events:none}
+  .sbook.covLoading .sinfo{opacity:0;pointer-events:none}
+  .sbook.covLoading .nowTag,.sbook.covLoading .markTag{opacity:0}
+  .sbook.covLoading .arrRow{opacity:0;pointer-events:none}
+  .sinfo{transition:opacity .35s ease}
+  .sbook .nowTag,.sbook .markTag,.arrRow{transition:opacity .35s ease}
+  @media (prefers-reduced-motion: reduce){.covGhost::after{animation:none}img.covStage{transition-duration:.01ms}img.covStage.covWait{filter:none}}
   .sbook .nowTag{position:absolute;top:6px;right:6px;z-index:2;font-size:9px;font-weight:800;letter-spacing:.07em;color:#191919;background:#e8b34b;border-radius:5px;padding:2px 5px}
   .sbook .nowTag[hidden]{display:none}
   /* Marks badge: a book with marked pages announces itself on its
@@ -745,6 +814,19 @@
      to fb-book-status), and the reader badge follows the open book. */
   .icStatusRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:13.5px}
   #icStatus{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  /* ---- Cover versions segment (info card, below Status) ----
+     A labelled segment in the panels' language: the live cover
+     preview flanked by the standard circular icon buttons, the
+     version label + counter under it, and a full-width upload
+     action in the card's neutral button style. */
+  .icCoverSeg{margin-top:14px;border-top:1px solid rgba(244,241,234,.16);padding-top:12px}
+  .icCoverLbl{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#b9b2a4;margin:0 0 8px}
+  .icCoverRow{display:flex;align-items:center;justify-content:center;gap:14px}
+  .icCoverNav{flex:0 0 auto;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer;font:inherit;font-size:24px;line-height:1;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .icCoverNav[disabled]{opacity:.32;cursor:default}
+  #icCoverPreview{width:104px;height:104px;object-fit:cover;border-radius:8px;background:#2b2b2b;box-shadow:0 6px 14px rgba(0,0,0,.5);flex:0 0 auto}
+  #icCoverLabel{margin:9px 0 0;font-size:13px;line-height:1.4;color:#cfc9bd;text-align:center}
+  #icCoverUpload{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .icLink{display:inline-flex;align-items:center;min-height:38px;padding:7px 16px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;box-sizing:border-box}
   /* Copy link + Download PDF: the book's file drawer, shared by the
      Classic info card and the 3D detail card — gold-outline actions
@@ -950,6 +1032,12 @@
   .s3-face.front img{width:100%;height:100%;object-fit:cover;display:block}
   .s3-face.front::before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(30,10,0,.38),rgba(30,10,0,.10) 9%,transparent 20%,transparent 88%,rgba(255,255,255,.10));pointer-events:none}
   .s3-noart{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;text-align:center;font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.3;color:#f4e9cf}
+  /* Experiment #3 on the 3D shelf: the no-art fallback fades in
+     the same way a landed cover does, and a volume whose cover
+     is still loading takes no taps (stage drags pass through to
+     the stage, so the shelf still moves while covers land). */
+  .s3-noart{animation:covFadeIn .45s ease both}
+  .s3-wrap.covLoading{pointer-events:none}
   .s3-face.back{inset:0;transform:rotateY(180deg) translateZ(calc(var(--d)/2));background:var(--cloth,#5a4632);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;color:#f4e9cf}
   .s3-face.back .b-title{font-family:Georgia,serif;font-size:15px;font-weight:600;line-height:1.35}
   .s3-face.back .b-author{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,233,207,.75)}
@@ -1060,6 +1148,33 @@
   @media (max-width:340px){#s3Read{font-size:12px}#s3FootCopy{font-size:11.5px;letter-spacing:-.01em}}
   #shelfViewSeg,#coverSizeSeg{display:flex;gap:6px;min-width:0;max-width:100%}
   #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{flex:1 1 0;min-width:0;justify-content:center}
+  /* Covers per row (experiment #2): ONE stepper box in the
+     panel's v11 language — darker inset wash, darker stroke, soft
+     inner shadow, 10px radius. The current value sits at the left;
+     two stacked gold chevrons at the right step it through
+     Auto → 3 → 4 → 5 → 6. Each chevron is a comfortable tap
+     target (26px tall inside a 52px box); an arrow at its end of
+     the range dims and disables. */
+  /* REFINEMENT C — the stepper no longer spans the panel: it takes
+     the width of ONE Cover size button (the Cover size segment is
+     three flex:1 buttons across with 6px gaps, so one button is
+     (100% - 12px) / 3 of the same segment width), left-aligned.
+     Height, value/chevron arrangement and end behavior unchanged. */
+  .perRowStepper{display:flex;align-items:center;justify-content:space-between;gap:10px;width:calc((100% - 12px)/3);min-height:52px;padding:0 6px 0 14px;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);border-radius:10px;box-shadow:inset 0 1px 4px rgba(0,0,0,.45);box-sizing:border-box}
+  .perRowVal{font-size:15px;font-weight:600;color:#f4f1ea}
+  .perRowArrows{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;padding:2px 0}
+  .perRowArrow{display:flex;align-items:center;justify-content:center;width:46px;height:23px;padding:0;background:transparent;border:0;border-radius:6px;color:#e8b34b;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .perRowArrow svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+  .perRowArrow:active:not(:disabled){background:rgba(232,179,75,.16)}
+  .perRowArrow:disabled{color:rgba(232,179,75,.26);cursor:default}
+  /* REFINEMENT (round 2) — settings-row layout: the COVERS PER ROW
+     heading and the stepper share one row, heading at the left,
+     stepper at the right. The divider that sat under the heading
+     alone now runs under the whole row; the explainer stays below
+     it, unchanged. The stepper keeps its width and height. */
+  .perRowHeadRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:7px;border-bottom:1px solid rgba(0,0,0,.45);box-shadow:0 1px 0 rgba(244,241,234,.05)}
+  #shelfOptsPanel .setSeg.perRowSeg .shelfOptsGroup{padding-bottom:0;border-bottom:0;box-shadow:none}
+  .perRowHeadRow .perRowStepper{flex:0 0 auto}
   @media (prefers-reduced-motion: reduce){.s3-book,.s3-wrap{transition-duration:.01ms}}
 
   /* ---- Scroll reading mode ----
@@ -1073,7 +1188,7 @@
   #scrollView[hidden]{display:none}
   #scrollCol{display:flex;flex-direction:column;align-items:center;gap:18px}
   .scPage{position:relative;width:min(680px,calc(100% - 28px));background:#2b2b2b;line-height:0;box-shadow:0 14px 34px rgba(0,0,0,.5)}
-  .scPage img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
+  .scPage img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
   @media (max-width:560px){.scPage{width:calc(100% - 20px)}}
   body.mode-scroll #bookWrap{visibility:hidden}
   /* ---- Reader quick menu (☰) ----
@@ -1208,6 +1323,19 @@
      chaining anywhere else. Nothing past the content end is added:
      at full scroll the padding is all that follows the last row. */
   #shelfScroll{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
+  /* Top-edge cushion for the Classic shelf: the same 18px mask
+     fade the info cards' scroll window uses, at the top edge
+     only, so covers scrolling up dissolve at the clip line
+     instead of slicing. The bottom edge is untouched. */
+  #shelfScroll{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 100%)}
+  /* Shelf footer: a slim frosted bar pinned at the very bottom of
+     the bookshelf, Classic and 3D alike. The shelf is a flex
+     column and the bar is its last child, so the scroll area ends
+     above it and it never overlaps covers. It lives inside #shelf,
+     so it shows only while the bookshelf is open. Purely
+     informational — it takes no taps. v11 menu ground + blur. */
+  #shelfFoot{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;padding:4px 14px calc(4px + env(safe-area-inset-bottom,0px));background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);border-top:1px solid rgba(244,241,234,.14);font-size:11.5px;color:#b9b2a4;pointer-events:none;box-sizing:border-box}
+  .shelfFootBrand{color:#e8b34b;font-weight:700;letter-spacing:.12em;font-size:10.5px}
 
   /* ---- Menu unification (v11 Lab test) ----
      One visual language for every menu, on the Settings / Shelf
@@ -1650,16 +1778,138 @@
   #diagRefresh{width:100%;min-height:44px;padding:8px 12px;background:rgba(0,0,0,.42);color:#e8b34b;border:1px solid rgba(0,0,0,.62);border-radius:10px;box-shadow:inset 0 1px 4px rgba(0,0,0,.45);font:inherit;font-size:14px;font-weight:600;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #diagRefresh:active{background:rgba(232,179,75,.16)}
   #diagProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+  /* ===== EXPERIMENT #1 — Text on art ===== */
+  #textModeSeg{display:inline-flex;gap:3px;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);border-radius:10px;padding:3px;box-shadow:inset 0 1px 3px rgba(0,0,0,.35)}
+  #textModeSeg button{appearance:none;background:transparent;border:0;border-radius:7px;color:#cfc9ba;font:inherit;font-size:12.5px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+  #textModeSeg button[aria-pressed="true"]{background:#e8b34b;color:#1a160f;font-weight:600}
+  #artArrangeBtn{flex:0 0 auto;display:inline-flex;align-items:center;min-height:32px;background:rgba(20,20,20,.62);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 12px;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #artArrangeBtn[aria-pressed="true"]{background:#e8b34b;color:#1a160f;border-color:rgba(0,0,0,.5);font-weight:600}
+  #artArrangeBtn[hidden]{display:none}
+  #textModePop{position:fixed;z-index:70;width:216px;max-width:calc(100vw - 16px);background:rgba(22,22,21,.96);border:1px solid rgba(0,0,0,.62);border-radius:12px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:2px;box-sizing:border-box;color:#f4f1ea}
+  #textModePop[hidden]{display:none}
+  /* v12.9 — hidden rows in the Text menu / segment really hide:
+     their own display rules would otherwise beat the attribute. */
+  #textModePop .tmRow[hidden],#textModePop .tmDiv[hidden],#textModeSeg button[hidden]{display:none}
+  .tmRow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:transparent;border:0;border-radius:8px;color:#f4f1ea;font:inherit;font-size:14px;padding:9px 10px;cursor:pointer;text-align:left;width:100%;box-sizing:border-box}
+  .tmRow:hover{background:rgba(255,255,255,.06)}
+  .tmCheck{color:#e8b34b;font-weight:700;visibility:hidden}
+  .tmRow[aria-checked="true"] .tmCheck{visibility:visible}
+  .tmDiv{height:1px;background:rgba(244,241,234,.14);margin:3px 4px}
+  /* v12.9 — hard containment at ALL times: the overlay box clips
+     its contents to its own bounds, so during a resize drag the
+     words can never paint past the box edge in the frames before
+     the reflow / auto-grow catches up. At rest nothing changes:
+     the grow logic in artApply measures the text and sets the box
+     height, so the settled box is never clipped — only the
+     transient mid-gesture spill is gone. (.artText keeps its own
+     overflow:hidden as well.) */
+  .artOv{position:absolute;z-index:3;display:none;pointer-events:none;transition:opacity .18s ease;overflow:hidden}
+  .artOv .artPlate{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .artOv .artText{position:absolute;inset:0;padding:4% 5%;overflow:hidden;font-family:Georgia,"Times New Roman",serif;line-height:1.45;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;pointer-events:none}
+  /* REFINEMENT A — while arranging, the box is unmistakably
+     grabbable: a strong gold outline on every live box, a heavier
+     solid outline + halo on the active one, and a bigger corner
+     resize handle. */
+  body.art-arranging .artOv{pointer-events:auto;cursor:grab;outline:2px dashed rgba(232,179,75,.9);outline-offset:2px;touch-action:none}
+  body.art-arranging .artOv:active{cursor:grabbing}
+  body.art-arranging .artOv.artSel{outline:3px solid #e8b34b;box-shadow:0 0 0 5px rgba(232,179,75,.22)}
+  .artOv .artHandle{display:none;position:absolute;right:2px;bottom:2px;width:28px;height:28px;border-radius:8px;background-color:#e8b34b;background-image:linear-gradient(135deg,transparent 52%,rgba(26,22,15,.6) 52%,rgba(26,22,15,.6) 62%,transparent 62%,transparent 76%,rgba(26,22,15,.6) 76%,rgba(26,22,15,.6) 86%,transparent 86%);border:2px solid rgba(0,0,0,.65);cursor:nwse-resize;box-shadow:0 2px 8px rgba(0,0,0,.45);z-index:2}
+  body.art-arranging .artOv .artHandle{display:block}
+  #artStylePop{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(50px + env(safe-area-inset-bottom,0px));z-index:46;width:min(440px,calc(100vw - 16px));max-height:calc(var(--app-h,100dvh)*.6);overflow:hidden;background:rgba(22,22,21,.60);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(0,0,0,.62);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 18px 44px rgba(0,0,0,.55);box-sizing:border-box;color:#f4f1ea;transition:opacity .18s ease}
+  /* v12.8 — Tier 2 keeps the SAME frosted ground as Tier 1
+     (rgba(22,22,21,.60) + blur above) and the SAME 60%-of-viewport
+     height cap: expanded, the panel is a see-through bottom panel
+     whose Tier 2 rows scroll internally — it never becomes a
+     full-screen opaque sheet, so the page art (and the lifted
+     text box) stays readable while any control is clicked. */
+  #artStylePop[data-tier="2"]{background:rgba(22,22,21,.60);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);max-height:calc(var(--app-h,100dvh)*.6)}
+  #artStylePop[hidden]{display:none}
+  /* v12.5 — the panel always floats: translucent frosted glass
+     in the v11 blur family (see the base rule above), visibly
+     more see-through than the solid panels so the art reads
+     through it, anchored over the bottom of the stage. While a
+     text box is dragged or resized the panel fades to near-
+     invisible and restores on release. Two tiers: Tier 1 (the
+     default) is just the header and the Text size row; Tier 2
+     (#artTier2) holds every other control and stays hidden
+     until the header's "More style" toggle opens it. */
+  #artStylePop.artDragging{opacity:.1}
+  #artTierToggle{appearance:none;background:rgba(0,0,0,.42);color:#e8b34b;border:1px solid rgba(0,0,0,.62);border-radius:8px;font:inherit;font-size:13px;font-weight:600;padding:5px 12px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;flex:0 0 auto}
+  #artTier2{display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-right:2px}
+  #artTier2[hidden]{display:none}
+  .artPopRow{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.32);border:1px solid rgba(0,0,0,.62);border-radius:10px;padding:7px 10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
+  .artPopHead{justify-content:space-between}
+  #artPopTitle{font-size:13px;font-weight:600;color:#f4f1ea}
+  .artPopLbl{flex:0 0 74px;font-size:12.5px;color:#cfc9ba}
+  .artPopRow input[type="range"]{flex:1 1 auto;min-width:0;accent-color:#e8b34b}
+  #artSwatches{display:inline-flex;gap:7px}
+  .artSw{width:26px;height:26px;border-radius:8px;border:1px solid rgba(0,0,0,.62);cursor:pointer;padding:0;flex:0 0 auto}
+  .artSw[aria-pressed="true"]{outline:2px solid #e8b34b;outline-offset:1px}
+  #artPlateSeg{display:inline-flex;gap:3px;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);border-radius:10px;padding:3px}
+  #artPlateSeg button{appearance:none;background:transparent;border:0;border-radius:7px;color:#cfc9ba;font:inherit;font-size:12.5px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+  #artPlateSeg button[aria-pressed="true"]{background:#e8b34b;color:#1a160f;font-weight:600}
+  /* Plate color swatches ride the text-color swatch language;
+     the Align segmented control mirrors the Plate one, and the
+     Apply-all button speaks the panel's inset-button language.
+     A collapsed panel hides the Apply-all button with its rows. */
+  #artPlateSwatches{display:inline-flex;gap:7px}
+  #artAlignSeg{display:inline-flex;gap:3px;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);border-radius:10px;padding:3px}
+  #artAlignSeg button{appearance:none;background:transparent;border:0;border-radius:7px;color:#cfc9ba;font:inherit;font-size:12.5px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+  #artAlignSeg button[aria-pressed="true"]{background:#e8b34b;color:#1a160f;font-weight:600}
+  .artApplyAllBtn{appearance:none;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:13px;font-weight:600;min-height:40px;padding:8px 12px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .artApplyAllBtn:active{border-color:#e8b34b;background:rgba(232,179,75,.16)}
+  /* ---- v12.7 — point-size readout + font picker ----
+     The Text size slider gains a live points value in a small
+     near-black chip (the quick-menu gold-value language), fixed
+     width so the slider does not breathe while dragging. The
+     font picker is a wrapping row of choices inside its Tier 2
+     row; each choice's name is set in its own typeface (inline
+     font-family on the button), and the selected choice takes
+     the solid-gold selected treatment like the segments. */
+  #artFsVal{flex:0 0 auto;min-width:56px;text-align:center;background:rgba(0,0,0,.55);border:1px solid rgba(0,0,0,.62);border-radius:7px;color:#e8b34b;font-size:12.5px;font-weight:600;padding:3px 6px;font-variant-numeric:tabular-nums;box-sizing:border-box}
+  #artFontList{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 auto;min-width:0}
+  #artFontList button{appearance:none;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);border-radius:8px;color:#f4f1ea;font-size:15px;line-height:1.25;padding:4px 10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #artFontList button[aria-pressed="true"]{background:#e8b34b;color:#1a160f;border-color:rgba(0,0,0,.5);font-weight:700}
+  @media (max-width:560px){#artArrangeBtn{font-size:12px;padding:5px 10px;min-height:30px}.artPopLbl{flex-basis:62px}}
+  /* ---- v12.5 — Shelf options diet ----
+     The repeating per-group view explainers are gone (one note
+     at the panel's top covers them; only the Covers-per-row
+     narrow-screen note stays), and this panel's segments sit a
+     little tighter than the shared .setSeg defaults — scoped
+     to Shelf options only; Settings keeps its measurements.
+     When Shelf view is 3D, the Classic-only groups (Show
+     shelves, Shelf style, Cover size, Covers per row) collapse
+     behind the "Classic shelf options" disclosure: in Classic
+     view the wrapper is display:contents, so the groups lay out
+     exactly as direct panel children; in 3D the wrapper becomes
+     a segment block whose body starts closed. */
+  #shelfOptsPanel{gap:5px;padding:10px 12px}
+  #shelfOptsPanel .setSeg{gap:5px;padding:6px 10px}
+  #shelfOptsPanel .setSeg .shelfOptsGroup{padding-bottom:3px}
+  #shelfOptsPanel .shelfOptBtn{min-height:37px;padding-top:5px;padding-bottom:5px}
+  #shelfOptsPanel #shelfBdPick,#shelfOptsPanel #shelfStylePick{min-height:37px;padding-top:6px;padding-bottom:6px}
+  #shelfOptsPanel .goldImportBtn{min-height:38px}
+  #shelfOptsPanel .perRowHeadRow{padding-bottom:3px}
+  #shelfOptsPanel:not(.view-3d) #classicOptsWrap{display:contents}
+  #shelfOptsPanel:not(.view-3d) #classicOptsBody{display:contents}
+  #shelfOptsPanel:not(.view-3d) #classicOptsToggle{display:none}
+  #shelfOptsPanel.view-3d #classicOptsWrap{display:flex;flex-direction:column;gap:5px;background:rgba(255,255,255,.05);border:1px solid rgba(0,0,0,.55);border-radius:12px;padding:6px 10px;box-shadow:inset 0 1px 0 rgba(244,241,234,.06)}
+  #classicOptsToggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:30px;padding:2px 0;background:none;border:0;color:#b9b2a4;font:inherit;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:left}
+  #classicOptsToggle svg{width:15px;height:15px;stroke:#e8b34b;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;transition:transform .18s ease}
+  #classicOptsToggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+  #shelfOptsPanel.view-3d #classicOptsBody{display:flex;flex-direction:column;gap:7px}
+  #shelfOptsPanel.view-3d #classicOptsBody[hidden]{display:none}
+  #classicOptsBody>*{flex:0 0 auto}
 </style></head>
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><div id="headStack"><strong id="mark">Harlow’s Accidental Journey</strong><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span></div><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="setSeg"><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span></div><div class="setSeg"><span class="shelfOptsGroup">Backdrop</span><span class="shelfPickRow"><span class="bdSwatch sw-charcoal" id="bdPickSwatch" aria-hidden="true"></span><select id="shelfBdPick" aria-label="Shelf backdrop"><option value="charcoal">Charcoal</option><option value="ambient">Ambient book</option><option value="midnight">Midnight</option><option value="walnut">Walnut</option><option value="slate">Slate</option><option value="library">Library</option><option value="matteblack">Matte Black</option></select></span><p class="shelfOptsNote">The wall behind the books — Classic and 3D. Ambient book uses the current page, blurred.</p></div><div class="setSeg"><span class="shelfOptsGroup">Shelves</span><button id="showShelvesBtn" class="shelfOptBtn" type="button" aria-pressed="true"><span>Show shelves</span><span class="shelfToggleVal">On</span></button><p class="shelfOptsNote">Off leaves the Classic books on the wall with just their contact shadows. The 3D shelf is unaffected.</p></div><div class="setSeg"><span class="shelfOptsGroup">Shelf style</span><select id="shelfStylePick" aria-label="Shelf style"><option value="classic">Classic</option><option value="slim">Slim ledge</option><option value="beam">Library beam</option></select><p class="shelfOptsNote">Shelf style shows in the Classic view while shelves are on.</p></div><div class="setSeg"><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p></div><div class="setSeg"><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div></div><div class="setSeg"><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><div class="setSeg"><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span></div><div class="setSeg"><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="foley2" selected>Real page &#8212; leafy</option><option value="crisp">Crisp paper</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="turnVolRow">Turn volume <input id="sndTurnVol" type="range" min="0" max="100" step="1" value="70" aria-label="Turn volume"></label><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="gymnopedie" selected>Gymnop&#233;die No. 1</option><option value="prelude">Prelude in C</option><option value="nocturne">Nocturne</option><option value="vibraphone">Vibraphone Lullaby</option><option value="rainy">Rainy window</option><option value="ocean">Ocean Shore</option><option value="stream">Forest Stream</option><option value="felt">Felt Piano</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="musicVolRow">Music volume <input id="sndMusicVol" type="range" min="0" max="100" step="1" value="70" aria-label="Music volume"></label></div><div class="setSeg"><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span></div><div class="setSeg"><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></div><!-- DIAGNOSTICS (temporary) --><div class="setSeg"><span class="setGroup">Diagnostics</span><button id="diagSetBtn" class="setBtn" type="button" aria-expanded="false"><span>Window diagnostics</span></button></div></span></span></span></div>
+    <div id="banner"><div id="headStack"><strong id="mark">Harlow’s Accidental Journey</strong><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button><button id="artArrangeBtn" type="button" aria-pressed="false" hidden>Arrange</button></span></div><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p class="shelfOptsNote shelfOptsTopNote">Shelf options — most apply to the Classic shelf.</p><div class="setSeg"><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span></div><div class="setSeg"><span class="shelfOptsGroup">Backdrop</span><span class="shelfPickRow"><span class="bdSwatch sw-charcoal" id="bdPickSwatch" aria-hidden="true"></span><select id="shelfBdPick" aria-label="Shelf backdrop"><option value="charcoal">Charcoal</option><option value="ambient">Ambient book</option><option value="midnight">Midnight</option><option value="walnut">Walnut</option><option value="slate">Slate</option><option value="library">Library</option><option value="matteblack">Matte Black</option></select></span></div><div id="classicOptsWrap"><button id="classicOptsToggle" type="button" aria-expanded="false" aria-controls="classicOptsBody"><span>Classic shelf options</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button><div id="classicOptsBody" hidden><div class="setSeg"><span class="shelfOptsGroup">Shelves</span><button id="showShelvesBtn" class="shelfOptBtn" type="button" aria-pressed="true"><span>Show shelves</span><span class="shelfToggleVal">On</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Shelf style</span><select id="shelfStylePick" aria-label="Shelf style"><option value="classic">Classic</option><option value="slim">Slim ledge</option><option value="beam">Library beam</option></select></div><div class="setSeg"><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span></div><div class="setSeg perRowSeg"><span class="perRowHeadRow"><span class="shelfOptsGroup">Covers per row</span><div class="perRowStepper"><span class="perRowVal" id="perRowVal" aria-live="polite">Auto</span><span class="perRowArrows"><button id="perRowUp" class="perRowArrow" type="button" aria-label="More covers per row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg></button><button id="perRowDown" class="perRowArrow" type="button" aria-label="Fewer covers per row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button></span></div></span><p class="shelfOptsNote">On narrow screens a minimum cover width wins, so rows hold fewer rather than shrinking to slivers.</p></div></div></div><div class="setSeg"><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Shelf order</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div></div><div class="setSeg"><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><div class="setSeg"><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span></div><div class="setSeg"><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="foley2" selected>Real page &#8212; leafy</option><option value="crisp">Crisp paper</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="turnVolRow">Turn volume <input id="sndTurnVol" type="range" min="0" max="100" step="1" value="70" aria-label="Turn volume"></label><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="gymnopedie" selected>Gymnop&#233;die No. 1</option><option value="prelude">Prelude in C</option><option value="nocturne">Nocturne</option><option value="vibraphone">Vibraphone Lullaby</option><option value="rainy">Rainy window</option><option value="ocean">Ocean Shore</option><option value="stream">Forest Stream</option><option value="felt">Felt Piano</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="musicVolRow">Music volume <input id="sndMusicVol" type="range" min="0" max="100" step="1" value="70" aria-label="Music volume"></label></div><div class="setSeg"><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span></div><div class="setSeg"><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></div><!-- DIAGNOSTICS (temporary) --><div class="setSeg"><span class="setGroup">Diagnostics</span><button id="diagSetBtn" class="setBtn" type="button" aria-expanded="false"><span>Window diagnostics</span></button></div></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Tap the &#9432; on a cover for its card.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v12.9 &middot; Build 2026-11-09 12:43</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -1690,6 +1940,7 @@
     <input id="musFile" type="file" accept="audio/*" hidden>
     <input id="bookFilePick" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
     <input id="icBookFilePick" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
+    <input id="coverFilePick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
     <input id="artFilePick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
     <input id="artSpreadPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
     <input id="artInsertPick" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden>
@@ -1703,21 +1954,23 @@
       <div id="marksBar" hidden><span id="marksLabel">Marked pages</span><span id="marksList"></span><button id="marksClear" type="button" hidden>Clear all</button></div>
       <p id="stripNote" hidden></p>
       <div id="strip"></div>
-      <div id="stripActions" hidden><span id="stripSelLabel">Tap a page above to choose it.</span><button id="artReplaceBtn" type="button">Replace art&hellip;</button><button id="artSpreadBtn" type="button" hidden>Replace spread&hellip;</button><button id="artPhBtn" type="button" hidden>Use a placeholder&hellip;</button><button id="artPhSpreadBtn" type="button" hidden>Placeholder spread&hellip;</button><button id="artInsertBeforeBtn" type="button" hidden>Insert before&hellip;</button><button id="artInsertAfterBtn" type="button" hidden>Insert after&hellip;</button><button id="artRemoveBtn" type="button" hidden>Remove inserted page</button><button id="artRevertBtn" type="button" hidden>Revert to original art</button></div>
+      <div id="stripActions" hidden><span id="stripSelLabel">Tap a page above to choose it.</span><div class="editGroup" id="editGrpReplace"><span class="editGroupLbl">Replace</span><div class="editPair"><button id="artReplaceBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.4"/><path d="M4.5 17.5l4.5-4 3 2.6 3-2.6 4.5 4"/></svg><span>Replace art&hellip;</span></button><button id="artSpreadBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-1.6-1.3-3.7-2-6.5-2v13c2.8 0 4.9.7 6.5 2 1.6-1.3 3.7-2 6.5-2V4c-2.8 0-4.9.7-6.5 2z"/><path d="M12 6v13"/></svg><span>Replace spread&hellip;</span></button></div></div><div class="editGroup gone" id="editGrpPlaceholder"><span class="editGroupLbl">Placeholder</span><div class="editPair"><button id="artPhBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke-dasharray="4 3"/><circle cx="9" cy="10" r="1.4"/><path d="M4.5 17.5l4.5-4 3 2.6 3-2.6 4.5 4"/></svg><span>Use a placeholder&hellip;</span></button><button id="artPhSpreadBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-1.6-1.3-3.7-2-6.5-2v13c2.8 0 4.9.7 6.5 2 1.6-1.3 3.7-2 6.5-2V4c-2.8 0-4.9.7-6.5 2z" stroke-dasharray="4 3"/><path d="M12 6v13"/></svg><span>Placeholder spread&hellip;</span></button></div></div><div class="editGroup gone" id="editGrpInsert"><span class="editGroupLbl">Insert</span><div class="editPair"><button id="artInsertBeforeBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5z"/><path d="M2.5 12h9"/><path d="M7 7.5L2.5 12 7 16.5"/></svg><span>Insert before&hellip;</span></button><button id="artInsertAfterBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5z"/><path d="M12.5 12h9"/><path d="M17 7.5l4.5 4.5-4.5 4.5"/></svg><span>Insert after&hellip;</span></button></div></div><div class="editExtra gone" id="editExtraRow"><button id="artRemoveBtn" type="button" hidden>Remove inserted page</button><button id="artRevertBtn" type="button" hidden>Revert to original art</button></div></div>
       <div id="insertBar" hidden><span id="insertBarText"></span><button id="insertFileBtn" type="button">Choose image&hellip;</button><button id="insertPhBtn" type="button">Use a placeholder&hellip;</button><button id="insertCancelBtn" type="button">Cancel</button></div>
       <div id="phRow" hidden><span id="phRowLabel"></span><span class="phThumbs" id="phThumbs"></span><button id="phCancelBtn" type="button">Cancel</button></div>
       <div id="stripOffer" hidden><span id="stripOfferText"></span><button id="stripOfferYes" type="button">Use for this page</button><button id="stripOfferNo" type="button">Cancel</button></div>
     </div>
     <div id="textSheet" aria-hidden="true">
       <div class="sheetHandle" aria-hidden="true"></div>
-      <div id="textBar"><span id="textTitle">Page text</span><span id="textActions"><button id="textEdit" type="button">Edit</button><button id="textSave" type="button" hidden>Save</button><button id="textCancel" type="button" hidden>Cancel</button><button id="textClose" type="button" aria-label="Close page text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+      <div id="textBar"><span id="textTitle">Page text</span><span id="textModeSeg" role="group" aria-label="Text display"><button type="button" data-tmode="sheet" aria-pressed="true">Sheet</button><button type="button" data-tmode="onart" aria-pressed="false">On art</button></span><span id="textActions"><button id="textEdit" type="button">Edit</button><button id="textSave" type="button" hidden>Save</button><button id="textCancel" type="button" hidden>Cancel</button><button id="textClose" type="button" aria-label="Close page text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
       <div id="textBody"></div>
     </div>
     <button id="pagesTab" type="button" aria-label="Pages" title="Pages" aria-expanded="false"><span class="tabPill" aria-hidden="true"></span><span class="tabRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5l7-7 7 7"/></svg></span></button>
     <button id="quickBtn" type="button" aria-label="Quick menu" title="Quick menu" aria-haspopup="true" aria-expanded="false"><svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false"><path d="M2 2h16M2 7h16M2 12h16" stroke="#e8b34b" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem"><span class="qmLabel">First page</span></button><button id="qmLast" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Last page</span></button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Slideshow</span> <span class="qmVal" id="qmSlide">Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Sound</span> <span class="qmVal" id="qmSound">Off</span></button><button id="qmModeBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Reading mode</span> <span class="qmVal" id="qmMode">Hardcover</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page layout</span> <span class="qmVal" id="qmLayout">Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page labels</span> <span class="qmVal" id="qmLabels">Off</span></button><button id="qmGuidesBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Safety guides</span> <span class="qmVal" id="qmGuides">Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Book info</span></button><!-- DIAGNOSTICS (temporary) --><button id="qmDiag" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Diagnostics</span></button></div>
+    <div id="textModePop" role="menu" aria-label="Text display" hidden><button class="tmRow" id="tmSheet" type="button" role="menuitemradio" aria-checked="true"><span>Sheet</span><span class="tmCheck" aria-hidden="true">&#10003;</span></button><button class="tmRow" id="tmOnArt" type="button" role="menuitemradio" aria-checked="false"><span>On art</span><span class="tmCheck" aria-hidden="true">&#10003;</span></button><div class="tmDiv" aria-hidden="true"></div><button class="tmRow" id="tmArrange" type="button" role="menuitem" aria-pressed="false"><span>Arrange text</span><span class="tmCheck" aria-hidden="true">&#10003;</span></button></div>
+    <div id="artStylePop" hidden role="dialog" aria-label="Text on art style" data-tier="1"><div class="artPopRow artPopHead"><span id="artPopTitle">Style</span><button id="artTierToggle" type="button" aria-expanded="false" aria-controls="artTier2">More style</button></div><div class="artPopRow"><span class="artPopLbl">Text size</span><input id="artFs" type="range" min="0.028" max="0.085" step="0.002" aria-label="Text size"><span id="artFsVal" aria-hidden="true">29.4 pt</span></div><div id="artTier2" hidden><div class="artPopRow"><span class="artPopLbl">Font</span><span id="artFontList" role="group" aria-label="Text font"><button type="button" data-font="andika" style="font-family:'Andika',Georgia,'Times New Roman',serif" aria-pressed="true">Andika</button><button type="button" data-font="lora" style="font-family:'Lora',Georgia,serif" aria-pressed="false">Lora</button><button type="button" data-font="quicksand" style="font-family:'Quicksand',Verdana,sans-serif" aria-pressed="false">Quicksand</button><button type="button" data-font="gaegu" style="font-family:'Gaegu','Comic Sans MS',cursive" aria-pressed="false">Gaegu</button><button type="button" data-font="caveat" style="font-family:'Caveat',cursive" aria-pressed="false">Caveat</button></span></div><div class="artPopRow"><span class="artPopLbl">Color</span><span id="artSwatches"><button type="button" class="artSw" data-color="ivory" style="background:#f6efdd" aria-label="Ivory text" aria-pressed="false"></button><button type="button" class="artSw" data-color="ink" style="background:#221d16" aria-label="Ink text" aria-pressed="false"></button><button type="button" class="artSw" data-color="gold" style="background:#e8b34b" aria-label="Gold text" aria-pressed="false"></button><button type="button" class="artSw" data-color="white" style="background:#ffffff" aria-label="White text" aria-pressed="false"></button><button type="button" class="artSw" data-color="black" style="background:#000000" aria-label="Black text" aria-pressed="false"></button></span></div><div class="artPopRow"><span class="artPopLbl">Plate</span><span id="artPlateSeg" role="group" aria-label="Backing plate"><button type="button" data-plate="none" aria-pressed="false">None</button><button type="button" data-plate="solid" aria-pressed="false">Solid</button><button type="button" data-plate="feather" aria-pressed="false">Feathered</button></span></div><div class="artPopRow" id="artPColorRow"><span class="artPopLbl">Plate color</span><span id="artPlateSwatches"><button type="button" class="artSw" data-pcolor="ink" style="background:#100d0a" aria-label="Ink plate" aria-pressed="false"></button><button type="button" class="artSw" data-pcolor="ivory" style="background:#f6efdd" aria-label="Ivory plate" aria-pressed="false"></button><button type="button" class="artSw" data-pcolor="gold" style="background:#e8b34b" aria-label="Gold plate" aria-pressed="false"></button><button type="button" class="artSw" data-pcolor="white" style="background:#ffffff" aria-label="White plate" aria-pressed="false"></button><button type="button" class="artSw" data-pcolor="black" style="background:#000000" aria-label="Black plate" aria-pressed="false"></button></span></div><div class="artPopRow" id="artOpRow"><span class="artPopLbl">Plate opacity</span><input id="artOp" type="range" min="0.15" max="0.95" step="0.05" aria-label="Plate opacity"></div><div class="artPopRow"><span class="artPopLbl">Align</span><span id="artAlignSeg" role="group" aria-label="Text alignment"><button type="button" data-align="left" aria-pressed="true">Left</button><button type="button" data-align="center" aria-pressed="false">Center</button><button type="button" data-align="right" aria-pressed="false">Right</button></span></div><button id="artApplyAll" class="artApplyAllBtn" type="button">Apply style to all pages</button></div></div>
     <button id="expandBtn" type="button" aria-label="Expand view" title="Expand view" aria-pressed="false"><svg class="icoExpand" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg class="icoCollapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v-5"/></svg></button>
-    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p></div></div></div>
+    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div class="icCoverSeg" id="icCoverSeg"><span class="icCoverLbl">Cover</span><div class="icCoverRow"><button id="icCoverPrev" class="icCoverNav" type="button" aria-label="Previous cover version" disabled>&#8249;</button><img id="icCoverPreview" alt=""><button id="icCoverNext" class="icCoverNav" type="button" aria-label="Next cover version" disabled>&#8250;</button></div><p id="icCoverLabel">Original &middot; 1 of 1</p><button id="icCoverUpload" type="button">Upload new cover&hellip;</button></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p></div></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
   <!-- DIAGNOSTICS (temporary) — window geometry readout panel + safe-area probe -->
@@ -3434,6 +3687,7 @@
         gd.innerHTML = '<div class="gTrim"><span class="gtag gtagT">TRIM</span></div><div class="gSafe"><span class="gtag gtagS">SAFE</span></div>';
         d.appendChild(gd);
         scrollColEl.appendChild(d);
+        if (typeof attachScrollOv === "function") attachScrollOv(d, i);
       }
       paintGuides();
       scrollSig = scrollSignature();
@@ -3847,7 +4101,8 @@
           ? "width:82px;height:" + Math.max(20, Math.round(82 / bookAspect)) + "px"
           : "height:82px;width:" + Math.max(20, Math.round(82 * bookAspect)) + "px";
         var imgs = g.map(function (ix) {
-          var im = '<img loading="lazy" alt="" style="' + tStyle + '" src="' + pageSrc(PAGES[ix]) + '">';
+          var stripPageSrc = (ix === 0 && !compareOn && coverSelectedSrc(currentEntryId)) || PAGES[ix];
+          var im = '<img loading="lazy" alt="" style="' + tStyle + '" src="' + pageSrc(stripPageSrc) + '">';
           var star = (typeof isPageMarked === "function" && isPageMarked(ix)) ? '<span class="mmark" aria-hidden="true">&#9733;</span>' : "";
           if (!artEditing && !star) return im;
           return '<span class="twrap' + (artEditing && ix === artSelIdx ? " sel" : "") + '" data-pidx="' + ix + '">' + im + (artEditing && artReplaced[ix] ? '<span class="rmark">REPLACED</span>' : "") + (artEditing && pageIns[ix] ? '<span class="imark">INSERTED</span>' : "") + star + "</span>";
@@ -3906,8 +4161,8 @@
     var pagesTab = document.getElementById("pagesTab");
     var tabDragMoved = false;
     function syncPagesTab() { if (pagesTab) pagesTab.setAttribute("aria-expanded", sheet.classList.contains("open") ? "true" : "false"); }
-    function openSheet(invoker) { if (shelfIsOpen) return; rememberReturnFocus("sheet", invoker || null, sheet); if (typeof closeTextPanel === "function") closeTextPanel(); if (typeof paintSheetTitle === "function") paintSheetTitle(); if (typeof syncBookSearch === "function") syncBookSearch(); buildStrip(); sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false"); syncPagesTab(); }
-    function closeSheet() { if (typeof endSearchKeyboard === "function") endSearchKeyboard(); var wasOpen = sheet.classList.contains("open"); sheet.classList.remove("open"); if (artEditing) exitArtEdit(); if (wasOpen) restoreReturnFocus("sheet", sheet, pagesTab); sheet.setAttribute("aria-hidden", "true"); syncPagesTab(); if (slideSec) scheduleSlide(); }
+    function openSheet(invoker) { if (shelfIsOpen) return; rememberReturnFocus("sheet", invoker || null, sheet); if (typeof closeTextPanel === "function") closeTextPanel(); if (typeof paintSheetTitle === "function") paintSheetTitle(); if (typeof syncBookSearch === "function") syncBookSearch(); buildStrip(); sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false"); syncPagesTab(); if (typeof artSurfaceSync === "function") artSurfaceSync(); }
+    function closeSheet() { if (typeof endSearchKeyboard === "function") endSearchKeyboard(); if (typeof clearPagesSearch === "function") clearPagesSearch(); var wasOpen = sheet.classList.contains("open"); sheet.classList.remove("open"); if (artEditing) exitArtEdit(); if (wasOpen) restoreReturnFocus("sheet", sheet, pagesTab); sheet.setAttribute("aria-hidden", "true"); syncPagesTab(); if (typeof artSurfaceSync === "function") artSurfaceSync(); if (slideSec) scheduleSlide(); }
     if (pagesTab) pagesTab.addEventListener("click", function () {
       if (tabDragMoved) { tabDragMoved = false; return; }
       if (sheet.classList.contains("open")) closeSheet(); else openSheet(this);
@@ -4435,6 +4690,173 @@
       }
       tryOnce();
     }
+    /* ---- Cover versions (per-book cover library) ----
+       Every book carries a small library of front covers. Version 1
+       is always the book's ORIGINAL cover — it is not stored here at
+       all, it is simply the cover the book already resolves to (its
+       seeded cover, its page-1 art, an import's chosen front cover),
+       so it can never be removed or overwritten. Each upload APPENDS
+       one version {src, ts}; nothing is ever destroyed by uploading.
+       The record stored per book is { uploads: [...], sel } where
+       sel 0 = Original and sel k = uploads[k-1]. Records live in a
+       dedicated IndexedDB (fb-cover-versions) — the same storage
+       family as page replacements (fb-art) and saved imports
+       (fb-imports) — for built-in, shelf, and imported books alike,
+       keyed by the book's stable id, so the version list and the
+       chosen cover survive a reload. When a non-Original version is
+       chosen it becomes the book's live cover everywhere the cover
+       is presented: resolveEffectiveCoverSrc answers it first (so
+       the Classic shelf tile, the 3D shelf, and both book cards —
+       everything fed by the cover-thumbnail pipeline — follow), and
+       the reader's cover page renders it through effSrc / effImg
+       WITHOUT touching PAGES, page text, marks, or reading place:
+       the version is a presentation layer over page 1, never an
+       edit to the book. */
+    var coverVers = {};   // book id -> { uploads: [{src, ts}], sel }
+    var coverDb = null, coverDbFailed = false;
+    function coverDbOpen(cb) {
+      if (coverDb) { cb(coverDb); return; }
+      if (coverDbFailed || !window.indexedDB) { coverDbFailed = true; cb(null); return; }
+      var req;
+      try { req = window.indexedDB.open("fb-cover-versions", 1); } catch (err) { coverDbFailed = true; cb(null); return; }
+      req.onupgradeneeded = function () { try { req.result.createObjectStore("covers"); } catch (err) {} };
+      req.onsuccess = function () { coverDb = req.result; cb(coverDb); };
+      req.onerror = function () { coverDbFailed = true; cb(null); };
+      req.onblocked = function () { coverDbFailed = true; cb(null); };
+    }
+    coverDbOpen(function () {});   // settle availability early
+    function coverIdbSave(id) {
+      var rec = coverVers[id];
+      coverDbOpen(function (db) {
+        if (!db) return;
+        try {
+          var store = db.transaction("covers", "readwrite").objectStore("covers");
+          if (rec && rec.uploads && rec.uploads.length) store.put({ uploads: rec.uploads, sel: coverSelIdx(id) }, id);
+          else store.delete(id);
+        } catch (err) {}
+      });
+    }
+    function coverIdbDelete(id) {
+      delete coverVers[id];
+      coverDbOpen(function (db) {
+        if (!db) return;
+        try { db.transaction("covers", "readwrite").objectStore("covers").delete(id); } catch (err) {}
+      });
+    }
+    function loadCoverVersions(cb) {
+      coverDbOpen(function (db) {
+        if (!db) { if (cb) cb(); return; }
+        try {
+          var req = db.transaction("covers", "readonly").objectStore("covers").openCursor();
+          req.onsuccess = function () {
+            var cur = req.result;
+            if (!cur) { if (cb) cb(); return; }
+            var v = cur.value;
+            if (v && v.uploads && v.uploads.length) {
+              var ups = [];
+              v.uploads.forEach(function (u) { if (u && u.src) ups.push({ src: u.src, ts: (typeof u.ts === "number") ? u.ts : 0 }); });
+              if (ups.length) {
+                var sel = (typeof v.sel === "number") ? Math.round(v.sel) : 0;
+                coverVers[cur.key] = { uploads: ups, sel: Math.max(0, Math.min(sel, ups.length)) };
+              }
+            }
+            cur.continue();
+          };
+          req.onerror = function () { if (cb) cb(); };
+        } catch (err) { if (cb) cb(); }
+      });
+    }
+    function coverCount(id) {
+      var r = coverVers[id];
+      return 1 + (r && r.uploads ? r.uploads.length : 0);
+    }
+    function coverSelIdx(id) {
+      var r = coverVers[id];
+      if (!r || !r.uploads || !r.uploads.length) return 0;
+      var s = (typeof r.sel === "number") ? Math.round(r.sel) : 0;
+      return Math.max(0, Math.min(s, r.uploads.length));
+    }
+    function coverSelectedSrc(id) {
+      if (!id) return null;
+      var r = coverVers[id];
+      var s = coverSelIdx(id);
+      if (!r || s === 0) return null;
+      var u = r.uploads[s - 1];
+      return (u && u.src) || null;
+    }
+    var COVER_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    function fmtCoverTs(ts) {
+      var d = new Date(ts);
+      var h = d.getHours(), m = d.getMinutes();
+      var h12 = h % 12; if (h12 === 0) h12 = 12;
+      return COVER_MONTHS[d.getMonth()] + " " + d.getDate() + ", " + h12 + ":" + (m < 10 ? "0" : "") + m + " " + (h >= 12 ? "PM" : "AM");
+    }
+    function coverVersionName(id) {
+      var s = coverSelIdx(id);
+      if (s === 0) return "Original";
+      var r = coverVers[id];
+      var u = r && r.uploads ? r.uploads[s - 1] : null;
+      return (u && u.ts) ? ("Uploaded " + fmtCoverTs(u.ts)) : "Uploaded cover";
+    }
+    var coverVerImgCache = {};
+    function coverVersionImg(src) {
+      var c = coverVerImgCache[src];
+      if (!c) { coverVerImgCache = {}; c = newPageImg(src); coverVerImgCache[src] = c; }
+      return c;
+    }
+    /* A cover choice has changed for this book: persist it, then
+       refresh every surface that presents the cover — the shelf
+       (Classic tiles or the 3D shelf, whichever buildShelf drives),
+       the reader when this book is the open one, the Pages strip's
+       cover thumbnail, and the info card's own segment + header. */
+    function coverChanged(id) {
+      coverIdbSave(id);
+      if (typeof shelfIsOpen !== "undefined" && shelfIsOpen && typeof buildShelf === "function") { try { buildShelf(); } catch (err) {} }
+      if (id === currentEntryId) {
+        try { render(); } catch (err) {}
+        if (sheet && sheet.classList.contains("open")) { try { buildStrip(); } catch (err) {} }
+      }
+      if (typeof refreshCoverSeg === "function") refreshCoverSeg();
+    }
+    function stepCoverVersion(id, dir) {
+      var n = coverCount(id);
+      if (!id || n < 2) return;
+      var r = coverVers[id] || (coverVers[id] = { uploads: [], sel: 0 });
+      r.sel = ((coverSelIdx(id) + dir) % n + n) % n;   // stepping cycles through every version
+      coverChanged(id);
+    }
+    function addCoverVersion(id, src) {
+      if (!id || !src) return;
+      var r = coverVers[id] || (coverVers[id] = { uploads: [], sel: 0 });
+      r.uploads.push({ src: src, ts: Date.now() });
+      r.sel = r.uploads.length;   // the upload becomes the live cover at once
+      coverChanged(id);
+    }
+    /* Cover upload processing: the folder loader's standards, like
+       Replace art — long side capped at 1600, JPEG-encoded, and
+       letterboxed into the TARGET book's page shape (the card's
+       book, which is not necessarily the open one) when the new
+       art's shape differs — never squashed. */
+    function processCoverImage(file, aspect, cb) {
+      var reader = new FileReader();
+      reader.onerror = function () { cb(null); };
+      reader.onload = function () {
+        var im = new Image();
+        im.onerror = function () { cb(null); };
+        im.onload = function () {
+          var w = im.naturalWidth, h = im.naturalHeight;
+          if (!w || !h) { cb(null); return; }
+          var scale = Math.min(1, 1600 / Math.max(w, h));
+          var c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(w * scale));
+          c.height = Math.max(1, Math.round(h * scale));
+          c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+          cb(fitCanvas(c, aspect).toDataURL("image/jpeg", 0.85));
+        };
+        im.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
     /* The cover source as the book currently stands on this device:
        an import answers from its shelf entry (its pages and cover
        mirror every replacement), the open book from its entry (kept
@@ -4444,6 +4866,8 @@
        replacement shows on the shelf before the book is reopened. */
     function resolveEffectiveCoverSrc(entry, cb) {
       if (!entry) { cb(null); return; }
+      var cvSrc = coverSelectedSrc(entry.id);
+      if (cvSrc) { cb(cvSrc); return; }
       if (entry.source === "import") { cb(entry.cover || (entry.pages && entry.pages[0]) || null); return; }
       if (entry.id === currentEntryId) { cb(entry.cover || PAGES[0] || null); return; }
       try {
@@ -4503,14 +4927,165 @@
         }
       });
     }
+    /* ---- Experiment #3: staged cover reveal (presentation only) ----
+       Thumbnails are still produced, cached and version-stamped
+       by getCoverThumb exactly as before; this layer only decides
+       WHEN a finished cover becomes visible.
+       Smoothing rules — one pass, sticky:
+       - The ghost is a cold slot's INITIAL state: staging begins
+         before any cover src is assigned to the slot's <img>, so
+         a cover can never paint ahead of its ghost phase. There
+         is no opening pop for the staging to fix afterwards.
+       - Reveal is sticky for the whole session: covSession[id]
+         remembers each book's outcome and every shelf rebuild
+         consults it first. A revealed book re-attaches its
+         already-loaded thumbnail synchronously — no ghost, no
+         covLoading, no fade restart — across rebuilds of any
+         cause (persisted imports landing, reading-place restore,
+         covers-per-row stepping, sort / order, backdrop / style,
+         resize, returning from the reader).
+       - One staging pass per book: a rebuild while a book is
+         still pending joins the SAME record — its bounded wait
+         and its place in the shared reveal queue are never
+         restarted. The new slot waits on the resolution already
+         in flight and reveals with it, in slot order, once. A
+         late-arriving import starts its own record and stages
+         without disturbing settled covers.
+       - Warm covers skip the ghost: a thumbnail already in hand
+         synchronously when the slot is built (the session cache,
+         or the entry's own stored thumb) shows immediately — no
+         visible dark phase, e.g. on a return trip to the shelf.
+       - Genuinely cold covers keep the per-cover blur-up reveal
+         through the shared stagger queue; a cover that never
+         resolves falls back after a bounded wait, and a real
+         cover arriving after the fallback still trades up —
+         directly, without re-ghosting. While a slot is loading
+         it is not tappable (the .covLoading rules), on either
+         shelf. */
+    var covRevealLast = 0;
+    function covQueueReveal(fn, fast) {
+      var step = REDUCED ? 0 : (fast ? 14 : 46);
+      var now = Date.now();
+      var wait = Math.max(0, covRevealLast + step - now);
+      covRevealLast = now + wait;
+      if (wait > 0) setTimeout(fn, wait); else fn();
+    }
+    var covSession = {};   // book id -> {state, want, settled, settledWant, slots, boundWaits, boundStarted}
+    function covRecord(id) {
+      var r = covSession[id];
+      if (!r) { r = covSession[id] = { state: "pending", want: null, settled: false, settledWant: null, slots: [], boundWaits: 0, boundStarted: false }; }
+      return r;
+    }
+    function covSlotGhostOff(slot) {
+      if (!slot.ghost) return;
+      var gh = slot.ghost; slot.ghost = null;
+      gh.classList.add("gone");
+      setTimeout(function () { if (gh.parentNode) gh.parentNode.removeChild(gh); }, 450);
+    }
+    function covSlotReveal(slot) {
+      if (slot.done) return; slot.done = true;
+      var rec = slot.rec;
+      if (rec.state === "pending") { rec.state = "revealed"; rec.want = rec.settledWant; }
+      covQueueReveal(function () {
+        slot.img.classList.remove("covWait");
+        if (slot.stage.slot) slot.stage.slot.classList.remove("covLoading");
+        covSlotGhostOff(slot);
+        var im = slot.img;
+        setTimeout(function () { im.classList.remove("covStage"); im.classList.remove("covFast"); }, 650);
+      }, false);
+    }
+    function covSlotFallback(slot) {
+      if (slot.done) return; slot.done = true;
+      covQueueReveal(function () {
+        if (slot.stage.onFallback) { try { slot.stage.onFallback(); } catch (err) {} }
+        slot.img.classList.remove("covWait");
+        if (slot.stage.slot) slot.stage.slot.classList.remove("covLoading");
+        covSlotGhostOff(slot);
+        var im = slot.img;
+        setTimeout(function () { im.classList.remove("covStage"); im.classList.remove("covFast"); }, 650);
+      }, false);
+    }
+    function covSlotRelease(slot) {
+      /* Bounded wait expired on a resolved-but-not-yet-loaded
+         (lazy) cover: ghost off, slot tappable, the cover appears
+         when the browser loads it — the pre-experiment behavior
+         for covers far down the shelf / track. */
+      if (slot.done) return; slot.done = true;
+      var rec = slot.rec;
+      if (rec.state === "pending") { rec.state = "revealed"; rec.want = rec.settledWant; }
+      slot.img.classList.remove("covWait");
+      if (slot.stage.slot) slot.stage.slot.classList.remove("covLoading");
+      covSlotGhostOff(slot);
+    }
+    function covSlotTryReady(slot) {
+      if (slot.done || slot.rec.state === "fallback") return;
+      if (!slot.img.getAttribute("src")) return;
+      if (slot.img.complete && slot.img.naturalWidth > 0) covSlotReveal(slot);
+    }
+    function covFailAll(rec) {
+      if (rec.state !== "pending") return;
+      rec.state = "fallback";
+      rec.slots.forEach(function (s) { covSlotFallback(s); });
+    }
+    /* The bounded wait lives on the session record, not on any
+       one slot, so shelf rebuilds can never restart it: unresolved
+       slots keep their single in-flight staging. */
+    function covStartBound(rec) {
+      if (rec.boundStarted) return; rec.boundStarted = true;
+      (function step() {
+        setTimeout(function () {
+          if (rec.state !== "pending") return;
+          rec.boundWaits++;
+          var hasSrc = false;
+          rec.slots.forEach(function (s) { if (s.img.getAttribute("src")) hasSrc = true; });
+          if (hasSrc && rec.settled && rec.settledWant) {
+            if (rec.boundWaits < 10) { step(); return; }
+            rec.slots.forEach(function (s) { covSlotRelease(s); });
+            return;
+          }
+          if (hasSrc && !rec.settled && rec.boundWaits < 2) { step(); return; }
+          covFailAll(rec);
+        }, 6000);
+      })();
+    }
+    /* The thumb pipeline has answered for this book. The answer
+       is recorded once on the session record, then fed to every
+       live slot waiting on it. */
+    function covResolve(rec, want) {
+      rec.settled = true; rec.settledWant = want || null;
+      if (rec.state === "fallback") {
+        if (want) {
+          /* Late cover after the fallback: trade up directly —
+             no ghost, no fade restart on the settled slot. */
+          rec.state = "revealed"; rec.want = want;
+          rec.slots.forEach(function (s) {
+            if (s.stage.onLateCover) { try { s.stage.onLateCover(); } catch (err) {} }
+            if (s.img.getAttribute("src") !== want) s.img.src = want;
+          });
+        }
+        return;
+      }
+      if (!want) { covFailAll(rec); return; }
+      rec.slots.forEach(function (s) {
+        if (s.done) return;
+        if (s.img.getAttribute("src") !== want) s.img.src = want;
+        covSlotTryReady(s);
+      });
+    }
+    function covWantFor(thumb, src, guessSrc) {
+      return thumb || (src ? pageSrc(src) : (guessSrc ? pageSrc(guessSrc) : null));
+    }
     /* Point a cover <img> at the book's thumbnail. priority is
        "lazy" (below the fold / unfocused), "eager" (first visible
        row / card covers), or "high" (the 3D shelf's focused book,
        which also carries fetchpriority="high"). A cached thumb
        lands synchronously; otherwise the tile keeps its reserved
        box on its dark ground until the thumb (or, failing that,
-       the full cover) arrives. */
-    function applyCoverThumb(imgEl, entry, priority) {
+       the full cover) arrives. Shelf covers pass a stage
+       (experiment #3) and get the ghost + per-cover reveal, once
+       per book per session; card covers pass none and behave
+       exactly as before. */
+    function applyCoverThumb(imgEl, entry, priority, stage) {
       if (!imgEl || !entry) return;
       imgEl.decoding = "async";
       try { imgEl.setAttribute("decoding", "async"); } catch (err) {}
@@ -4529,18 +5104,79 @@
         }
       }
       var guessSrc = entry.cover || null;
+      var cached = null;
       var mem = coverThumbMem[entry.id];
       if (mem && mem.thumb && guessSrc && mem.src === guessSrc) {
-        imgEl.src = mem.thumb;
+        cached = mem.thumb;
       } else if (entry.thumb && entry.thumbV === COVER_THUMB_V && entry.thumbSrc && guessSrc && entry.thumbSrc === guessSrc) {
         coverThumbMem[entry.id] = { src: entry.thumbSrc, thumb: entry.thumb };
-        imgEl.src = entry.thumb;
+        cached = entry.thumb;
       }
-      getCoverThumb(entry, function (thumb, src) {
-        var want = thumb || (src ? pageSrc(src) : (guessSrc ? pageSrc(guessSrc) : null));
-        if (!want) return;
-        if (imgEl.getAttribute("src") !== want) imgEl.src = want;
-      });
+      if (!stage) {
+        if (cached) imgEl.src = cached;
+        getCoverThumb(entry, function (thumb, src) {
+          var want = covWantFor(thumb, src, guessSrc);
+          if (!want) return;
+          if (imgEl.getAttribute("src") !== want) imgEl.src = want;
+        });
+        return;
+      }
+      var rec = covRecord(entry.id);
+      if (rec.state === "revealed") {
+        /* Sticky reveal: re-attach the already-loaded thumbnail
+           synchronously — no ghost, no covWait, no fade restart,
+           and the slot is tappable from this frame. The pipeline
+           is still consulted so a changed cover art trades up. */
+        var w0 = rec.want || cached;
+        if (w0 && imgEl.getAttribute("src") !== w0) imgEl.src = w0;
+        getCoverThumb(entry, function (thumb, src) {
+          var want = covWantFor(thumb, src, guessSrc);
+          if (!want) return;
+          rec.want = want;
+          if (imgEl.getAttribute("src") !== want) imgEl.src = want;
+        });
+        return;
+      }
+      if (rec.state === "fallback") {
+        /* Settled fallback: it stands from this frame, no ghost.
+           A real cover arriving later trades up via covResolve. */
+        if (stage.onFallback) { try { stage.onFallback(); } catch (err) {} }
+        rec.slots.push({ img: imgEl, stage: stage, rec: rec, ghost: null, done: true });
+        getCoverThumb(entry, function (thumb, src) { covResolve(rec, covWantFor(thumb, src, guessSrc)); });
+        return;
+      }
+      if (cached) {
+        /* Warm cover: the thumbnail is already in hand when the
+           slot is built, so the cover shows immediately and the
+           ghost phase is skipped entirely. */
+        imgEl.src = cached;
+        rec.settled = true; rec.settledWant = cached;
+        rec.state = "revealed"; rec.want = cached;
+        getCoverThumb(entry, function (thumb, src) {
+          var want = covWantFor(thumb, src, guessSrc);
+          if (!want) return;
+          rec.want = want;
+          if (imgEl.getAttribute("src") !== want) imgEl.src = want;
+        });
+        return;
+      }
+      /* Cold cover: the ghost is the slot's first rendered state.
+         It is created and attached BEFORE any cover src exists on
+         this <img> (the src arrives only through covResolve), and
+         the slot carries .covLoading — untappable, tags / ⓘ held
+         back — until its own cover lands. */
+      var slot = { img: imgEl, stage: stage, rec: rec, ghost: document.createElement("span"), done: false };
+      slot.ghost.className = "covGhost";
+      slot.ghost.setAttribute("aria-hidden", "true");
+      stage.host.appendChild(slot.ghost);
+      imgEl.classList.add("covStage");
+      imgEl.classList.add("covWait");
+      if (stage.slot) stage.slot.classList.add("covLoading");
+      rec.slots.push(slot);
+      imgEl.addEventListener("load", function () { covSlotTryReady(slot); });
+      imgEl.addEventListener("error", function () { if (rec.state === "pending") covFailAll(rec); else covSlotFallback(slot); });
+      covStartBound(rec);
+      getCoverThumb(entry, function (thumb, src) { covResolve(rec, covWantFor(thumb, src, guessSrc)); });
     }
     /* The override record, v2: { pages: {idx: replacementSrc},
        ins: {idx: insertedSrc} } — both keyed by FINAL page index.
@@ -5078,6 +5714,19 @@
       stripNoteEl.hidden = !text;
       stripNoteEl.textContent = text || "";
     }
+    /* REFINEMENT B — a grid group (and its label) renders only
+       while at least one of its buttons does; the extra row the
+       same. Called wherever the buttons' hidden flags settle. */
+    var editGrpReplace = document.getElementById("editGrpReplace");
+    var editGrpPlaceholder = document.getElementById("editGrpPlaceholder");
+    var editGrpInsert = document.getElementById("editGrpInsert");
+    var editExtraRow = document.getElementById("editExtraRow");
+    function syncEditGroups() {
+      if (editGrpReplace) editGrpReplace.classList.toggle("gone", artReplaceBtn.hidden && artSpreadBtn.hidden);
+      if (editGrpPlaceholder) editGrpPlaceholder.classList.toggle("gone", artPhBtn.hidden && artPhSpreadBtn.hidden);
+      if (editGrpInsert) editGrpInsert.classList.toggle("gone", artInsertBeforeBtn.hidden && artInsertAfterBtn.hidden);
+      if (editExtraRow) editExtraRow.classList.toggle("gone", artRemoveBtn.hidden && artRevertBtn.hidden);
+    }
     function refreshArtSelection() {
       var tws = strip.querySelectorAll(".twrap");
       for (var i = 0; i < tws.length; i++) {
@@ -5092,6 +5741,7 @@
         artInsertBeforeBtn.hidden = true;
         artInsertAfterBtn.hidden = true;
         artRemoveBtn.hidden = true;
+        syncEditGroups();
         return;
       }
       stripSelLabel.textContent = "Page " + (artSelIdx + 1) + (pageIns[artSelIdx] ? " \u2014 inserted page" : "") + (artReplaced[artSelIdx] ? " \u2014 art replaced" : "");
@@ -5102,6 +5752,7 @@
       artInsertBeforeBtn.hidden = false;
       artInsertAfterBtn.hidden = false;
       artRemoveBtn.hidden = !pageIns[artSelIdx];
+      syncEditGroups();
     }
     function enterArtEdit() {
       if (artEditing) return;
@@ -5340,6 +5991,7 @@
       textBtn.hidden = !has;
       if (!has && textIsOpen) closeTextPanel();
       if (textIsOpen) updateTextPanel();
+      if (typeof syncOnArt === "function") syncOnArt();
       if (typeof syncBookSearch === "function") syncBookSearch();
       if (typeof refreshCrowded === "function") refreshCrowded();
     }
@@ -5624,6 +6276,666 @@
     // rebuilt, since the override indices name the final layout.
     // (Books opened from the shelf get theirs the same way.)
 
+    /* ---- EXPERIMENT #1 — Text on art ----
+       A second way to read a book's page text: laid over the artwork
+       itself. The Text control gains a mode — "sheet" (the bottom
+       sheet, exactly as it has always been) or "onart" — remembered
+       per device in fb-text-mode. In On art mode each visible page
+       carries an overlay box (a child of that page's .base element,
+       so it rides the glide/focus transforms with the page) showing
+       the page's words in that page's own arrangement: position and
+       size as fractions of the page, plus font size, color, and
+       backing plate, all remembered per page of each book in
+       fb-onart (the fb-book-text pattern — on-device only; imports,
+       exports, and the book-file format are untouched). While a leaf
+       is flying (or the book is being dragged or gliding) the boxes
+       fade out and fade back in when the spread settles. "Arrange"
+       (shown in the banner while On art is active) enters placement
+       mode: drag a box to move it, drag its corner handle to resize
+       (the text reflows), and style it from the popover. A page
+       never arranged uses the default: lower-third box, ivory text,
+       feathered plate. Wordless books never see any of this — the
+       Text control stays hidden for them, as today. */
+    var textMode = "sheet";
+    try { if (localStorage.getItem("fb-text-mode") === "onart") textMode = "onart"; } catch (err) {}
+    var onArtStore = {};
+    try { onArtStore = JSON.parse(localStorage.getItem("fb-onart") || "{}") || {}; } catch (err) { onArtStore = {}; }
+    function saveOnArtStore() {
+      try { localStorage.setItem("fb-onart", JSON.stringify(onArtStore)); } catch (err) {}
+    }
+    function onArtBookId() {
+      return (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin";
+    }
+    /* v12.9 — text-baked books: a catalog entry flagged textBaked
+       carries finished print pages whose words live in the art
+       itself (Santa). An On art overlay would print the words a
+       second time over the page, so a flagged book is Sheet-only:
+       the Text menu hides its On art and Arrange entries, and a
+       stored On art preference falls back to Sheet while the
+       flagged book is open. Unflagged books are untouched. */
+    function bookTextBaked(id) {
+      try {
+        if (typeof CATALOG === "undefined" || !CATALOG) return false;
+        for (var bi2 = 0; bi2 < CATALOG.length; bi2++) if (CATALOG[bi2].id === id) return !!CATALOG[bi2].textBaked;
+      } catch (err) {}
+      return false;
+    }
+    function currentBookTextBaked() { return bookTextBaked(onArtBookId()); }
+    function enforceTextBakedMode() {
+      if (!currentBookTextBaked()) return;
+      hideTextModePop();
+      if (artArranging) exitArtArrange();
+      if (textMode !== "sheet") {
+        textMode = "sheet";
+        syncTextModeChrome();
+        syncOnArt();
+      }
+    }
+    var ART_COLORS = { ivory: "#f6efdd", ink: "#221d16", gold: "#e8b34b", white: "#ffffff", black: "#000000" };
+    /* Plate colors (RGB triplets, alpha comes from the opacity
+       slider). "ink" is the original dark plate and the default —
+       pages saved before plate color existed carry no pcolor and
+       render exactly as they always did. */
+    var ART_PLATE_COLORS = { ink: "16,13,10", ivory: "246,239,221", gold: "232,179,75", white: "255,255,255", black: "0,0,0" };
+    /* v12.7 — the font picker: five curated faces for the on-art
+       overlay text, loaded from Google Fonts at the end of the
+       body (non-blocking; every stack ends in the page's long-standing
+       fallback faces, so a font that fails to load just renders
+       in the fallback and nothing breaks). "andika" is the
+       default — the book-production story font — and pages saved
+       before fonts existed carry no font and render in it.
+       Sheet text mode never reads this. */
+    var ART_FONTS = {
+      andika: "'Andika', Georgia, 'Times New Roman', serif",
+      lora: "'Lora', Georgia, 'Times New Roman', serif",
+      quicksand: "'Quicksand', Verdana, Geneva, sans-serif",
+      gaegu: "'Gaegu', 'Comic Sans MS', 'Segoe Print', cursive",
+      caveat: "'Caveat', 'Segoe Script', cursive"
+    };
+    /* v12.7 — point-size display mapping: the stored fs stays
+       the same fraction of the page it has always been; points
+       are that fraction of the book's trim height. The current
+       books are square 8.5in, so trim height = 8.5 × 72 = 612pt
+       (a 17pt readout ⇒ font-size ≈ 17/612 of the page height). */
+    var ART_TRIM_PT = 612;
+    function artFsPt(fs) { return (fs * ART_TRIM_PT).toFixed(1); }
+    function artDefault() { return { x: 0.07, y: 0.58, w: 0.86, h: 0.34, fs: 0.048, color: "ivory", plate: "feather", op: 0.55, pcolor: "ink", align: "left", font: "andika" }; }
+    function artFor(idx) {
+      var d = artDefault();
+      var book = onArtStore[onArtBookId()];
+      var a = book && book[String(idx)];
+      if (a) { for (var k in d) { if (typeof a[k] !== "undefined" && a[k] !== null) d[k] = a[k]; } }
+      if (!ART_COLORS[d.color]) d.color = "ivory";
+      if (["none", "solid", "feather"].indexOf(d.plate) < 0) d.plate = "feather";
+      if (!ART_PLATE_COLORS[d.pcolor]) d.pcolor = "ink";
+      if (["left", "center", "right"].indexOf(d.align) < 0) d.align = "left";
+      if (!ART_FONTS[d.font]) d.font = "andika";
+      return d;
+    }
+    function artSave(idx, a) {
+      var id = onArtBookId();
+      onArtStore[id] = onArtStore[id] || {};
+      onArtStore[id][String(idx)] = { x: a.x, y: a.y, w: a.w, h: a.h, fs: a.fs, color: a.color, plate: a.plate, op: a.op, pcolor: a.pcolor, align: a.align, font: a.font };
+      saveOnArtStore();
+    }
+    function artClamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    var artArrangeBtn = document.getElementById("artArrangeBtn");
+    var textModePop = document.getElementById("textModePop");
+    var tmSheetRow = document.getElementById("tmSheet");
+    var tmOnArtRow = document.getElementById("tmOnArt");
+    var tmArrangeRow = document.getElementById("tmArrange");
+    var artStylePop = document.getElementById("artStylePop");
+    var artPopTitle = document.getElementById("artPopTitle");
+    var artFsInput = document.getElementById("artFs");
+    var artFsValEl = document.getElementById("artFsVal");
+    var artOpInput = document.getElementById("artOp");
+    var artOpRow = document.getElementById("artOpRow");
+    var artPColorRow = document.getElementById("artPColorRow");
+    var artArranging = false;
+    var artActiveIdx = -1;
+
+    function makeArtOv() {
+      var ov = document.createElement("div");
+      ov.className = "artOv";
+      ov.setAttribute("aria-hidden", "true");
+      var plate = document.createElement("div"); plate.className = "artPlate";
+      var txt = document.createElement("div"); txt.className = "artText";
+      var handle = document.createElement("div"); handle.className = "artHandle"; handle.setAttribute("aria-hidden", "true");
+      ov.appendChild(plate); ov.appendChild(txt); ov.appendChild(handle);
+      ov._plate = plate; ov._txt = txt; ov._handle = handle; ov._pidx = -1;
+      artDragSetup(ov);
+      return ov;
+    }
+    var ovL = makeArtOv(), ovR = makeArtOv();
+    baseL.appendChild(ovL);
+    baseR.appendChild(ovR);
+    var scrollOvs = {};
+
+    function artApply(ov, idx) {
+      var host = ov.parentNode;
+      if (!host) return;
+      var a = artFor(idx);
+      var hw = host.clientWidth || 1;
+      ov.style.left = (a.x * 100) + "%";
+      ov.style.top = (a.y * 100) + "%";
+      ov.style.width = (a.w * 100) + "%";
+      ov.style.height = (a.h * 100) + "%";
+      ov._txt.style.fontSize = Math.max(9, Math.round(a.fs * hw)) + "px";
+      ov._txt.style.fontFamily = ART_FONTS[a.font] || ART_FONTS.andika;
+      ov._txt.style.color = ART_COLORS[a.color];
+      ov._txt.style.textAlign = (a.align === "center" || a.align === "right") ? a.align : "left";
+      ov._txt.textContent = (pageTexts[idx] || "").trim();
+      /* FIT — no spill, no lost words: if the words are taller
+         than the box at this width and font size, the box grows
+         downward from its top edge; if growth would run off the
+         page's bottom edge the box shifts up inside the page; and
+         if the text still cannot fit the page, the font size caps
+         at the largest size that fits at this width. The fitted
+         height (and capped size) is what gets remembered, so a
+         revisit renders the same box. Extra height above the fit
+         is left alone — only too-short boxes change. This also
+         gives corner-resizing its floor: a drag that makes the
+         box too short is grown back to the content height here. */
+      var hh = host.clientHeight || 1;
+      var needPx = ov._txt.scrollHeight;
+      if (needPx > a.h * hh + 1) {
+        var nh = needPx / hh;
+        if (a.y + nh > 1) {
+          a.y = Math.max(0, 1 - nh);
+          if (nh > 1) {
+            while (needPx > hh + 1 && a.fs > 0.024) {
+              a.fs = Math.max(0.024, a.fs - 0.002);
+              ov._txt.style.fontSize = Math.max(9, Math.round(a.fs * hw)) + "px";
+              needPx = ov._txt.scrollHeight;
+            }
+            nh = Math.min(1, needPx / hh);
+            a.y = Math.max(0, 1 - nh);
+          }
+        }
+        a.h = nh;
+        ov.style.top = (a.y * 100) + "%";
+        ov.style.height = (a.h * 100) + "%";
+        artSave(idx, a);
+      }
+      // The plate color is its own pick now, fully independent of
+      // the text color; "ink" is the original dark plate.
+      var plateCol = ART_PLATE_COLORS[a.pcolor] || ART_PLATE_COLORS.ink;
+      if (a.plate === "none") {
+        ov._plate.style.display = "none";
+      } else {
+        ov._plate.style.display = "block";
+        ov._plate.style.background = "rgba(" + plateCol + "," + a.op + ")";
+        if (a.plate === "feather") {
+          var mask = "radial-gradient(115% 125% at 50% 50%, #000 52%, rgba(0,0,0,.55) 76%, transparent 100%)";
+          ov._plate.style.webkitMaskImage = mask;
+          ov._plate.style.maskImage = mask;
+          ov._plate.style.borderRadius = "16px";
+        } else {
+          ov._plate.style.webkitMaskImage = "none";
+          ov._plate.style.maskImage = "none";
+          ov._plate.style.borderRadius = "8px";
+        }
+      }
+      ov.classList.toggle("artSel", artArranging && idx === artActiveIdx);
+    }
+    function artVisible() { return textMode === "onart" && !currentBookTextBaked() && bookHasText(); }
+    function paintArtOv(ov, idx) {
+      if (idx === null || idx === undefined || idx < 0 || idx >= N || !pageTexts[idx] || !pageTexts[idx].trim()) {
+        ov.style.display = "none"; ov._pidx = -1; return;
+      }
+      if (focusMode && visibleTextIdxs().indexOf(idx) < 0) {
+        ov.style.display = "none"; ov._pidx = -1; return;
+      }
+      ov._pidx = idx;
+      ov.style.display = "block";
+      artApply(ov, idx);
+    }
+    function paintScrollOv(ov, idx) {
+      ov._pidx = idx;
+      if (!artVisible() || !pageTexts[idx] || !pageTexts[idx].trim()) { ov.style.display = "none"; return; }
+      ov.style.display = "block";
+      artApply(ov, idx);
+    }
+    function attachScrollOv(pageEl, idx) {
+      scrollOvs = scrollOvs || {};
+      var ov = makeArtOv();
+      pageEl.appendChild(ov);
+      scrollOvs[idx] = ov;
+      paintScrollOv(ov, idx);
+    }
+    function syncScrollOvs() {
+      if (!scrollOvs) return;
+      Object.keys(scrollOvs).forEach(function (k) {
+        var ov = scrollOvs[k];
+        if (!ov || !ov.parentNode) { delete scrollOvs[k]; return; }
+        paintScrollOv(ov, parseInt(k, 10));
+      });
+    }
+    function restyleArtIdx(idx) {
+      if (ovL._pidx === idx && ovL.style.display !== "none") artApply(ovL, idx);
+      if (ovR._pidx === idx && ovR.style.display !== "none") artApply(ovR, idx);
+      var sov = scrollOvs && scrollOvs[idx];
+      if (sov && sov.style.display !== "none") artApply(sov, idx);
+    }
+    function syncOnArt() {
+      if (!ovL || !ovR) return;
+      var on = artVisible();
+      if (!on) {
+        if (artArranging) exitArtArrange();
+        hideTextModePop();
+        if (artArrangeBtn) artArrangeBtn.hidden = true;
+        ovL.style.display = "none"; ovL._pidx = -1;
+        ovR.style.display = "none"; ovR._pidx = -1;
+        syncScrollOvs();
+        return;
+      }
+      if (artArrangeBtn) artArrangeBtn.hidden = false;
+      if (artArranging && (artActiveIdx < 0 || artActiveIdx >= N)) {
+        var vis0 = turnMode === "scroll" ? [scrollCurIdx] : visibleTextIdxs();
+        artActiveIdx = -1;
+        for (var vi = 0; vi < vis0.length; vi++) {
+          if (pageTexts[vis0[vi]] && pageTexts[vis0[vi]].trim()) { artActiveIdx = vis0[vi]; break; }
+        }
+        if (artActiveIdx < 0) { exitArtArrange(); }
+        else syncArtStylePop();
+      }
+      if (turnMode === "scroll") {
+        ovL.style.display = "none"; ovL._pidx = -1;
+        ovR.style.display = "none"; ovR._pidx = -1;
+      } else {
+        paintArtOv(ovL, flipped === 0 ? null : 2 * flipped - 1);
+        paintArtOv(ovR, flipped === HALF ? null : 2 * flipped);
+      }
+      syncScrollOvs();
+    }
+    /* Fade the boxes out while anything is in motion (a flying leaf,
+       a finger drag, a camera glide) and back in once settled; a
+       settled-state change re-syncs which pages the boxes belong to.
+       Runs only while On art is the active mode. */
+    var artWatchOn = false, artLastSig = "", artLayoutTick = 0;
+    function artWatch() {
+      if (textMode !== "onart") { artWatchOn = false; return; }
+      /* v12.5 — keep the floating panel's stage lift right as
+         the viewport changes under it (throttled). */
+      if (artArranging && !artStylePop.hidden && ++artLayoutTick % 15 === 0) artPanelLayout();
+      var busy = (typeof animating !== "undefined" && animating) ||
+        (typeof drag !== "undefined" && !!drag) ||
+        (typeof camAnim !== "undefined" && !!camAnim) ||
+        (typeof zoomIsOpen !== "undefined" && zoomIsOpen);
+      var target = busy ? "0" : "1";
+      if (ovL.style.opacity !== target) ovL.style.opacity = target;
+      if (ovR.style.opacity !== target) ovR.style.opacity = target;
+      var sig = flipped + "|" + focus + "|" + (focusMode ? 1 : 0) + "|" + onArtBookId() + "|" + N + "|" + turnMode;
+      if (!busy && sig !== artLastSig) { artLastSig = sig; syncOnArt(); }
+      requestAnimationFrame(artWatch);
+    }
+    function artWatchKick() {
+      if (!artWatchOn && textMode === "onart") { artWatchOn = true; requestAnimationFrame(artWatch); }
+    }
+
+    /* ---- Mode choice ---- */
+    function syncTextModeChrome() {
+      var segBtns = document.querySelectorAll("#textModeSeg button");
+      for (var i = 0; i < segBtns.length; i++) {
+        segBtns[i].setAttribute("aria-pressed", segBtns[i].getAttribute("data-tmode") === textMode ? "true" : "false");
+      }
+      if (tmSheetRow) tmSheetRow.setAttribute("aria-checked", textMode === "sheet" ? "true" : "false");
+      if (tmOnArtRow) tmOnArtRow.setAttribute("aria-checked", textMode === "onart" ? "true" : "false");
+      /* v12.9 — a text-baked book's Text menu offers Sheet only:
+         the On art row, the Arrange row, their divider, and the
+         sheet bar's On art segment all stand down while a flagged
+         book is open, and return for unflagged books. */
+      var bakedNow = currentBookTextBaked();
+      if (tmOnArtRow) tmOnArtRow.hidden = bakedNow;
+      if (tmArrangeRow) tmArrangeRow.hidden = bakedNow;
+      var tmDivEl = textModePop ? textModePop.querySelector(".tmDiv") : null;
+      if (tmDivEl) tmDivEl.hidden = bakedNow;
+      var segOnArtBtn = document.querySelector('#textModeSeg button[data-tmode="onart"]');
+      if (segOnArtBtn) segOnArtBtn.hidden = bakedNow;
+      if (artArrangeBtn && bakedNow) artArrangeBtn.hidden = true;
+      if (tmArrangeRow) tmArrangeRow.setAttribute("aria-pressed", artArranging ? "true" : "false");
+      textBtn.setAttribute("aria-expanded", textMode === "onart" ? String(!textModePop.hidden) : String(textIsOpen));
+    }
+    function setTextMode(m) {
+      if (m !== "onart") m = "sheet";
+      if (m === "onart" && currentBookTextBaked()) m = "sheet";
+      var changed = m !== textMode;
+      textMode = m;
+      if (changed) { try { localStorage.setItem("fb-text-mode", m); } catch (err) {} }
+      hideTextModePop();
+      if (m === "onart") {
+        if (textIsOpen) closeTextPanel();
+      } else if (artArranging) {
+        exitArtArrange();
+      }
+      syncTextModeChrome();
+      syncOnArt();
+      artWatchKick();
+    }
+    var segBtnsAll = document.querySelectorAll("#textModeSeg button");
+    for (var sbi = 0; sbi < segBtnsAll.length; sbi++) {
+      segBtnsAll[sbi].addEventListener("click", function () { setTextMode(this.getAttribute("data-tmode")); });
+    }
+    function showTextModePop() {
+      if (!textModePop || !bookHasText()) return;
+      syncTextModeChrome();
+      var r = textBtn.getBoundingClientRect();
+      textModePop.hidden = false;
+      var w = textModePop.offsetWidth || 216;
+      textModePop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + "px";
+      textModePop.style.top = (r.bottom + 6) + "px";
+      syncTextModeChrome();
+    }
+    function hideTextModePop() {
+      if (textModePop && !textModePop.hidden) { textModePop.hidden = true; syncTextModeChrome(); }
+    }
+    /* In Sheet mode the Text button keeps its exact old behavior
+       (toggle the sheet). In On art mode it opens the mode popover
+       instead — this capture-phase listener on the button's parent
+       runs before the button's own sheet toggle and stops it. */
+    document.getElementById("leftTools").addEventListener("click", function (e) {
+      if (textMode !== "onart") return;
+      var t = e.target;
+      var btn = (t && t.closest) ? t.closest("#textBtn") : null;
+      if (!btn) return;
+      e.stopPropagation();
+      e.preventDefault();
+      if (textModePop.hidden) showTextModePop(); else hideTextModePop();
+    }, true);
+    document.addEventListener("pointerdown", function (e) {
+      if (!textModePop || textModePop.hidden) return;
+      if (textModePop.contains(e.target) || textBtn.contains(e.target)) return;
+      hideTextModePop();
+    });
+    if (tmSheetRow) tmSheetRow.addEventListener("click", function () {
+      setTextMode("sheet");
+      if (!textIsOpen) openTextPanel(textBtn);
+    });
+    if (tmOnArtRow) tmOnArtRow.addEventListener("click", function () { setTextMode("onart"); });
+    if (tmArrangeRow) tmArrangeRow.addEventListener("click", function () {
+      hideTextModePop();
+      if (artArranging) exitArtArrange(); else enterArtArrange();
+    });
+
+    /* ---- Placement mode ---- */
+    function syncArtStylePop() {
+      if (artActiveIdx < 0 || artActiveIdx >= N) return;
+      var a = artFor(artActiveIdx);
+      artPopTitle.textContent = "Style · " + textHead(artActiveIdx);
+      artFsInput.value = String(a.fs);
+      if (artFsValEl) artFsValEl.textContent = artFsPt(a.fs) + " pt";
+      artOpInput.value = String(a.op);
+      artOpRow.style.display = a.plate === "none" ? "none" : "";
+      artPColorRow.style.display = a.plate === "none" ? "none" : "";
+      var sws = document.querySelectorAll("#artSwatches .artSw");
+      for (var i = 0; i < sws.length; i++) {
+        sws[i].setAttribute("aria-pressed", sws[i].getAttribute("data-color") === a.color ? "true" : "false");
+      }
+      var pbs = document.querySelectorAll("#artPlateSeg button");
+      for (var j = 0; j < pbs.length; j++) {
+        pbs[j].setAttribute("aria-pressed", pbs[j].getAttribute("data-plate") === a.plate ? "true" : "false");
+      }
+      var psws = document.querySelectorAll("#artPlateSwatches .artSw");
+      for (var pj = 0; pj < psws.length; pj++) {
+        psws[pj].setAttribute("aria-pressed", psws[pj].getAttribute("data-pcolor") === a.pcolor ? "true" : "false");
+      }
+      var abs2 = document.querySelectorAll("#artAlignSeg button");
+      for (var aj = 0; aj < abs2.length; aj++) {
+        abs2[aj].setAttribute("aria-pressed", abs2[aj].getAttribute("data-align") === a.align ? "true" : "false");
+      }
+      var fbs = document.querySelectorAll("#artFontList button");
+      for (var fj = 0; fj < fbs.length; fj++) {
+        fbs[fj].setAttribute("aria-pressed", fbs[fj].getAttribute("data-font") === a.font ? "true" : "false");
+      }
+      artPanelLayout();
+    }
+    function enterArtArrange() {
+      if (!artVisible()) return;
+      hideTextModePop();
+      artArranging = true;
+      document.body.classList.add("art-arranging");
+      var vis = turnMode === "scroll" ? [scrollCurIdx] : visibleTextIdxs();
+      artActiveIdx = -1;
+      for (var i = 0; i < vis.length; i++) {
+        if (pageTexts[vis[i]] && pageTexts[vis[i]].trim()) { artActiveIdx = vis[i]; break; }
+      }
+      if (artActiveIdx < 0 && vis.length) artActiveIdx = vis[0];
+      if (artActiveIdx < 0) { exitArtArrange(); return; }
+      artArrangeBtn.textContent = "Done";
+      artArrangeBtn.setAttribute("aria-pressed", "true");
+      artSuppressed = false;
+      artStylePop.hidden = false;
+      syncArtStylePop();
+      syncTextModeChrome();
+      syncOnArt();
+      artPanelLayout();
+      artSurfaceSync();
+    }
+    function exitArtArrange() {
+      if (!artArranging) return;
+      artArranging = false;
+      document.body.classList.remove("art-arranging");
+      artArrangeBtn.textContent = "Arrange";
+      artArrangeBtn.setAttribute("aria-pressed", "false");
+      artSuppressed = false;
+      artStylePop.classList.remove("artDragging");
+      artStylePop.hidden = true;
+      if (artLift) { artLift = 0; stage.style.transform = ""; }
+      syncTextModeChrome();
+      syncOnArt();
+    }
+    artArrangeBtn.addEventListener("click", function () {
+      if (artArranging) exitArtArrange(); else enterArtArrange();
+    });
+    /* ---- v12.5 — floating panel: tiers + stage lift ----
+       The panel never docks and never re-fits the book: it floats
+       over the bottom of the stage (translucent CSS above), so
+       entering and leaving Arrange leaves the book's rect exactly
+       as the reading view had it. Tier state is session-only
+       (artTier, never stored): Tier 1 shows the header and the
+       Text size row; "More style" expands Tier 2 in place with
+       every other control. The one Done in Arrange is the
+       banner's — the panel itself carries no Done button. If
+       the panel's default position would cover the active box,
+       the STAGE is translated up by exactly the overlap amount
+       (v12.8: both tiers; translation only — fit() is never
+       called for the panel, so the book is never resized); the
+       check reconstructs the
+       box's un-lifted rect so re-checks converge. artPanelLayout
+       re-runs from enterArtArrange, the tier toggle,
+       syncArtStylePop (active-box changes), and (throttled) the
+       art watch loop. */
+    var artTier = 1;
+    var artLift = 0;
+    var artTierToggleBtn = document.getElementById("artTierToggle");
+    var artTier2El = document.getElementById("artTier2");
+    function artSetTier(tier) {
+      artTier = tier === 2 ? 2 : 1;
+      if (artTier2El) artTier2El.hidden = artTier !== 2;
+      artStylePop.setAttribute("data-tier", String(artTier));
+      if (artTierToggleBtn) {
+        artTierToggleBtn.textContent = artTier === 2 ? "Less style" : "More style";
+        artTierToggleBtn.setAttribute("aria-expanded", artTier === 2 ? "true" : "false");
+      }
+      artPanelLayout();
+    }
+    if (artTierToggleBtn) artTierToggleBtn.addEventListener("click", function () {
+      artSetTier(artTier === 2 ? 1 : 2);
+    });
+    /* ---- v12.8 — one surface at a time ----
+       While Arrange is active, opening the Pages sheet or the
+       quick menu hides the Arrange panel (and drops its stage
+       lift) for as long as that surface is open; when the surface
+       closes, the panel returns exactly as it was — same tier,
+       same active page, same state — via syncArtStylePop. Called
+       from openSheet / closeSheet / setQuickMenu, which are the
+       single funnels for those surfaces. */
+    var artSuppressed = false;
+    function artSurfaceSync() {
+      if (!artStylePop) return;
+      var blocked = (typeof sheet !== "undefined" && sheet && sheet.classList.contains("open")) ||
+        (typeof quickOpen !== "undefined" && quickOpen);
+      if (!artArranging) { artSuppressed = false; return; }
+      if (blocked && !artStylePop.hidden) {
+        artSuppressed = true;
+        artStylePop.hidden = true;
+        if (artLift) { artLift = 0; stage.style.transform = ""; }
+      } else if (!blocked && artSuppressed) {
+        artSuppressed = false;
+        artStylePop.hidden = false;
+        syncArtStylePop();
+        artPanelLayout();
+      }
+    }
+    function artActiveOv() {
+      if (ovL._pidx === artActiveIdx && ovL.style.display !== "none") return ovL;
+      if (ovR._pidx === artActiveIdx && ovR.style.display !== "none") return ovR;
+      var sov = scrollOvs ? scrollOvs[artActiveIdx] : null;
+      if (sov && sov.style.display !== "none") return sov;
+      return null;
+    }
+    function artPanelLayout() {
+      if (!artArranging || artStylePop.hidden) {
+        if (artLift) { artLift = 0; stage.style.transform = ""; }
+        return;
+      }
+      var ov = artActiveOv();
+      if (!ov) {
+        if (artLift) { artLift = 0; stage.style.transform = ""; }
+        return;
+      }
+      var pr = artStylePop.getBoundingClientRect();
+      var br = ov.getBoundingClientRect();
+      var uTop = br.top + artLift, uBot = br.bottom + artLift;
+      var overlap = uBot > pr.top + 2 && uTop < pr.bottom && br.right > pr.left && br.left < pr.right;
+      /* v12.8 — lift by exactly the overlap amount (plus a small
+         8px breathing gap), in BOTH tiers: the stage translates
+         just far enough that the active box's bottom edge sits
+         fully above the panel's top edge — translation only,
+         the book's size never changes. */
+      var need = overlap ? Math.ceil(uBot - pr.top) + 8 : 0;
+      if (need !== artLift) {
+        artLift = need;
+        stage.style.transform = need ? ("translateY(" + (-need) + "px)") : "";
+      }
+    }
+    function artEditActive(patch) {
+      if (artActiveIdx < 0 || artActiveIdx >= N) return;
+      var a = artFor(artActiveIdx);
+      for (var k in patch) a[k] = patch[k];
+      artSave(artActiveIdx, a);
+      restyleArtIdx(artActiveIdx);
+      syncArtStylePop();
+    }
+    artFsInput.addEventListener("input", function () { artEditActive({ fs: parseFloat(artFsInput.value) || artDefault().fs }); });
+    artOpInput.addEventListener("input", function () { artEditActive({ op: parseFloat(artOpInput.value) || artDefault().op }); });
+    var artSws = document.querySelectorAll("#artSwatches .artSw");
+    for (var swi = 0; swi < artSws.length; swi++) {
+      artSws[swi].addEventListener("click", function () { artEditActive({ color: this.getAttribute("data-color") }); });
+    }
+    var artPbs = document.querySelectorAll("#artPlateSeg button");
+    for (var pbi = 0; pbi < artPbs.length; pbi++) {
+      artPbs[pbi].addEventListener("click", function () { artEditActive({ plate: this.getAttribute("data-plate") }); });
+    }
+    var artPSws = document.querySelectorAll("#artPlateSwatches .artSw");
+    for (var psi = 0; psi < artPSws.length; psi++) {
+      artPSws[psi].addEventListener("click", function () { artEditActive({ pcolor: this.getAttribute("data-pcolor") }); });
+    }
+    var artABs = document.querySelectorAll("#artAlignSeg button");
+    for (var abi = 0; abi < artABs.length; abi++) {
+      artABs[abi].addEventListener("click", function () { artEditActive({ align: this.getAttribute("data-align") }); });
+    }
+    var artFBs = document.querySelectorAll("#artFontList button");
+    for (var fbi = 0; fbi < artFBs.length; fbi++) {
+      artFBs[fbi].addEventListener("click", function () { artEditActive({ font: this.getAttribute("data-font") }); });
+    }
+    /* Apply the current page's STYLE — font, font size, text color,
+       plate type, plate color, plate opacity, alignment — to every
+       other text-carrying page of this book. Placement (x/y/w/h)
+       stays per-page and is never touched. The button confirms by
+       briefly reading "Applied ✓". */
+    var artApplyAllBtn = document.getElementById("artApplyAll");
+    var artApplyAllTimer = 0;
+    artApplyAllBtn.addEventListener("click", function () {
+      if (artActiveIdx < 0 || artActiveIdx >= N) return;
+      var src = artFor(artActiveIdx);
+      for (var pai = 0; pai < N; pai++) {
+        if (pai === artActiveIdx) continue;
+        if (!pageTexts[pai] || !pageTexts[pai].trim()) continue;
+        var ta = artFor(pai);
+        ta.fs = src.fs; ta.color = src.color; ta.plate = src.plate;
+        ta.pcolor = src.pcolor; ta.op = src.op; ta.align = src.align;
+        ta.font = src.font;
+        artSave(pai, ta);
+        restyleArtIdx(pai);
+      }
+      artApplyAllBtn.textContent = "Applied ✓";
+      if (artApplyAllTimer) clearTimeout(artApplyAllTimer);
+      artApplyAllTimer = setTimeout(function () { artApplyAllBtn.textContent = "Apply style to all pages"; }, 1600);
+    });
+    /* Drag to move, corner handle to resize. Coordinates are page
+       fractions throughout, so an arrangement survives any window
+       size; the box is clamped inside its page. */
+    function artDragSetup(ov) {
+      ov.addEventListener("pointerdown", function (e) {
+        if (!artArranging) return;
+        var idx = ov._pidx;
+        if (idx < 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (artActiveIdx !== idx) {
+          artActiveIdx = idx;
+          syncArtStylePop();
+          syncOnArt();
+        }
+        var host = ov.parentNode;
+        if (!host) return;
+        var hw = host.clientWidth || 1, hh = host.clientHeight || 1;
+        var a = artFor(idx);
+        var onHandle = e.target === ov._handle;
+        var sx = e.clientX, sy = e.clientY;
+        var start = { x: a.x, y: a.y, w: a.w, h: a.h };
+        try { ov.setPointerCapture(e.pointerId); } catch (err) {}
+        artStylePop.classList.add("artDragging");
+        function mv(ev) {
+          var dx = (ev.clientX - sx) / hw, dy = (ev.clientY - sy) / hh;
+          if (onHandle) {
+            a.w = artClamp(start.w + dx, 0.18, 1 - a.x);
+            a.h = artClamp(start.h + dy, 0.1, 1 - a.y);
+          } else {
+            a.x = artClamp(start.x + dx, 0, 1 - a.w);
+            a.y = artClamp(start.y + dy, 0, 1 - a.h);
+          }
+          artSave(idx, a);
+          restyleArtIdx(idx);
+        }
+        function up() {
+          artStylePop.classList.remove("artDragging");
+          ov.removeEventListener("pointermove", mv);
+          ov.removeEventListener("pointerup", up);
+          ov.removeEventListener("pointercancel", up);
+        }
+        ov.addEventListener("pointermove", mv);
+        ov.addEventListener("pointerup", up);
+        ov.addEventListener("pointercancel", up);
+      });
+    }
+    syncTextModeChrome();
+    syncOnArt();
+    artWatchKick();
+    /* v12.9 — belt and braces for the no-selection rule: a
+       selection gesture starting anywhere on the stage is
+       cancelled outright, so no handles or loupe can form on the
+       page or its overlay text even where a browser would let a
+       programmatic or edge-case selection begin. Form fields
+       keep their normal selection (the guard passes them by). */
+    if (stage) stage.addEventListener("selectstart", function (e) {
+      var t = e.target;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      e.preventDefault();
+    });
+
     /* ---- Full-book search (Pages sheet) ----
        The Pages sheet is the book's navigation hub — thumbnails,
        marks, and now search over the book's words. The field sits
@@ -5662,6 +6974,19 @@
       if (searchDebounce) { clearTimeout(searchDebounce); searchDebounce = null; }
       searchHighlightQuery = "";
       endSearchKeyboard();
+      if (searchInputEl) searchInputEl.value = "";
+      if (searchClearBtn) searchClearBtn.hidden = true;
+      if (searchResultsEl) searchResultsEl.innerHTML = "";
+      if (searchEmptyEl) searchEmptyEl.hidden = true;
+    }
+    /* v12.9 — the Pages sheet opens clean: closing it (any path —
+       ×, swipe, tab, a jump) clears the query and its results, so
+       reopening always starts on the thumbnail grid. Unlike the
+       book-switch reset above, this leaves searchHighlightQuery
+       alone: a result tap sets the highlight, then closes the
+       sheet on its way to the Page text sheet. */
+    function clearPagesSearch() {
+      if (searchDebounce) { clearTimeout(searchDebounce); searchDebounce = null; }
       if (searchInputEl) searchInputEl.value = "";
       if (searchClearBtn) searchClearBtn.hidden = true;
       if (searchResultsEl) searchResultsEl.innerHTML = "";
@@ -5854,7 +7179,13 @@
     var compareOn = false;
     var origImgCache = {};
     function origSrcFor(idx) { return (artReplaced[idx] && artOrig[idx]) ? artOrig[idx] : PAGES[idx]; }
-    function effSrc(idx) { return compareOn ? origSrcFor(idx) : PAGES[idx]; }
+    function effSrc(idx) {
+      // A chosen cover version presents as the book's cover page in
+      // the reader (Compare still wins: it is a deliberate look at
+      // the book's own original art). PAGES itself is never touched.
+      if (idx === 0 && !compareOn) { var cvs = coverSelectedSrc(currentEntryId); if (cvs) return cvs; }
+      return compareOn ? origSrcFor(idx) : PAGES[idx];
+    }
     function origImgFor(idx) {
       var s = artOrig[idx];
       var c = origImgCache[idx];
@@ -5862,6 +7193,7 @@
       return c;
     }
     function effImg(idx) {
+      if (idx === 0 && !compareOn) { var cvs = coverSelectedSrc(currentEntryId); if (cvs) return coverVersionImg(cvs); }
       if (compareOn && artReplaced[idx] && artOrig[idx]) return origImgFor(idx);
       return pageImgs[idx];
     }
@@ -8370,6 +9702,7 @@
       quickOpen = !!open;
       if (quickMenu) quickMenu.hidden = !quickOpen;
       paintQuickMenu();
+      if (typeof artSurfaceSync === "function") artSurfaceSync();
     }
     function closeQuickMenu(refocus) {
       if (!quickOpen) return;
@@ -8580,12 +9913,12 @@
           "Tomorrow, her captain promised, the wind would be fair — and the little red boat would sail at last."],
         info: { author: "BookVizion Studio", format: "Square (1:1)", status: "test", links: [],
           about: "A small red sailboat bobs at the harbor wall among the flags and gulls, dreaming of the morning it will sail out to sea." } },
-      { id: "the-night-i-met-santa", title: "The Night I Met Santa", cover: "shelf/santa/01.jpg", source: "built-in", pages: shelfPagesN("santa", 36),
+      { id: "the-night-i-met-santa", title: "The Night I Met Santa", cover: "shelf/santa/01.jpg", source: "built-in", pages: shelfPagesN("santa", 36), textBaked: true,
         text: [
           null,
           null,
           "Copyright © 2026 Jack Farrell All rights reserved. No part of this book may be reproduced or transmitted in any form or by any means, electronic or mechanical, including photocopying, recording, or by any information storage and retrieval system, without permission in writing from the publisher or author. This is a work of fiction. Names, characters, places, and incidents either are the product of the author’s imagination or are used fictitiously, and any resemblance to actual persons, living or dead, is entirely coincidental. First illustrated edition, 2026. Book design by Jon Farrell. www.jon-beatz.com",
-          "Written by The Night I Met Santa was written for his family so that wonder would never grow old. This book brings his poem to life, page by page, picture by picture. For my family, with love. Jon, Jackie, and Lorrin— Who first heard this story on Christmas Eve and still believe in the magic downstairs. Collin, Emma, Stella, and Amelia— who just might hear a noise among the toys one night soon.",
+          "The Night I Met Santa was written for his family so that wonder would never grow old. It was typed, printed, and shared among the Farrells as a keepsake — a reminder that magic still visits those who believe.",
           "One Christmas Eve, a curious child hears a noise downstairs among the toys. What begins as a tiptoe peek turns into something unforgettable. A quiet hour with Santa himself.",
           "Stories, laughter, hot cocoa instead of milk, and one small wish for Christmas that isn’t gifts at all...",
           "I searched and I peeked when I first heard the noise. Something or someone was in with the toys. I slithered and crawled for a peek of a glimpse. It must be some fairies or holiday imps.",
@@ -8737,6 +10070,22 @@
     try {
       var svCoverSize = localStorage.getItem("fb-shelf-coversize");
       if (["large", "medium", "small"].indexOf(svCoverSize) >= 0) shelfCoverSize = svCoverSize;
+    } catch (err) {}
+    /* Covers per row (experiment #2, Classic shelf only):
+       "auto" is today's behavior exactly — buildShelf chunks rows
+       by the Cover size column count and the covers take the
+       stylesheet's clamp width. A fixed count ("3".."6") makes the
+       count own the row instead: buildShelf chunks by the count
+       and pins --sbookw inline at the width that fits N across
+       (see fixedRowLayout / syncCoverWidth by setCoverSize).
+       Loaded here, with the other shelf prefs, so a persisted
+       count is already in force at the first buildShelf — the
+       shelf never paints Auto and then jumps. Persisted per
+       device in fb-shelf-perrow. The 3D shelf never reads it. */
+    var shelfPerRow = "auto";
+    try {
+      var svPerRow = localStorage.getItem("fb-shelf-perrow");
+      if (["auto", "3", "4", "5", "6"].indexOf(svPerRow) >= 0) shelfPerRow = svPerRow;
     } catch (err) {}
     /* ---- Shelf customization: backdrop + show shelves + style ----
        Three independent per-device layers (fb-shelf-backdrop /
@@ -8998,6 +10347,7 @@
     var shelfOptsBtn = document.getElementById("shelfOptsBtn");
     var shelfOptsPanel = document.getElementById("shelfOptsPanel");
     var shelfOptsOpen = false;
+    var classicOptsOpen = false;
     function syncShelfOptsUI() {
       if (!shelfOptsPanel) return;
       shelfOptsPanel.querySelectorAll("[data-shelf-sort]").forEach(function (b) {
@@ -9012,6 +10362,12 @@
       shelfOptsPanel.querySelectorAll("[data-cover-size]").forEach(function (b) {
         b.setAttribute("aria-pressed", b.getAttribute("data-cover-size") === shelfCoverSize ? "true" : "false");
       });
+      var prv = document.getElementById("perRowVal");
+      if (prv) prv.textContent = shelfPerRow === "auto" ? "Auto" : shelfPerRow;
+      var prUpSync = document.getElementById("perRowUp");
+      if (prUpSync) prUpSync.disabled = shelfPerRow === "6";
+      var prDownSync = document.getElementById("perRowDown");
+      if (prDownSync) prDownSync.disabled = shelfPerRow === "auto";
       var bdPickSync = document.getElementById("shelfBdPick");
       if (bdPickSync) {
         if (bdPickSync.value !== shelfBackdropMode) bdPickSync.value = shelfBackdropMode;
@@ -9028,6 +10384,12 @@
       }
       var ab = document.getElementById("arrangeBtn");
       if (ab) ab.setAttribute("aria-pressed", arrangeOn ? "true" : "false");
+      var is3dView = typeof shelfViewMode !== "undefined" && shelfViewMode === "3d";
+      shelfOptsPanel.classList.toggle("view-3d", is3dView);
+      var cot = document.getElementById("classicOptsToggle");
+      if (cot) cot.setAttribute("aria-expanded", classicOptsOpen ? "true" : "false");
+      var cob = document.getElementById("classicOptsBody");
+      if (cob) cob.hidden = is3dView ? !classicOptsOpen : false;
       renderHiddenList();
     }
     /* Background lock while the popover is open (the CSS half is
@@ -9084,6 +10446,51 @@
       shelfCoverSize = mode;
       try { localStorage.setItem("fb-shelf-coversize", mode); } catch (err) {}
       applyCoverSize();
+      syncShelfOptsUI();
+      buildShelf();
+    }
+    /* ---- Covers per row (experiment #2) ----
+       Fixed-count row geometry. The Cover size nominal width —
+       the same clamps the stylesheet puts in --sbookw — is the
+       ceiling: a fixed row never inflates covers past their Cover
+       size, it only shrinks them when N covers at that size would
+       overflow the row, so the count survives every Cover size.
+       The floor runs the other way: below a 76px cover the count
+       yields instead, and the row wraps to fewer, still-usable
+       covers rather than slivers (narrow phones, large counts). */
+    var PERROW_MIN_COVER = 76;
+    function fixedRowLayout(n) {
+      var gap = shelfCoverSize === "small" ? 10 : 16;
+      var avail = shelfRowsEl ? shelfRowsEl.clientWidth : 0;
+      if (!avail) avail = Math.max(0, document.documentElement.clientWidth - 28);
+      avail = Math.max(0, avail - 4); /* .shelfRow side padding */
+      var vw = window.innerWidth || avail;
+      var nominal = shelfCoverSize === "large" ? Math.min(188, Math.max(138, vw * 0.42))
+        : shelfCoverSize === "small" ? Math.min(94, Math.max(62, vw * 0.20))
+        : Math.min(126, Math.max(94, vw * 0.27));
+      var cols = Math.max(1, Math.min(n, Math.floor((avail + gap) / (PERROW_MIN_COVER + gap))));
+      var fit = (avail - (cols - 1) * gap) / cols;
+      return { cols: cols, width: Math.max(1, Math.min(nominal, fit)) };
+    }
+    /* Pins (fixed count) or releases (Auto) the inline --sbookw on
+       #shelf. The stylesheet's cov- clamps own the variable in
+       Auto; an inline value outranks them while a fixed count is
+       on, and everything the variable feeds — cover width, rail
+       offset, the ⓘ corner — follows it. Called from buildShelf
+       (every Classic build), setPerRow, and once at panel wiring
+       so a persisted count is in force before the first paint. */
+    function syncCoverWidth() {
+      var sh = document.getElementById("shelf");
+      if (!sh) return;
+      if (shelfPerRow === "auto") { sh.style.removeProperty("--sbookw"); return; }
+      var lay = fixedRowLayout(parseInt(shelfPerRow, 10));
+      sh.style.setProperty("--sbookw", lay.width.toFixed(1) + "px");
+    }
+    function setPerRow(mode) {
+      if (["auto", "3", "4", "5", "6"].indexOf(mode) < 0) return;
+      shelfPerRow = mode;
+      try { localStorage.setItem("fb-shelf-perrow", mode); } catch (err) {}
+      syncCoverWidth();
       syncShelfOptsUI();
       buildShelf();
     }
@@ -9180,6 +10587,16 @@
       shelfOptsPanel.querySelectorAll("[data-cover-size]").forEach(function (b) {
         b.addEventListener("click", function () { setCoverSize(b.getAttribute("data-cover-size")); });
       });
+      var PERROW_STEPS = ["auto", "3", "4", "5", "6"];
+      function stepPerRow(dir) {
+        var i = PERROW_STEPS.indexOf(shelfPerRow);
+        var j = Math.min(PERROW_STEPS.length - 1, Math.max(0, i + dir));
+        if (j !== i) setPerRow(PERROW_STEPS[j]);
+      }
+      var prUpEl = document.getElementById("perRowUp");
+      if (prUpEl) prUpEl.addEventListener("click", function () { stepPerRow(1); });
+      var prDownEl = document.getElementById("perRowDown");
+      if (prDownEl) prDownEl.addEventListener("click", function () { stepPerRow(-1); });
       var bdPickEl = document.getElementById("shelfBdPick");
       if (bdPickEl) bdPickEl.addEventListener("change", function () { setShelfBackdrop(bdPickEl.value); });
       var stylePickEl = document.getElementById("shelfStylePick");
@@ -9195,12 +10612,34 @@
         syncShelfOptsUI();
         buildShelf();
       });
+      var classicOptsToggleEl = document.getElementById("classicOptsToggle");
+      if (classicOptsToggleEl) classicOptsToggleEl.addEventListener("click", function () {
+        classicOptsOpen = !classicOptsOpen;
+        syncShelfOptsUI();
+      });
       syncShelfOptsUI();
       applyCoverSize();
+      syncCoverWidth();
       applyShelfBackdrop();
       applyShelfStyle();
       applyShowShelves();
     }
+
+    /* A fixed Covers-per-row count owns its row geometry, so a
+       viewport change (rotation, window drag, browser chrome
+       showing or hiding) must re-derive the floored count and the
+       fitted cover width. Auto needs nothing — its clamps are
+       pure CSS. Debounced, and only while the Classic shelf is
+       actually on screen. */
+    var perRowResizeTimer = null;
+    window.addEventListener("resize", function () {
+      if (shelfPerRow === "auto" || !shelfIsOpen || shelfViewMode !== "classic") return;
+      if (perRowResizeTimer) clearTimeout(perRowResizeTimer);
+      perRowResizeTimer = setTimeout(function () {
+        perRowResizeTimer = null;
+        if (shelfIsOpen && shelfViewMode === "classic") buildShelf();
+      }, 120);
+    });
 
     /* ---- 3D shelf view — one dataset, two views ----
        shelfViewMode is the ONLY new state: which drawing of the
@@ -9500,7 +10939,25 @@
           im.addEventListener("error", function () { if (!im.getAttribute("src")) return; im.remove(); var na = document.createElement("div"); na.className = "s3-noart"; na.textContent = entry.title; front.appendChild(na); });
           front.appendChild(im);
           s3CoverImgs.push(im);
-          applyCoverThumb(im, entry, idx === s3Focus ? "high" : "lazy");
+          /* Experiment #3: the cover face is staged like the
+             Classic slots — a charcoal ghost fills the face
+             (untappable) until this volume's own thumbnail
+             lands, then the cover blur-fades in over it. A
+             cover that never resolves falls back to the same
+             title treatment the error path above uses (the
+             .s3-noart fade-in is in the stylesheet), and a
+             late cover trades back up over it. */
+          applyCoverThumb(im, entry, idx === s3Focus ? "high" : "lazy", {
+            host: front, slot: wrap,
+            onFallback: function () {
+              if (im.parentNode === front) front.removeChild(im);
+              if (!front.querySelector(".s3-noart")) { var naf = document.createElement("div"); naf.className = "s3-noart"; naf.textContent = entry.title; front.appendChild(naf); }
+            },
+            onLateCover: function () {
+              var naq = front.querySelector(".s3-noart"); if (naq) front.removeChild(naq);
+              if (im.parentNode !== front) front.appendChild(im);
+            }
+          });
         } else {
           s3CoverImgs.push(null);
           var na2 = document.createElement("div"); na2.className = "s3-noart"; na2.textContent = entry.title; front.appendChild(na2);
@@ -9527,6 +10984,7 @@
     function setShelfView(mode) {
       if (mode !== "classic" && mode !== "3d") return;
       shelfViewMode = mode;
+      classicOptsOpen = false;
       try { localStorage.setItem("fb-shelf-view", mode); } catch (err) {}
       syncShelfOptsUI();
       closeShelfOpts();
@@ -9622,9 +11080,25 @@
       window.addEventListener("resize", function () { clearTimeout(s3ResizeTimer); s3ResizeTimer = setTimeout(function () { if (shelfIsOpen && shelfViewMode === "3d") s3Layout(false); }, 120); });
     }
 
+    /* Build stamp — bump on every build. The iteration is the v12
+       experiment line (12.x): bump the last number once per review
+       round, not per micro-fix. */
+    var BUILD_ITERATION = "12.9";
+    var BUILD_STAMP = "2026-11-09 12:43";
+    var shelfFootStampEl = document.getElementById("shelfFootStamp");
+    var shelfFootCountEl = document.getElementById("shelfFootCount");
+    function syncShelfFoot() {
+      if (shelfFootStampEl) shelfFootStampEl.textContent = " \u00b7 v" + BUILD_ITERATION + " \u00b7 Build " + BUILD_STAMP;
+      if (shelfFootCountEl) {
+        var n = shelfEntries().length;
+        shelfFootCountEl.textContent = n + (n === 1 ? " book" : " books");
+      }
+    }
+
     function buildShelf() {
       syncFilterChip();
       updateShelfAmbient();
+      syncShelfFoot();
       var scEl = document.getElementById("shelfScroll");
       var subEl = document.getElementById("shelfSub");
       if (shelfViewMode === "3d") {
@@ -9636,7 +11110,7 @@
       }
       if (scEl) scEl.style.display = "";
       if (s3El) s3El.hidden = true;
-      if (subEl) subEl.textContent = "Tap a book to open it in the reader. Tap the \u24d8 on a cover for its card.";
+      if (subEl) subEl.innerHTML = "<span class=\"hintS\">Tap a book to open it.</span> <span class=\"hintS\">Tap the \u24d8 for its card.</span>";
       var entries = visibleShelfEntries();
       shelfRowsEl.innerHTML = "";
       if (!entries.length) {
@@ -9662,6 +11136,12 @@
         return;
       }
       var shelfCols = shelfCoverSize === "large" ? 2 : shelfCoverSize === "small" ? 4 : 3;
+      /* Covers per row (experiment #2): a fixed count replaces the
+         Cover size column count with its own floored count, and
+         the cover width is re-pinned to fit that many across.
+         Auto leaves both exactly as they were. */
+      if (shelfPerRow !== "auto") shelfCols = fixedRowLayout(parseInt(shelfPerRow, 10)).cols;
+      syncCoverWidth();
       // The READING tag (and the gold outline with it) belongs to the
       // last book actually opened — see readingTagId — which is not
       // always the book the reader happens to have loaded.
@@ -9684,7 +11164,13 @@
           // First visible row loads eagerly; every cover below it
           // is lazy + async. The image itself is the book's cover
           // thumbnail, slotted into the same reserved box.
-          applyCoverThumb(im, entry, entryPos < shelfCols ? "eager" : "lazy");
+          // Experiment #3: the slot is staged — a ghost in the
+          // cover's exact shape stands in (untappable, tags and
+          // ⓘ held back) until this cover's own thumbnail lands,
+          // then the cover blur-fades in over it. The fallback
+          // for a cover that never resolves is today's empty box
+          // over the title below, so no onFallback is needed.
+          applyCoverThumb(im, entry, entryPos < shelfCols ? "eager" : "lazy", { host: cov, slot: wrap });
           cov.appendChild(im);
           var tag = document.createElement("span");
           tag.className = "nowTag";
@@ -10016,6 +11502,55 @@
     icStatusEl.addEventListener("change", function () {
       if (icBookId) setBookStatus(icBookId, icStatusEl.value);
     });
+    /* ---- Cover versions segment wiring ----
+       The segment under Status: preview + stepping arrows + the
+       version label / counter, and the upload action. Stepping and
+       uploading both take effect immediately (coverChanged owns the
+       refresh of every cover surface, this segment included); the
+       arrows disable when the book has only its Original cover. */
+    function refreshCoverSeg() {
+      var prevBtn = document.getElementById("icCoverPrev");
+      var nextBtn = document.getElementById("icCoverNext");
+      var labelEl = document.getElementById("icCoverLabel");
+      var previewEl = document.getElementById("icCoverPreview");
+      if (!prevBtn || !nextBtn || !labelEl || !previewEl) return;
+      if (!icBookId) { prevBtn.disabled = true; nextBtn.disabled = true; return; }
+      var n = coverCount(icBookId);
+      var s = coverSelIdx(icBookId);
+      labelEl.textContent = coverVersionName(icBookId) + " \u00b7 " + (s + 1) + " of " + n;
+      prevBtn.disabled = n < 2;
+      nextBtn.disabled = n < 2;
+      var entry = null;
+      try { entry = findShelfEntry(icBookId); } catch (err) {}
+      if (entry) {
+        applyCoverThumb(previewEl, entry, "eager");
+        var headCov = document.getElementById("icCover");
+        if (headCov) applyCoverThumb(headCov, entry, "eager");
+      }
+    }
+    var icCoverPrevBtn = document.getElementById("icCoverPrev");
+    var icCoverNextBtn = document.getElementById("icCoverNext");
+    if (icCoverPrevBtn) icCoverPrevBtn.addEventListener("click", function () { if (icBookId) stepCoverVersion(icBookId, -1); });
+    if (icCoverNextBtn) icCoverNextBtn.addEventListener("click", function () { if (icBookId) stepCoverVersion(icBookId, 1); });
+    var coverFilePickEl = document.getElementById("coverFilePick");
+    var coverUploadFor = null;
+    var icCoverUploadBtn = document.getElementById("icCoverUpload");
+    if (icCoverUploadBtn) icCoverUploadBtn.addEventListener("click", function () {
+      if (!icBookId || !coverFilePickEl) return;
+      coverUploadFor = icBookId;
+      coverFilePickEl.click();
+    });
+    if (coverFilePickEl) coverFilePickEl.addEventListener("change", function () {
+      var f = coverFilePickEl.files && coverFilePickEl.files[0];
+      coverFilePickEl.value = "";
+      var id = coverUploadFor;
+      coverUploadFor = null;
+      if (!f || !id) return;
+      var entry = null;
+      try { entry = findShelfEntry(id); } catch (err) {}
+      var asp = (entry && typeof entry.aspect === "number" && entry.aspect > 0) ? entry.aspect : 1;
+      processCoverImage(f, asp, function (src) { if (src) addCoverVersion(id, src); });
+    });
     function sourceLabel(src, entry) {
       if (src === "built-in") return "Built-in";
       if (src === "import") return (entry && entry.persisted) ? "Imported — saved on this device" : "Imported — this visit";
@@ -10072,6 +11607,7 @@
       stats.hidden = !stats.children.length;
       icBookId = entry.id;
       icStatusEl.value = bookStatus(entry.id);
+      refreshCoverSeg();
       var icMarksEl = document.getElementById("icMarks");
       if (icMarksEl) {
         var icMarkN = marksCountFor(entry.id);
@@ -10330,6 +11866,7 @@
       if (!entry || entry.source !== "import") return;
       var kb = entry.keyBase || "";
       delete coverThumbMem[id];
+      coverIdbDelete(id);
       for (var ri = shelfImports.length - 1; ri >= 0; ri--) if (shelfImports[ri].id === id) shelfImports.splice(ri, 1);
       impIdbDelete(id, function () {});
       try {
@@ -10514,6 +12051,11 @@
       if (typeof resetReaderExtras === "function") resetReaderExtras(entry.id);
       pageImgs = PAGES.map(newPageImg);
       currentEntryId = entry.id;
+      /* v12.9 — a text-baked book (Santa) lands in Sheet mode and
+         its Text menu sheds the On art / Arrange entries; an
+         unflagged book's menu is re-synced whole. */
+      if (typeof enforceTextBakedMode === "function") enforceTextBakedMode();
+      if (typeof syncTextModeChrome === "function") syncTextModeChrome();
       recordBookOpened(entry.id);
       applyEdition();
       blankNote = autoBlankIdx >= 0 ? "blank page added" : "";
@@ -10737,7 +12279,16 @@
       document.body.dataset.flipReady = "1";
     }
     var landingGuard = setTimeout(finishLanding, 3000);
-    loadPersistedImports(function () { clearTimeout(landingGuard); finishLanding(); });
+    loadPersistedImports(function () {
+      clearTimeout(landingGuard);
+      finishLanding();
+      // Cover versions load alongside the landing, never in front of
+      // it: the shelf re-renders with each book's chosen cover as soon
+      // as they arrive, so the boot path touches no new database first.
+      loadCoverVersions(function () {
+        if (shelfIsOpen && typeof buildShelf === "function") { try { buildShelf(); } catch (err) {} }
+      });
+    });
   }
   // Embedded pages first, on every protocol. file:// used to be the only
   // path that waited for pages-data.js; https skipped it and each turn
@@ -10831,4 +12382,11 @@
     if (refreshBtn) refreshBtn.addEventListener('click', render);
   })();
   </script>
+  <!-- Google Fonts for the On-art text styles: loaded at the end of <body>
+       so the head stays byte-identical to the last device-proven build;
+       a stylesheet here is non-blocking by construction and the On-art
+       font stacks fall back gracefully until it arrives. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Gaegu:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@500;700&display=swap">
 </body></html>
