@@ -68,7 +68,7 @@
      competed directly with the banner's old z-index 2 and the arrows
      painted (and hit-tested) over the Settings panel that drops from
      this banner — swallowing taps aimed at the panel's toggles. */
-  #banner{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:rgba(25,25,25,.97);z-index:30}
+  #banner{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top, 0px)) 18px 10px;background:rgba(25,25,25,.97);z-index:30}
   #tools{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;min-width:0}
   #counter{background:rgba(20,20,20,.62);color:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.28)}
   /* The book title is the header's FIRST line, on its own row above
@@ -889,7 +889,7 @@
   #zoomStage:active{cursor:grabbing}
   #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
   #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
-  @media (max-width:560px){#banner{padding:8px 10px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:16.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
+  @media (max-width:560px){#banner{padding:calc(8px + env(safe-area-inset-top, 0px)) 10px 8px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:16.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
   @media (max-width:560px){body.hdr-pills #editionBadge{display:none}body.hdr-crowded #banner{gap:6px}body.hdr-crowded #leftTools{gap:6px}body.hdr-crowded #tools{gap:6px}body.hdr-crowded #textBtn>span{display:none}body.hdr-crowded #compareBtn .cmpShort{display:none}}
 
   /* ---- 3D shelf view (Shelf view: 3D) ----
@@ -9342,13 +9342,22 @@
       s3Orbit = { ry: -14, rx: 3 }; s3ApplyOrbit();
     }
     function s3CloseDetail() {
-      if (!s3DetailOpen) { if (s3DetailEl) s3DetailEl.hidden = true; return; }
+      /* Teardown ALWAYS cleans up — even when the open flag was
+         already cleared by hand (the old Read path did exactly
+         that, leaving .has-detail on the stage: every cover stayed
+         dimmed to ghost opacity and untappable after returning to
+         the shelf). The class / bar / panel / orbit cleanup below
+         therefore runs unconditionally, not only on the
+         flag-was-open path; refresh + layout follow whenever the
+         detail was open or the dimmer was still on the stage. */
+      var wasOpen = s3DetailOpen;
+      var hadDim = !!(s3StageEl && s3StageEl.classList.contains("has-detail"));
       s3DetailOpen = false; s3DetailId = null;
-      s3StageEl.classList.remove("has-detail");
+      if (s3StageEl) s3StageEl.classList.remove("has-detail");
       if (s3BarEl) s3BarEl.style.display = "";
-      s3DetailEl.hidden = true;
+      if (s3DetailEl) s3DetailEl.hidden = true;
       var book = s3Books[s3Focus]; if (book) book.style.transform = "";
-      s3Refresh(); s3Layout(true);
+      if (wasOpen || hadDim) { s3Refresh(); s3Layout(true); }
     }
     function s3DetailGoTo(i) {
       if (!s3DetailOpen) return;
@@ -9430,6 +9439,8 @@
         dashes.appendChild(d); s3DashBtns.push(d);
       });
       if (s3DetailOpen) { s3DetailEl.hidden = false; s3StageEl.classList.add("has-detail"); if (s3BarEl) s3BarEl.style.display = "none"; s3FillDetail(); s3ApplyOrbit(); }
+      else { /* Defensive: no detail open after a rebuild means no dimmer — a stranded .has-detail would ghost every cover. */
+        if (s3DetailEl) s3DetailEl.hidden = true; if (s3StageEl) s3StageEl.classList.remove("has-detail"); }
       s3Refresh(); s3Layout(false);
     }
     function setShelfView(mode) {
@@ -9452,7 +9463,11 @@
       document.getElementById("s3Read").addEventListener("click", function () {
         var id = s3DetailId || (s3Entries[s3Focus] && s3Entries[s3Focus].id);
         if (!id) return;
-        s3DetailOpen = false; s3DetailId = null;
+        /* Run the REAL teardown (dimmer off, bar back, orbit
+           cleared) before opening the reader — clearing the flags
+           by hand here is what stranded .has-detail on the stage
+           and ghosted every cover on return to the shelf. */
+        s3CloseDetail();
         openShelfBook(id);
       });
       document.getElementById("s3Status").addEventListener("change", function () { if (s3DetailId) setBookStatus(s3DetailId, this.value); });
