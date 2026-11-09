@@ -728,7 +728,6 @@
   #icUpdate{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
   #icNote{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:#f0c66d}
   #icNote[hidden]{display:none}
-  #icBack{width:100%;margin-top:16px;min-height:44px;padding:8px 18px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #icRemove,#icHide{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer;touch-action:manipulation}
   #icRemove[hidden],#icHide[hidden]{display:none}
   #icConfirm{margin-top:10px;border:1px solid rgba(232,179,75,.45);background:rgba(232,179,75,.1);border-radius:10px;padding:10px 12px}
@@ -992,7 +991,7 @@
   #s3ConfirmYes{flex:1;min-height:42px;background:#e8b34b;color:#191919;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
   #s3ConfirmNo{flex:1;min-height:42px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #s3Read{appearance:none;border:0;cursor:pointer;background:#e8b34b;color:#191919;font:inherit;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px}
-  #s3Back{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.35);color:#f2ead9;font:inherit;font-weight:600;font-size:14px;padding:12px 18px;border-radius:10px}
+  #s3FootCopy{appearance:none;cursor:pointer;background:transparent;border:1px solid rgba(242,234,217,.35);color:#f2ead9;font:inherit;font-weight:600;font-size:14px;padding:12px 18px;border-radius:10px}
   #shelfViewSeg,#coverSizeSeg{display:flex;gap:6px;min-width:0;max-width:100%}
   #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{flex:1 1 0;min-width:0;justify-content:center}
   @media (prefers-reduced-motion: reduce){.s3-book,.s3-wrap{transition-duration:.01ms}}
@@ -1261,7 +1260,7 @@
   #settingsPanel input[type="checkbox"]:checked,#wiz input[type="checkbox"]:checked{background:#e8b34b;border-color:#e8b34b}
   #settingsPanel input[type="checkbox"]:checked::after,#wiz input[type="checkbox"]:checked::after{color:#191919}
   #speedSeg button[aria-pressed="true"]{background:#e8b34b;color:#191919;border-color:#e8b34b;font-weight:700}
-  #wizNext,#wizStart,#wizClose2,#icBack,#icConfirmYes,#s3Read,#s3ConfirmYes,.goldImportBtn,#artReplaceBtn,#insertFileBtn,#stripOfferYes,#textSave{background:#e8b34b;color:#191919}
+  #wizNext,#wizStart,#wizClose2,#icConfirmYes,#s3Read,#s3ConfirmYes,.goldImportBtn,#artReplaceBtn,#insertFileBtn,#stripOfferYes,#textSave{background:#e8b34b;color:#191919}
   .shelfOptBtn[aria-pressed="true"]{background:rgba(232,179,75,.22);border-color:#e8b34b;color:#e8b34b}
 
   /* ---- Frosted charcoal blend (v11 Lab test, Jon 2026-11-08) ----
@@ -1594,7 +1593,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Tap the &#9432; on a cover for its card.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3CopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3Back" type="button">&#8592; Back to shelf</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub">Tap a book to open it in the reader. Tap the &#9432; on a cover for its card.</p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3CopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -1652,7 +1651,7 @@
     <button id="quickBtn" type="button" aria-label="Quick menu" title="Quick menu" aria-haspopup="true" aria-expanded="false"><svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false"><path d="M2 2h16M2 7h16M2 12h16" stroke="#e8b34b" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem"><span class="qmLabel">First page</span></button><button id="qmLast" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Last page</span></button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Slideshow</span> <span class="qmVal" id="qmSlide">Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Sound</span> <span class="qmVal" id="qmSound">Off</span></button><button id="qmModeBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Reading mode</span> <span class="qmVal" id="qmMode">Hardcover</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page layout</span> <span class="qmVal" id="qmLayout">Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page labels</span> <span class="qmVal" id="qmLabels">Off</span></button><button id="qmGuidesBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Safety guides</span> <span class="qmVal" id="qmGuides">Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Book info</span></button><!-- DIAGNOSTICS (temporary) --><button id="qmDiag" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Diagnostics</span></button></div>
     <button id="expandBtn" type="button" aria-label="Expand view" title="Expand view" aria-pressed="false"><svg class="icoExpand" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg class="icoCollapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v-5"/></svg></button>
-    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div></div>
+    <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p></div></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
   </div>
   <!-- DIAGNOSTICS (temporary) — window geometry readout panel + safe-area probe -->
@@ -9150,6 +9149,7 @@
     try { if (localStorage.getItem("fb-shelf-view") === "3d") shelfViewMode = "3d"; } catch (err) {}
     var s3Focus = 0, s3Entries = [], s3Wraps = [], s3Books = [], s3DashBtns = [], s3CoverImgs = [];
     var s3DetailOpen = false, s3DetailId = null, s3TrackX = 0, s3SuppressClick = false;
+    var s3LayoutRetry = false;
     var s3Orbit = { ry: -14, rx: 3 };
     var s3TintCache = {};
     var s3El = document.getElementById("shelf3d");
@@ -9231,6 +9231,21 @@
     }
     function s3Layout(animate) {
       if (!s3Wraps.length) return;
+      if (!s3StageEl.clientWidth) {
+        /* Built while the shelf was hidden: a display:none stage
+           measures zero, and laying out against zero stacks
+           every wrap at gap-only steps (the flat cascade).
+           Defer one frame — by then the shelf is on screen with
+           its real size; if it never opens, the retry no-ops. */
+        if (!s3LayoutRetry) {
+          s3LayoutRetry = true;
+          requestAnimationFrame(function () {
+            s3LayoutRetry = false;
+            if (shelfIsOpen && shelfViewMode === "3d") s3Layout(animate);
+          });
+        }
+        return;
+      }
       s3Wraps.forEach(function (w, i) { w.style.left = (i * s3StepPx()) + "px"; });
       s3SetTrack(s3OffsetFor(s3Focus), animate);
     }
@@ -9459,7 +9474,7 @@
       document.getElementById("s3DetailPrev").addEventListener("click", function () { s3DetailGoTo(s3Focus - 1); });
       document.getElementById("s3DetailNext").addEventListener("click", function () { s3DetailGoTo(s3Focus + 1); });
       document.getElementById("s3DetailClose").addEventListener("click", function () { s3CloseDetail(); });
-      document.getElementById("s3Back").addEventListener("click", function () { s3CloseDetail(); });
+
       document.getElementById("s3Read").addEventListener("click", function () {
         var id = s3DetailId || (s3Entries[s3Focus] && s3Entries[s3Focus].id);
         if (!id) return;
@@ -9667,8 +9682,16 @@
       if (typeof stopNarration === "function") stopNarration();
       setSettings(false);
       closeShelfOpts();
-      buildShelf();
+      /* Unhide BEFORE building: the 3D shelf's layout measures
+         the stage (clientWidth / wrap offsetWidth), and a still-
+         hidden shelf measures zero — every wrap stacked at
+         gap-only steps and the track landed at a zero-width
+         offset, the flat overlapping cascade that only an arrow
+         press repaired. The boot landing escaped this only
+         because html.boot-shelf forces the hidden shelf to
+         display:flex while it builds. */
       shelfEl.hidden = false;
+      buildShelf();
       shelfIsOpen = true;
       syncOverlay();
       document.body.classList.add("shelf-open");
@@ -9904,6 +9927,11 @@
     if (icDlBtn) icDlBtn.addEventListener("click", function () { var e = icBookId ? findShelfEntry(icBookId) : null; if (e) downloadBookPdf(e, icDlBtn); });
     var s3CopyBtn = document.getElementById("s3CopyLink");
     if (s3CopyBtn) s3CopyBtn.addEventListener("click", function () { if (s3DetailId) copyBookLink(s3DetailId, s3CopyBtn); });
+    /* The detail footer's second slot is the same copy action
+       (it replaced "Back to shelf" — the ✕ alone closes the
+       card now), answering with the same "Copied ✓" flash. */
+    var s3FootCopyBtn = document.getElementById("s3FootCopy");
+    if (s3FootCopyBtn) s3FootCopyBtn.addEventListener("click", function () { if (s3DetailId) copyBookLink(s3DetailId, s3FootCopyBtn); });
     var s3DlBtn = document.getElementById("s3DownloadPdf");
     if (s3DlBtn) s3DlBtn.addEventListener("click", function () { var e = s3DetailId ? findShelfEntry(s3DetailId) : null; if (e) downloadBookPdf(e, s3DlBtn); });
 
@@ -10036,7 +10064,19 @@
       }
     }
     function closeInfoCard() {
-      if (!infoIsOpen) return;
+      /* Teardown ALWAYS cleans up — even when the open flag was
+         already cleared by hand (the same hardening s3CloseDetail
+         got): a card whose flag says closed must never be left
+         stranded on screen with no way to dismiss it. The hide +
+         flip-class cleanup therefore runs unconditionally;
+         focus restore and the flip-out animation follow on the
+         was-open path. */
+      var wasOpen = infoIsOpen;
+      if (!wasOpen) {
+        infoEl.hidden = true;
+        infoEl.classList.remove("flipIn", "flipOut");
+        return;
+      }
       /* Fallback chain: the shelf controls only exist in shelf
          state — a card closed in the reader (its invoker was a
          quick-menu row, gone with the menu) must land on the
@@ -10059,7 +10099,6 @@
       }, 300);
     }
     document.getElementById("icClose").addEventListener("click", closeInfoCard);
-    document.getElementById("icBack").addEventListener("click", closeInfoCard);
     document.getElementById("icConfirmYes").addEventListener("click", function () { if (icBookId) removeImportBook(icBookId); });
     document.getElementById("icConfirmNo").addEventListener("click", function () { document.getElementById("icConfirm").hidden = true; });
     infoEl.addEventListener("click", function (e) { if (e.target === infoEl) closeInfoCard(); });
