@@ -2,14 +2,14 @@
 
 > The BookVizion 3D flipbook viewer — a bookshelf of picture books whose covers turn like stiff board and whose pages bend like paper.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v10 (GitHub default is main). v9 is frozen as the restore point (v8, v7 and v6 are frozen restore points too). `main` mirrors the v10 tip (GitHub Pages serves `main`) — the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v11 (GitHub default is main). v10 is frozen as the restore point (v9, v8, v7 and v6 are frozen restore points too). `main` mirrors the v11 tip (GitHub Pages serves `main`) — the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Static site](https://img.shields.io/badge/site-static-blue)
-![Version](https://img.shields.io/badge/version-10.0.0-orange)
+![Version](https://img.shields.io/badge/version-11.0.0-orange)
 
 ## Live preview
 
@@ -21,15 +21,15 @@ The viewer opens on its bookshelf: eight books — two published picture books, 
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v10`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, mirrored from the v10 working line.
+Captured from the working viewer on `3D-Flip-BookVizon-v11`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, mirrored from the v11 working line.
 
 **Bookshelf** — the front door: every book at a glance, cover and title only — the ⓘ on a cover's corner opens its info card, and a ★ count rides the cover when the book has marks.
 
-![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611081836)
+![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611082005)
 
 **3D shelf** — the same library standing on a shelf: drag or step along it, and Open pulls the focused book out.
 
-![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611081836)
+![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611082005)
 
 **Mid-book** — the first story spread, pages 6–7.
 
@@ -62,7 +62,7 @@ What the viewer does:
 
 ## Design language
 
-Charcoal stage, cream page paper, and one gold accent (`#e8b34b`) — the same gold as the header title, the Final badge, the mark stars, and the tabs. Controls are rectangular with a 10px corner radius everywhere in menus, panels, and the header (Text, Listen, Compare); only the round icon buttons, the covers' corner ⓘ buttons, and the peek tab's grab handle stay circular, by design.
+Charcoal stage, cream page paper, and one gold accent (`#e8b34b`) — the same gold as the header title, the Final badge, the mark stars, and the tabs. Controls are rectangular with a 10px corner radius everywhere in menus, panels, and the header (Text, Listen, Compare); only the round icon buttons, the covers' corner ⓘ buttons, and the peek tab's grab handle stay circular, by design. The menus — Settings, Shelf options, the quick menu, the import wizard, and the book cards — share one segmented charcoal design: every labelled group sits in its own segment block on a ground as dark as the Pages sheet, controls rest as darker insets with dark strokes, and gold marks only the current state (solid gold on small controls, a gold tint on the big shelf choices), with the quick menu's values seated in near-black chips.
 
 The reader header names the open book in gold above the page counter — visible even with the Pages sheet open, because the sheet is a bottom sheet and never covers it. Beside the counter sit the Text, Compare, and Listen buttons when the book offers them; the status badge (Final gold, Print copper, Review steel blue, Test silver-gray) steps aside when the header gets crowded. The mark star and zoom live at the stage's top-left and stand down, with the page arrows, whenever an overlay is open.
 

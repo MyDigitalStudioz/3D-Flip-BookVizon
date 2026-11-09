@@ -143,7 +143,7 @@
   .wizNote{font-size:12px;line-height:1.4;color:#b9b2a4;margin:0}
   .wizOpt{display:flex;align-items:center;gap:8px;font-size:14px;min-height:44px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .wizOpt input[type="checkbox"]{width:18px;height:18px;accent-color:#e8b34b;flex:0 0 auto}
-  #pdfLayout,#bookSize{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:4px 8px;font:inherit}
+  #pdfLayout,#bookSize{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:4px 8px;font:inherit}
   .wizWarn{font-size:13px;line-height:1.45;color:#f0c66d;background:rgba(232,179,75,.12);border:1px solid rgba(232,179,75,.45);border-radius:8px;padding:8px 10px}
   .wizWarn[hidden]{display:none}
   .wizBar{height:8px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
@@ -164,7 +164,7 @@
   #loadBar[hidden]{display:none}
   #loadFill{height:100%;width:0;background:#e8b34b}
   #turnLabel{display:flex;align-items:center;gap:6px;color:#f4f1ea;font-size:13px;white-space:nowrap}
-  #turnPick,#layoutPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  #turnPick,#layoutPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   #voicePick{max-width:188px;text-overflow:ellipsis}
   #bdColor{width:46px;height:30px;padding:2px;border:1px solid rgba(244,241,234,.45);border-radius:8px;background:#242424;cursor:pointer;flex:0 0 auto}
   #settingsPanel .setRow[hidden],#settingsPanel .setBtn[hidden]{display:none}
@@ -283,7 +283,11 @@
   #viewer:fullscreen #counter,#viewer:fullscreen #mark,#viewer:fullscreen #textBtn,#viewer:fullscreen #compareBtn,#viewer:fullscreen #listenBtn{display:none}
   body.expanded #fs,#viewer:fullscreen #fs{background:rgba(15,15,15,.5)}
   body.expanded #turnLabel,#viewer:fullscreen #turnLabel{background:rgba(15,15,15,.55);border-radius:999px;padding:4px 8px}
-  #sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:rgba(16,16,16,.97);border-top:1px solid #4a4a4a;transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+  /* Pages sheet material (Jon, 2026-11-08): translucent but darker —
+     a near-black wash at .88 over a backdrop blur, so the book
+     stays faintly present behind the sheet while the thumbnails
+     and labels keep a dark, high-contrast ground. */
+  #sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:rgba(9,9,9,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid #4a4a4a;transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
   #sheet.open{transform:none;visibility:visible;transition:transform .3s ease}
   #sheetBar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 0}
   #sheetTitleWrap{display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -686,7 +690,7 @@
      writes straight through to the book's data (and, for built-ins,
      to fb-book-status), and the reader badge follows the open book. */
   .icStatusRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:13.5px}
-  #icStatus{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  #icStatus{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   .icLink{display:inline-flex;align-items:center;min-height:38px;padding:7px 16px;background:rgba(232,179,75,.14);color:#e8b34b;border:1px solid rgba(232,179,75,.55);border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;box-sizing:border-box}
   /* Copy link + Download PDF: the book's file drawer, shared by the
      Classic info card and the 3D detail card — gold-outline actions
@@ -724,12 +728,17 @@
      is display:block). */
   #settingsPanel .setBtn{flex-wrap:nowrap}
   #settingsPanel .setBtn span{white-space:nowrap}
-  #fxPick,#musPick{background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  #fxPick,#musPick{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   #fxNote,#musNote{font-size:12px;line-height:1.4;color:#b9b2a4}
   #fxNote[hidden],#musNote[hidden]{display:none}
-  #settingsPanel input[type="checkbox"],#wiz input[type="checkbox"]{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:6px;background:#191919;border:1.5px solid rgba(244,241,234,.55);position:relative;cursor:pointer;flex:0 0 auto;margin:0;padding:0}
-  #settingsPanel input[type="checkbox"]:checked,#wiz input[type="checkbox"]:checked{background:#e8b34b;border-color:#e8b34b}
-  #settingsPanel input[type="checkbox"]:checked::after,#wiz input[type="checkbox"]:checked::after{content:"\2713";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#191919;font-size:15px;font-weight:800;line-height:1}
+  /* Checkboxes wear the Shelf options selected language (v11
+     unification): an unfilled hairline square on the shared button
+     surface when off, and when on, the pressed-row treatment —
+     gold-tinted fill, gold border, and a gold check — exactly the
+     .shelfOptBtn[aria-pressed="true"] tokens, at checkbox size. */
+  #settingsPanel input[type="checkbox"],#wiz input[type="checkbox"]{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.07);border:1.5px solid rgba(244,241,234,.45);position:relative;cursor:pointer;flex:0 0 auto;margin:0;padding:0}
+  #settingsPanel input[type="checkbox"]:checked,#wiz input[type="checkbox"]:checked{background:rgba(232,179,75,.22);border-color:#e8b34b}
+  #settingsPanel input[type="checkbox"]:checked::after,#wiz input[type="checkbox"]:checked::after{content:"\2713";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#e8b34b;font-size:15px;font-weight:800;line-height:1}
   #settingsPanel input[type="checkbox"]:focus-visible,#wiz input[type="checkbox"]:focus-visible{outline:2px solid #e8b34b;outline-offset:2px}
   /* ---- Touch-robust toggles ----
      The visible gold box stays 22px, but its hit area does not: an
@@ -830,11 +839,11 @@
   #sheet.searching #searchResults{max-height:none;overflow:visible}
   /* ---- Read-to-me settings rows ---- */
   #speedSeg{display:inline-flex;gap:0;flex:0 0 auto}
-  #speedSeg button{min-height:32px;padding:5px 10px;background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:12.5px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #speedSeg button{min-height:32px;padding:5px 10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:12.5px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #speedSeg button:first-child{border-radius:8px 0 0 8px}
   #speedSeg button:last-child{border-radius:0 8px 8px 0}
   #speedSeg button:not(:first-child){border-left:0}
-  #speedSeg button[aria-pressed="true"]{background:#e8b34b;color:#191919;border-color:#e8b34b;font-weight:700}
+  #speedSeg button[aria-pressed="true"]{background:rgba(232,179,75,.22);color:#e8b34b;border-color:#e8b34b;font-weight:700}
   #readNote{font-size:12px;line-height:1.4;color:#b9b2a4}
   #readNote[hidden]{display:none}
   /* ---- Zoom (magnifier) view ----
@@ -949,7 +958,7 @@
   #s3Stats{margin-top:12px;border-top:1px solid rgba(244,241,234,.16)}
   #s3Stats .icStat{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid rgba(244,241,234,.16);font-size:13.5px}
   .s3-status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:13.5px}
-  #s3Status{background:#191919;color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+  #s3Status{background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
   #s3Links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
   #s3Remove,#s3Hide{width:100%;margin-top:10px;min-height:42px;padding:8px 16px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
   #s3Remove[hidden],#s3Hide[hidden]{display:none}
@@ -986,20 +995,36 @@
      No grab pill: the pill is the Pages tab's drag cue, and this
      tab only taps. Reader-only: it stands down with the shelf and
      with any open overlay, under exactly the peek tab's rules.
-     Button and menu share the peek tab / bottom sheets' material
-     exactly — matte near-black surface, thin neutral #4a4a4a
-     border, soft black shadow — so the tabs, the sheets and the
-     menu read as one family; the ☰ hamburger bars wear the tab
-     chevron's gold, and the tab's border golds while the menu is open, same
-     as the peek tab's expanded state. The menu opens directly
+     The tab itself shares the peek tab / bottom sheets' material —
+     matte near-black surface, thin neutral #4a4a4a border, soft
+     black shadow — and the ☰ hamburger bars wear the tab
+     chevron's gold; the tab's border golds while the menu is open, same
+     as the peek tab's expanded state. The menu above it speaks the
+     Settings / Shelf options panel language instead (v11 unification):
+     the same matte #242424 card, hairline warm border, panel shadow
+     and hairline-bordered rows as those two panels, in a compact
+     density — and its state rows put the current value in gold at
+     the right, like a Shelf options pressed row. The menu opens directly
      above the tab, aligned to its right edge. */
   #quickBtn{position:absolute;right:14px;bottom:0;z-index:26;width:60px;height:35px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(16,16,16,.94);color:#e8b34b;border:1px solid #4a4a4a;border-bottom:0;border-radius:12px 12px 0 0;cursor:pointer;font:inherit;font-size:20px;line-height:1;box-shadow:0 -4px 18px rgba(0,0,0,.42);box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #quickBtn[aria-expanded="true"]{border-color:#e8b34b}
   body.shelf-open #quickBtn,body.shelf-open #quickMenu,body.overlay-open #quickBtn,body.overlay-open #quickMenu,html.boot-shelf #quickBtn,html.boot-shelf #quickMenu{display:none}
-  #quickMenu{position:absolute;right:14px;bottom:43px;z-index:26;width:218px;max-width:calc(100vw - 28px);background:rgba(16,16,16,.97);color:#f4f1ea;border:1px solid #4a4a4a;border-radius:12px;padding:8px;box-shadow:0 -4px 18px rgba(0,0,0,.42);display:flex;flex-direction:column;gap:4px;box-sizing:border-box}
+  #quickMenu{position:absolute;right:14px;bottom:43px;z-index:26;width:232px;max-width:calc(100vw - 28px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:10px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
   #quickMenu[hidden]{display:none}
-  .qmItem{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:44px;padding:8px 12px;background:rgba(255,255,255,.05);color:#f4f1ea;border:1px solid transparent;border-radius:10px;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .qmItem{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:44px;padding:8px 12px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:10px;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .qmItem:active{border-color:#e8b34b;background:rgba(232,179,75,.16)}
+  /* Quick-menu state rows speak the Settings / Shelf language:
+     the label sits left in ivory and the current value sits right
+     in gold, so state reads at a glance — the same gold the Shelf
+     options pressed buttons and Settings checks use. Action rows
+     (First page / Last page / Book info) carry no value. The gold
+     value sits in its own darker inset box (Jon, 2026-11-08): a
+     near-black chip with a soft inner edge, right-aligned in the
+     row, so the state reads as a distinct little display rather
+     than loose text on the row's gray. A shared min-width keeps
+     the short values (Off / Auto) in boxes of a family size. */
+  .qmLabel{flex:1 1 auto;min-width:0}
+  .qmVal{flex:0 0 auto;color:#e8b34b;font-weight:600;text-align:center;white-space:nowrap;background:rgba(0,0,0,.45);border:1px solid rgba(0,0,0,.4);border-radius:7px;padding:3px 9px;min-width:58px;box-sizing:border-box;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
   /* ---- Expand view tab ----
      The quick-menu tab's twin at the reader's bottom-left: same
      matte near-black dock, thin #4a4a4a border, rounded top
@@ -1075,7 +1100,7 @@
      search results keep their own scrolling inside it). */
   html,body{overflow:hidden;overscroll-behavior:none}
   #viewer{position:fixed;inset:0;height:auto;min-height:0;overflow:hidden}
-  #quickMenu{max-height:calc(var(--app-h,100dvh) - 51px - env(safe-area-inset-bottom,0px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d #101010}
+  #quickMenu{max-height:calc(var(--app-h,100dvh) - 51px - env(safe-area-inset-bottom,0px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d transparent}
   #sheet{max-height:calc(var(--app-h,100dvh) - 12px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #strip{overscroll-behavior:contain}
   /* The Bookshelf rides the same pin: #shelf is inset:0 inside the
@@ -1094,11 +1119,300 @@
      at full scroll the padding is all that follows the last row. */
   #shelfScroll{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
 
+  /* ---- Menu unification (v11 Lab test) ----
+     One visual language for every menu, on the Settings / Shelf
+     options tokens: matte #242424 panels, hairline warm borders,
+     the rgba(255,255,255,.07) control surface, and gold reserved
+     for the current state (Shelf's pressed tint + check, the quick
+     menu's values, a checked box). The panels and rows above carry
+     those tokens in place; what remains is the selects — the last
+     native-feeling controls in Settings. They keep opening the
+     platform picker, but they no longer LOOK native: the system
+     chevron gives way to one small gold chevron in the panel
+     language, drawn the same on every select in every panel and
+     card (Settings, the import wizard, both book cards). */
+  #turnPick,#layoutPick,#labelPick,#slidePick,#bdPick,#startPick,#voicePick,#fxPick,#musPick,#icStatus,#s3Status,#pdfLayout,#bookSize{-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23e8b34b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:12px 12px;padding-right:30px}
+
+  /* ---- Subtle elevation (v11 Lab test) ----
+     Three levels, warm-black and soft throughout — never a gold
+     glow, never shadowed text, and nothing inside a panel casts
+     one (those controls keep their hairline border + inset depth):
+       1 · Light lift — header pills, header / stage icon circles,
+           the corner ⓘ, and small floating notes over artwork.
+       2 · Panel lift — Settings, Shelf options, quick menu, the
+           import wizard, both book cards and the 3D detail card:
+           a close contact line, a wide ambient wash, and a faint
+           top highlight so the card reads as a lit surface.
+       3 · Sheet lift — the Pages and Page-text bottom sheets cast
+           upward only, like the dock tabs they replace.
+     Classic covers get their own contact treatment: a short dark
+     foot plus a soft ambient fall, so a book sits ON its plank
+     instead of floating in the grid. Reader pages (flip bases,
+     scroll pages, zoom) soften to the same warm ambient. */
+  :root{--elev-1:0 1px 2px rgba(28,20,12,.30),0 4px 12px rgba(28,20,12,.22);--elev-2:inset 0 1px 0 rgba(244,241,234,.07),0 2px 6px rgba(28,20,12,.24),0 14px 32px rgba(28,20,12,.30),0 28px 56px rgba(28,20,12,.16);--elev-sheet:0 -2px 6px rgba(20,14,8,.28),0 -14px 36px rgba(20,14,8,.36);--elev-dock:0 -1px 3px rgba(20,14,8,.28),0 -8px 22px rgba(20,14,8,.30);--elev-cover:0 1px 3px rgba(20,14,8,.42),0 6px 14px rgba(20,14,8,.28),0 16px 30px rgba(20,14,8,.16)}
+  /* Level 1 — floating chrome over artwork */
+  #settingsBtn,#shelfBtn,#shelfOptsBtn,#markBtn,#zoomBtn{box-shadow:var(--elev-1)}
+  #counter,#textBtn,#compareBtn,#listenBtn{box-shadow:var(--elev-1)}
+  #editionBadge{box-shadow:0 1px 3px rgba(28,20,12,.28),0 3px 8px rgba(28,20,12,.18)}
+  .sinfo{box-shadow:0 1px 3px rgba(20,14,8,.34),0 3px 8px rgba(20,14,8,.22)}
+  #switchNote{box-shadow:var(--elev-1)}
+  /* Level 2 — floating panels and cards */
+  #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard,.icCard{box-shadow:var(--elev-2)}
+  #s3Detail{box-shadow:inset 0 1px 0 rgba(244,241,234,.07),0 2px 6px rgba(28,20,12,.24),0 18px 40px rgba(28,20,12,.32),0 32px 64px rgba(28,20,12,.18)}
+  #zoomContent{box-shadow:0 2px 6px rgba(28,20,12,.26),0 18px 40px rgba(28,20,12,.30)}
+  /* Level 3 — bottom sheets and dock tabs (upward cast only) */
+  #sheet,#textSheet{box-shadow:var(--elev-sheet)}
+  #pagesTab,#quickBtn,#expandBtn{box-shadow:var(--elev-dock)}
+  /* Covers and reader pages — contact + ambient, warm not black */
+  .sbook .covWrap{box-shadow:var(--elev-cover)}
+  #icCover{box-shadow:0 1px 3px rgba(20,14,8,.38),0 5px 12px rgba(20,14,8,.24)}
+  .base{box-shadow:0 2px 6px rgba(28,20,12,.26),0 22px 48px rgba(28,20,12,.34)}
+  .scPage{box-shadow:0 1px 3px rgba(20,14,8,.32),0 12px 28px rgba(20,14,8,.26)}
+  /* The plank's own fall softens to match the covers above it */
+  .shelfRow::after{box-shadow:0 10px 18px rgba(20,14,8,.38),inset 0 1px 0 rgba(255,224,170,.45)}
+  /* Flat tier, stated outright: controls inside panels cast nothing */
+  .shelfOptBtn,.qmItem,#settingsPanel .setBtn,#settingsPanel select,.wizChoice,.tcard,.searchResult,.markChip{box-shadow:none}
+
+  /* ---- Darker panel ground + control surfaces (v11 Lab test,
+     Jon 2026-11-08) ----
+     Jon liked the quick menu's new dark inset boxes behind the
+     gold values, but overall prefers the darker look of the Pages
+     sheet and how its buttons sit — and asked for Settings and
+     Shelf options to get the same matching treatment. So every
+     floating panel trades the flat matte #242424 for the sheet's
+     own material: a near-black wash at .88 over a 14px backdrop
+     blur, the book ghosting faintly behind the panel just as it
+     does behind the sheet. The neutral control surfaces inside
+     come down with it: the shared rgba(255,255,255,.07) button
+     surface gives way to a near-black rgba(0,0,0,.38) — the same
+     family as the quick menu's gold-value chips and the dock
+     tabs — set with background-color only, so the selects keep
+     their gold chevron image. Every gold selected state is
+     untouched and still wins on specificity or order: Shelf's
+     gold-tint pressed buttons with checkmarks, the Speed
+     segment's pressed gold, the checked checkbox's gold tint and
+     check, the wizard's pressed choices, the guides button's
+     pressed tint (re-asserted below its .setBtn override, which
+     it ties), gold hovers, gold links and solid-gold primaries.
+     Borders, labels, section heads and ivory values are exactly
+     as they were, so legibility rides on the same hairlines.
+     The import wizard and both book cards share these control
+     tokens, so they follow on the same values; the 3D detail
+     card keeps its own warm near-black gradient ground, with
+     its neutral controls darkened to match. The Page-text
+     sheet was already darker than the old matte. */
+  #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard,.icCard{background:rgba(9,9,9,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .qmItem,#settingsPanel select,#fxPick,#musPick,#pdfLayout,#bookSize,#wizBack,#icStatus,#icUpdate,#icRemove,#icHide,#icConfirmNo,#s3Status,#s3Remove,#s3Hide,#s3ConfirmNo,.hiddenRestore{background-color:rgba(0,0,0,.38)}
+  #settingsPanel .setBtn{background-color:rgba(0,0,0,.38)}
+  #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+  .shelfOptBtn:not([aria-pressed="true"]),.wizChoice:not([aria-pressed="true"]) ,#speedSeg button:not([aria-pressed="true"]){background-color:rgba(0,0,0,.38)}
+  #settingsPanel input[type="checkbox"]:not(:checked),#wiz input[type="checkbox"]:not(:checked){background-color:rgba(0,0,0,.38)}
+  #settingsPanel input[type="range"]::-webkit-slider-thumb{background-color:#101010}
+  #settingsPanel input[type="range"]::-moz-range-thumb{background-color:#101010}
+
+  /* ---- Happy medium (v11 Lab test, Jon 2026-11-08) ----
+     The blend of v10 and v11, in three moves. (1) The floating
+     panels keep v11's near-black ground and its 14px backdrop
+     blur, but the wash rises from .88 to .97 — the same opacity
+     the 3D detail card's gradient already wears — so the book
+     behind a panel barely ghosts instead of bleeding through
+     and competing with the rows; the Pages sheet keeps its
+     .88 translucency untouched, as the reference Jon liked.
+     (2) SMALL selected controls go back to v10's solid gold
+     with dark marks: a checked checkbox is a solid gold square
+     with a dark check, and the Speed segment's pressed button
+     is a solid gold block with dark text — small states state,
+     they don't whisper. The solid-gold primary buttons (wizard
+     Next / Start, Flip back, the confirm and import actions)
+     are re-asserted on the same values so no panel override
+     can wash them out. (3) LARGE choice surfaces keep v11's
+     gold tint: Shelf options' full-width pressed buttons stay
+     tint + gold check, re-asserted below so the solid-gold
+     move above can never swallow them — solid gold across a
+     button that wide would shout. Quick-menu value chips,
+     gold chevrons, neutral dark controls, borders, labels and
+     the elevation tiers are all exactly as they were. */
+  #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard,.icCard{background:rgba(9,9,9,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  #settingsPanel input[type="checkbox"]:checked,#wiz input[type="checkbox"]:checked{background:#e8b34b;border-color:#e8b34b}
+  #settingsPanel input[type="checkbox"]:checked::after,#wiz input[type="checkbox"]:checked::after{color:#191919}
+  #speedSeg button[aria-pressed="true"]{background:#e8b34b;color:#191919;border-color:#e8b34b;font-weight:700}
+  #wizNext,#wizStart,#wizClose2,#icBack,#icConfirmYes,#s3Read,#s3ConfirmYes,.goldImportBtn,#artReplaceBtn,#insertFileBtn,#stripOfferYes,#textSave{background:#e8b34b;color:#191919}
+  .shelfOptBtn[aria-pressed="true"]{background:rgba(232,179,75,.22);border-color:#e8b34b;color:#e8b34b}
+
+  /* ---- Frosted charcoal blend (v11 Lab test, Jon 2026-11-08) ----
+     Jon asked for the panels a little lighter and a little more
+     transparent — dark frosted glass — and not all one dark: a
+     mixture, some areas holding more dark charcoal and some a
+     different shade, to give it a look. So the flat near-black
+     .97 wash of the happy medium gives way to a layered charcoal
+     system. (1) Panel grounds lighten and open up: each panel is
+     a soft vertical blend of two charcoals — a lighter warm
+     charcoal at the top settling to a deeper one at the bottom —
+     at .86–.90 over a stronger 20px backdrop blur with a touch
+     of saturation, which is what makes it read as frosted glass
+     rather than a tint: the book ghosts through, diffused.
+     Settings and Shelf options share the warm blend; the quick
+     menu wears a hair cooler, deeper charcoal so it keeps its
+     own identity; the wizard and book cards sit one step warmer
+     and denser, as befits cards you read closely. (2) The inner
+     control surfaces change shade instead of just darkening:
+     selects, Settings buttons, quick-menu rows, unselected
+     choice buttons and unchecked boxes take a lighter
+     stone-charcoal wash, visibly a different shade from the
+     panel ground — the mixture Jon asked for — set with
+     background-color only so the gold chevrons survive.
+     (3) The deepest charcoal stays where Jon already liked it:
+     the quick menu's gold-value chips keep their near-black
+     inset, now a touch deeper against the lighter rows.
+     Every gold state is untouched and still wins: solid-gold
+     checked boxes and Speed segment, Shelf's gold-tint pressed
+     buttons, solid-gold primaries, gold chevrons and hovers.
+     The Pages and Page-text sheets join the same frosted
+     family at a lighter touch — the sheet keeps the
+     translucency Jon picked it out for, just blended and
+     blurred to match. Borders, labels, layout, behavior and
+     the elevation tiers are exactly as they were. */
+  #settingsPanel,#shelfOptsPanel{background:linear-gradient(180deg,rgba(54,52,50,.86),rgba(39,38,36,.89));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
+  #quickMenu{background:linear-gradient(180deg,rgba(45,45,48,.86),rgba(33,33,36,.89));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
+  .wizCard,.icCard{background:linear-gradient(180deg,rgba(58,55,52,.88),rgba(43,41,39,.91));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
+  #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+  .qmVal{background:rgba(10,10,10,.55);border-color:rgba(0,0,0,.45)}
+  #sheet{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
+  #textSheet{background:rgba(30,29,27,.90);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
+
+  /* ---- Menus match the Pages sheet ground (v11 Lab test,
+     Jon 2026-11-08) ----
+     Jon's call, with the Pages sheet open under the Settings
+     panel in his screenshot: "the menus the same darkness as
+     the pages bottom area." The frosted blend above still left
+     the menu panels visibly lighter than the sheet — its warm
+     charcoal gradient (54,52,50 at the top) plus the saturate
+     boost lifted them over a bright backdrop, while the sheet
+     sat near-black. So the menus now stop approximating the
+     sheet and take its ground verbatim: every menu panel —
+     Settings, Shelf options, the quick menu, the import wizard
+     and both book info cards — wears the Pages sheet's exact
+     background and backdrop filter (rgba(22,22,21,.85) over
+     blur(18px) saturate(1.2)), and the Page-text sheet joins
+     them on the same value, so any two of these surfaces open
+     together read as one darkness. Inside the menus the
+     shades form the three-step ladder Jon pointed at in his
+     close crop of the Settings selects: the panel ground is
+     darkest, the control boxes sit one shade UP from it — a
+     step lighter and slightly warm, the stone-charcoal wash — and the quick menu's gold-value
+     chips stay deepest of all. So the select/dropdown boxes
+     and their kin (Settings buttons, quick-menu rows,
+     unselected Shelf / wizard choice buttons, the Speed
+     segment's unselected segments, unchecked boxes) keep the
+     stone wash on the darkened ground: each box reads as a
+     distinct raised control instead of melting into the
+     panel, exactly as the selects read in Jon's crop. Every
+     gold state is untouched and still wins: solid-gold
+     checked boxes and Speed segment, Shelf's gold-tint
+     pressed buttons, the quick menu's near-black gold-value
+     chips, gold chevrons, gold hovers and solid-gold
+     primaries. Borders, labels, layout, behavior and the
+     elevation tiers are exactly as they were — this round
+     changes darkness and shade separation only. */
+  #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard,.icCard{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
+  #textSheet{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
+  #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+
+  /* ---- Control boxes go darker, not lighter (v11 Lab test,
+     Jon 2026-11-08) ----
+     Jon's correction on his close crop of the Settings selects
+     (Swipe / Auto / Numbers / Off) and the unchecked boxes beside
+     them: "maybe these boxes go darker not lighter." The last
+     round sat those boxes one shade UP from the panel ground on
+     the lighter stone-charcoal wash; over
+     the Pages-dark panels that read as pale gray slabs floating
+     on the menu. So the direction flips: the same box family now
+     sits one shade DOWN — a near-black wash rgba(0,0,0,.42),
+     set with background-color only so the selects keep their
+     gold chevron image — and reads as a recessed inset in the
+     panel instead of a raised light box. The hairline borders
+     are unchanged, so each box still reads as a distinct
+     control against the ground it now sinks into, and ivory
+     values and gold chevrons keep their contrast on the darker
+     fill. The ladder is now: panel ground at the Pages
+     darkness, control boxes a step darker, the quick menu's
+     gold-value chips still deepest of all. Every gold state is
+     untouched and still wins: solid-gold checked boxes and
+     Speed segment, Shelf's gold-tint pressed buttons (the
+     guides button's pressed tint is re-asserted below its
+     .setBtn override, which it ties), gold hovers and
+     solid-gold primaries. Panel grounds, borders, labels,
+     layout, behavior and the elevation tiers are exactly as
+     they were — this round changes the boxes' shade only. */
+  .qmItem,#settingsPanel select,#fxPick,#musPick,#pdfLayout,#bookSize,#wizBack,#icStatus,#icUpdate,#icRemove,#icHide,#icConfirmNo,#s3Status,#s3Remove,#s3Hide,#s3ConfirmNo,.hiddenRestore{background-color:rgba(0,0,0,.42)}
+  #settingsPanel .setBtn{background-color:rgba(0,0,0,.42)}
+  #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+  .shelfOptBtn:not([aria-pressed="true"]),.wizChoice:not([aria-pressed="true"]),#speedSeg button:not([aria-pressed="true"]){background-color:rgba(0,0,0,.42)}
+  #settingsPanel input[type="checkbox"]:not(:checked),#wiz input[type="checkbox"]:not(:checked){background-color:rgba(0,0,0,.42)}
+
+
+  /* ---- Darker strokes + segmented groups (v11 Lab test,
+     Jon 2026-11-08) ----
+     Two moves on Jon's latest Settings screenshot: "maybe the
+     outlines need a darker stroke" and "it needs a little
+     separation so there's different segments — not one full
+     list of options after option." (1) STROKES: the whole
+     control-box family trades its pale hairline
+     rgba(244,241,234,.45) for a darker stroke rgba(0,0,0,.62)
+     with a soft inner shadow, so each box reads as a carved
+     inset in the panel rather than a light-outlined slab; the
+     menu panels' own outer borders darken to match. Gold
+     states keep their gold borders untouched — pressed Shelf
+     buttons, the pressed Speed segment, the checked box, gold
+     hovers and the guides button's pressed state all sit
+     outside these state guards. (2) SEGMENTS: the Settings
+     and Shelf options panels are no longer one flat list —
+     each labelled group (Reading / Sound / Backdrop /
+     Book & view; Shelf view / Cover size / Sort / Show /
+     Arrange / Hidden books / Import) now sits in its own
+     segment block (the .setSeg wrappers in the markup): a
+     barely lifted charcoal card with the same darker stroke,
+     a divider line under its group heading, and real air
+     between blocks. Panel grounds stay at the Pages darkness,
+     control fills stay the darker inset wash, and the quick
+     menu's value chips stay deepest — the ladder is
+     unchanged, it just has rooms in it now. The quick menu
+     gets the lighter touch of the same idea: its two page
+     actions now sit apart from the state rows below them. */
+  #settingsPanel,#shelfOptsPanel{gap:12px}
+  .setSeg{display:flex;flex-direction:column;gap:9px;background:rgba(255,255,255,.05);border:1px solid rgba(0,0,0,.55);border-radius:12px;padding:12px;box-shadow:inset 0 1px 0 rgba(244,241,234,.06)}
+  #settingsPanel .setSeg .setGroup,#shelfOptsPanel .setSeg .shelfOptsGroup{margin-top:0;padding-bottom:7px;border-bottom:1px solid rgba(0,0,0,.45);box-shadow:0 1px 0 rgba(244,241,234,.05)}
+  #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard{border-color:rgba(0,0,0,.6)}
+  .qmItem,#settingsPanel select,#fxPick,#musPick,#pdfLayout,#bookSize,#wizBack,#icStatus,#s3Status,.hiddenRestore{border-color:rgba(0,0,0,.62);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
+  #settingsPanel .setBtn:not([aria-pressed="true"]),.shelfOptBtn:not([aria-pressed="true"]),.wizChoice:not([aria-pressed="true"]),#speedSeg button:not([aria-pressed="true"]){border-color:rgba(0,0,0,.62);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
+  #settingsPanel input[type="checkbox"]:not(:checked),#wiz input[type="checkbox"]:not(:checked){border-color:rgba(0,0,0,.62)}
+  .wizField input[type="text"]{border-color:rgba(0,0,0,.62)}
+  #settingsClose,#shelfOptsClose,#wizX{border-color:rgba(0,0,0,.55)}
+  #qmLast{margin-bottom:6px}
+
+  /* ---- Segment width reclaim (sync #18 PORT-SIDE addition,
+     Jon 2026-11-08 — not a Lab-export delta; Lab mirror pending) ----
+     Jon, reviewing Shelf options on his phone: the new segment
+     blocks nest padding inside an already narrow panel — panel
+     padding outside segment padding — and the segmented button
+     rows (three-across Cover size, two-across Shelf view) came
+     out squished, labels crowding the gold check. Spacing and
+     width only, phone widths only: the panels run wider, panel
+     and segment side padding come down, and the segmented
+     buttons' own side padding and label-to-check gap come down.
+     No design value moves — grounds, inset washes, strokes,
+     gold tints and checks are exactly as approved — and the
+     label font size is untouched. */
+  @media (max-width:560px){
+    #settingsPanel,#shelfOptsPanel{width:340px;max-width:calc(100vw - 16px);padding-left:10px;padding-right:10px}
+    .setSeg{padding-left:8px;padding-right:8px}
+    #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{padding-left:10px;padding-right:10px;gap:8px}
+  }
 </style></head>
 <body>
   <div id="viewer">
     <div id="loadBar" hidden><div id="loadFill"></div></div>
-    <div id="banner"><div id="headStack"><strong id="mark">Harlow’s Accidental Journey</strong><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span></div><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="foley2" selected>Real page &#8212; leafy</option><option value="crisp">Crisp paper</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="turnVolRow">Turn volume <input id="sndTurnVol" type="range" min="0" max="100" step="1" value="70" aria-label="Turn volume"></label><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="gymnopedie" selected>Gymnop&#233;die No. 1</option><option value="prelude">Prelude in C</option><option value="nocturne">Nocturne</option><option value="vibraphone">Vibraphone Lullaby</option><option value="rainy">Rainy window</option><option value="ocean">Ocean Shore</option><option value="stream">Forest Stream</option><option value="felt">Felt Piano</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="musicVolRow">Music volume <input id="sndMusicVol" type="range" min="0" max="100" step="1" value="70" aria-label="Music volume"></label><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></span></span></span></div>
+    <div id="banner"><div id="headStack"><strong id="mark">Harlow’s Accidental Journey</strong><span id="leftTools"><span id="counter">Page 1 of 12</span><button id="textBtn" type="button" aria-label="Page text" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Text</span></button><button id="compareBtn" type="button" aria-label="Compare with the original art" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h13M17 12l4 4-4 4M21 16H8"/></svg><span class="cmpLong">Compare</span><span class="cmpShort">Compare</span></button><button id="listenBtn" type="button" aria-label="Read this page aloud" aria-pressed="false" data-state="play" hidden><svg class="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg class="icoStop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="pillTxt">Listen</span></button></span></div><span id="tools"><span id="editionBadge" class="ed-test">TEST PAGES</span><button id="shelfBtn" type="button" aria-label="Bookshelf" title="Bookshelf" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.5h3.4v19H4.2zM9.7 2.5h3.8v19H9.7zM15.6 2.5h3.4v19h-3.4z"/></svg></button><span id="shelfOptsWrap"><button id="shelfOptsBtn" type="button" aria-label="Shelf options" title="Shelf options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h8M18 7h3M3 17h3.5M13 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg></button><div id="shelfOptsPanel" role="dialog" aria-label="Shelf options" hidden><div class="shelfOptsHead"><span class="shelfOptsTitle">Shelf options</span><button id="shelfOptsClose" type="button" aria-label="Close shelf options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="setSeg"><span class="shelfOptsGroup">Shelf view</span><span id="shelfViewSeg" role="group" aria-label="Shelf view"><button class="shelfOptBtn" type="button" data-shelf-view="classic" aria-pressed="true"><span>Classic</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-view="3d" aria-pressed="false"><span>3D</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span></div><div class="setSeg"><span class="shelfOptsGroup">Cover size</span><span id="coverSizeSeg" role="group" aria-label="Cover size"><button class="shelfOptBtn" type="button" data-cover-size="large" aria-pressed="false"><span>Large</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="medium" aria-pressed="true"><span>Medium</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-cover-size="small" aria-pressed="false"><span>Small</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></span><p class="shelfOptsNote">Cover size applies to the Classic view.</p></div><div class="setSeg"><span class="shelfOptsGroup">Sort</span><button class="shelfOptBtn" type="button" data-shelf-sort="shelf" aria-pressed="true"><span>Shelf order</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="az" aria-pressed="false"><span>A&#8211;Z</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="recent" aria-pressed="false"><span>Recently read</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-sort="status" aria-pressed="false"><span>By status</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Show</span><button class="shelfOptBtn" type="button" data-shelf-show="all" aria-pressed="true"><span>All books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button><button class="shelfOptBtn" type="button" data-shelf-show="final" aria-pressed="false"><span>Final editions only</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Arrange</span><button id="arrangeBtn" class="shelfOptBtn" type="button" aria-pressed="false"><span>Arrange books</span><span class="optCheck" aria-hidden="true">&#10003;</span></button></div><div class="setSeg"><span class="shelfOptsGroup">Hidden books</span><div id="hiddenList"></div></div><div class="setSeg"><span class="shelfOptsGroup">Import</span><button id="shelfOptsImport" class="goldImportBtn" type="button">Import a book&hellip;</button><p id="shelfOptsImportNote" class="shelfOptsNote">Imported books are saved on this device and stay on this shelf until you remove them. Built-in books can be hidden and brought back in Shelf options.</p></div></div></span><span id="settingsWrap"><button id="settingsBtn" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="settingsPanel" role="menu" aria-label="Settings" hidden><span class="setHeadRow"><span class="setHead">Settings</span><button id="settingsClose" type="button" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span><div class="setSeg"><span class="setGroup">Reading</span><label id="turnLabel">Reading mode <select id="turnPick" aria-label="Reading mode"><option value="hardcover" selected>Hardcover</option><option value="magazine">Magazine</option><option value="swipe">Swipe</option><option value="scroll">Scroll</option><option value="simple">Simple</option></select></label><label class="setRow" id="layoutRow">Page layout <select id="layoutPick" aria-label="Page layout"><option value="auto" selected>Auto</option><option value="single">Single</option><option value="double">Double</option></select></label><label class="setRow" id="labelRow">Page labels <select id="labelPick" aria-label="Page labels"><option value="numbers" selected>Numbers</option><option value="spreads">Spread names</option></select></label><label class="setRow" id="slideRow">Slideshow <select id="slidePick" aria-label="Slideshow"><option value="0" selected>Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option></select></label><label class="setRow" id="rememberRow">Remember my place <input id="rememberPlace" type="checkbox" checked></label><label class="setRow" id="readRow">Read to me <input id="readAloud" type="checkbox"></label><label class="setRow" id="voiceRow">Voice <select id="voicePick" aria-label="Narration voice"><option value="">Device default</option></select></label><div class="setRow" id="speedRow"><span>Speed</span><span id="speedSeg" role="group" aria-label="Narration speed"><button type="button" data-speed="slower" aria-pressed="false">Slower</button><button type="button" data-speed="normal" aria-pressed="true">Normal</button><button type="button" data-speed="faster" aria-pressed="false">Faster</button></span></div><span id="readNote" hidden>Not available on this device</span></div><div class="setSeg"><span class="setGroup">Sound</span><label class="setRow" id="fxRow">Page-turn sound <input id="sndFx" type="checkbox"></label><label class="setRow" id="fxPickRow">Turn effect <select id="fxPick" aria-label="Page-turn sound effect"><option value="foley2" selected>Real page &#8212; leafy</option><option value="crisp">Crisp paper</option><option value="custom">Your file&#8230;</option></select></label><button id="fxFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose sound file&#8230;</span></button><span id="fxNote" hidden></span><label class="setRow" id="turnVolRow">Turn volume <input id="sndTurnVol" type="range" min="0" max="100" step="1" value="70" aria-label="Turn volume"></label><label class="setRow" id="musicRow">Background music <input id="sndMusic" type="checkbox"></label><label class="setRow" id="musPickRow">Music style <select id="musPick" aria-label="Background music style"><option value="gymnopedie" selected>Gymnop&#233;die No. 1</option><option value="prelude">Prelude in C</option><option value="nocturne">Nocturne</option><option value="vibraphone">Vibraphone Lullaby</option><option value="rainy">Rainy window</option><option value="ocean">Ocean Shore</option><option value="stream">Forest Stream</option><option value="felt">Felt Piano</option><option value="custom">Your file&#8230;</option></select></label><button id="musFileBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Choose music file&#8230;</span></button><span id="musNote" hidden></span><label class="setRow" id="musicVolRow">Music volume <input id="sndMusicVol" type="range" min="0" max="100" step="1" value="70" aria-label="Music volume"></label></div><div class="setSeg"><span class="setGroup">Backdrop</span><label class="setRow" id="bdRow">Scene <select id="bdPick" aria-label="Backdrop scene"><option value="charcoal" selected>Charcoal</option><option value="wood">Warm Wood</option><option value="night">Night</option><option value="cream">Cream</option><option value="color">Custom color</option><option value="image">Your image</option></select></label><label class="setRow" id="bdColorRow" hidden>Color <input id="bdColor" type="color" value="#373737" aria-label="Backdrop color"></label><button id="bdImgBtn" class="setBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19" fill="#f4f1ea"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4zm3 3.5A1.75 1.75 0 1 1 8.75 10 1.75 1.75 0 0 1 7 8.5zM4 17l5-5 3 3 4-4 4 4v2H4z"/></svg><span>Choose image&hellip;</span></button><span id="bdNote" hidden></span></div><div class="setSeg"><span class="setGroup">Book &amp; view</span><button id="importBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Import a book&hellip;</span></button><button id="tplBtn" class="setBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" width="19" height="19"><path d="M12 3a1 1 0 0 1 1 1v7.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L6.9 10.3a1 1 0 1 1 1.4-1.4L11 11.6V4a1 1 0 0 1 1-1zM5 18.5h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg><span>Download book-file template (.md)</span></button><label class="setRow" id="startRow">Start view <select id="startPick" aria-label="Start view"><option value="shelf" selected>Bookshelf</option><option value="book">Last book</option></select></label><label class="setRow" id="printRow">NOT FOR PRINT <input id="pdfPrintSet" type="checkbox" checked></label><button id="guidesBtn" class="setBtn" type="button" aria-label="Trim and safety guides" aria-pressed="false" title="Trim + safety guides — Lulu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5" stroke-dasharray="2.5 2"/></svg><span>Trim + safety guides</span></button><button id="fs" class="setBtn" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>Full screen</span></button></div></span></span></span></div>
     <div id="stage">
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
@@ -1159,7 +1473,7 @@
     </div>
     <button id="pagesTab" type="button" aria-label="Pages" title="Pages" aria-expanded="false"><span class="tabPill" aria-hidden="true"></span><span class="tabRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15.5l7-7 7 7"/></svg></span></button>
     <button id="quickBtn" type="button" aria-label="Quick menu" title="Quick menu" aria-haspopup="true" aria-expanded="false"><svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false"><path d="M2 2h16M2 7h16M2 12h16" stroke="#e8b34b" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-    <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem">First page</button><button id="qmLast" class="qmItem" type="button" role="menuitem">Last page</button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span id="qmSlide">Slideshow: Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span id="qmSound">Sound: Off</span></button><button id="qmModeBtn" class="qmItem" type="button" role="menuitem"><span id="qmMode">Reading mode: Hardcover</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span id="qmLayout">Page layout: Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span id="qmLabels">Page labels: Off</span></button><button id="qmGuidesBtn" class="qmItem" type="button" role="menuitem"><span id="qmGuides">Safety guides: Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem">Book info</button></div>
+    <div id="quickMenu" role="menu" aria-label="Quick actions" hidden><button id="qmFirst" class="qmItem" type="button" role="menuitem"><span class="qmLabel">First page</span></button><button id="qmLast" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Last page</span></button><button id="qmSlideBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Slideshow</span> <span class="qmVal" id="qmSlide">Off</span></button><button id="qmSoundBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Sound</span> <span class="qmVal" id="qmSound">Off</span></button><button id="qmModeBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Reading mode</span> <span class="qmVal" id="qmMode">Hardcover</span></button><button id="qmLayoutBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page layout</span> <span class="qmVal" id="qmLayout">Auto</span></button><button id="qmLabelsBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Page labels</span> <span class="qmVal" id="qmLabels">Off</span></button><button id="qmGuidesBtn" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Safety guides</span> <span class="qmVal" id="qmGuides">Off</span></button><button id="qmInfo" class="qmItem" type="button" role="menuitem"><span class="qmLabel">Book info</span></button></div>
     <button id="expandBtn" type="button" aria-label="Expand view" title="Expand view" aria-pressed="false"><svg class="icoExpand" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg class="icoCollapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v-5"/></svg></button>
     <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p><button id="icBack" type="button">Flip back</button></div></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
@@ -2984,7 +3298,7 @@
       var tp = document.getElementById("turnPick");
       if (tp) tp.value = mode;
       var qm0 = document.getElementById("qmMode");
-      if (qm0) qm0.textContent = "Reading mode: " + readingModeName(mode);
+      if (qm0) qm0.textContent = readingModeName(mode);
       if (mode === "scroll") {
         applyScrollVisibility();
         scrollCurIdx = Math.max(0, Math.min(N - 1, anchor));
@@ -6068,7 +6382,7 @@
       document.body.classList.toggle("guides-on", on);
       guidesBtn.setAttribute("aria-pressed", on ? "true" : "false");
       var qg = document.getElementById("qmGuides");
-      if (qg) qg.textContent = "Safety guides: " + (on ? "On" : "Off");
+      if (qg) qg.textContent = (on ? "On" : "Off");
       try { localStorage.setItem("fb-guides", on ? "1" : "0"); } catch (err) {}
     }
     guidesBtn.onclick = function () { setGuides(!document.body.classList.contains("guides-on")); };
@@ -7262,12 +7576,12 @@
       if (v !== "single" && v !== "double") v = "auto";
       if (layoutPick) layoutPick.value = v;
       var ql0 = document.getElementById("qmLayout");
-      if (v === layoutMode) { if (ql0) ql0.textContent = "Page layout: " + layoutDisplayName(layoutMode); return; }
+      if (v === layoutMode) { if (ql0) ql0.textContent = layoutDisplayName(layoutMode); return; }
       var wasSingle = isSingle();
       var anchor = currentFirst();
       layoutMode = v;
       try { localStorage.setItem("fb-page-layout", v); } catch (err) {}
-      if (ql0) ql0.textContent = "Page layout: " + layoutDisplayName(layoutMode);
+      if (ql0) ql0.textContent = layoutDisplayName(layoutMode);
       if (turnMode === "scroll") return;
       fit();
       var target = anchor;
@@ -7297,7 +7611,7 @@
       if (labelPick) labelPick.value = labelMode;
       try { localStorage.setItem("fb-page-labels", labelMode); } catch (err) {}
       var qlab = document.getElementById("qmLabels");
-      if (qlab) qlab.textContent = "Page labels: " + (labelMode === "spreads" ? "On" : "Off");
+      if (qlab) qlab.textContent = (labelMode === "spreads" ? "On" : "Off");
       counter.textContent = label();
       if (sheet.classList.contains("open")) buildStrip();
       if (typeof updateTextPanel === "function") updateTextPanel();
@@ -7790,12 +8104,12 @@
     var quickOpen = false;
     function quickSoundOn() { return !!(sndFxOn || sndMusicOn); }
     function paintQuickMenu() {
-      if (qmSlideEl) qmSlideEl.textContent = "Slideshow: " + (slideSec ? slideSec + "s" : "Off");
-      if (qmSoundEl) qmSoundEl.textContent = "Sound: " + (quickSoundOn() ? "On" : "Off");
-      if (qmModeEl) qmModeEl.textContent = "Reading mode: " + readingModeName(turnMode);
-      if (qmLayoutEl) qmLayoutEl.textContent = "Page layout: " + layoutDisplayName(layoutMode);
-      if (qmLabelsEl) qmLabelsEl.textContent = "Page labels: " + (labelMode === "spreads" ? "On" : "Off");
-      if (qmGuidesEl) qmGuidesEl.textContent = "Safety guides: " + (document.body.classList.contains("guides-on") ? "On" : "Off");
+      if (qmSlideEl) qmSlideEl.textContent = (slideSec ? slideSec + "s" : "Off");
+      if (qmSoundEl) qmSoundEl.textContent = (quickSoundOn() ? "On" : "Off");
+      if (qmModeEl) qmModeEl.textContent = readingModeName(turnMode);
+      if (qmLayoutEl) qmLayoutEl.textContent = layoutDisplayName(layoutMode);
+      if (qmLabelsEl) qmLabelsEl.textContent = (labelMode === "spreads" ? "On" : "Off");
+      if (qmGuidesEl) qmGuidesEl.textContent = (document.body.classList.contains("guides-on") ? "On" : "Off");
       if (quickBtn) quickBtn.setAttribute("aria-expanded", quickOpen ? "true" : "false");
     }
     function setQuickMenu(open) {
