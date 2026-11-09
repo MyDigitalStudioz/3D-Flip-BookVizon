@@ -697,8 +697,26 @@
      very bottom the last row clears the pinned footer by the
      same air. The 3D detail card's scroll area (.s3-d-scroll)
      carries the same addition. */
-  .icScroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d transparent;margin-right:-12px;padding-right:12px;padding-top:12px;padding-bottom:12px}
-  .icFoot{flex:0 0 auto;border-top:1px solid rgba(244,241,234,.16);margin-top:14px}
+  /* The cushion (owner's call, 2026-11-09): in-content padding
+     gives air at rest and at the very bottom, but mid-scroll a
+     row still slides flush to the scroll area's edge and is
+     hard-sliced there. So the scroll WINDOW itself is inset
+     8px top and bottom (margins on the scroll area): its clip
+     lines now sit inside the card, surrounded by card ground,
+     and scrolled content can never reach the card's outer edge
+     at any scroll position. The footer's top margin drops from
+     14px to 6px to compensate, so the total ground between the
+     window and the pinned footer is unchanged. Over the outer
+     18px at each end of the window a mask gradient — fixed to
+     the scroll area's own box, so it does not scroll with the
+     content — fades rows out as they leave: they dissolve into
+     the cushion instead of being cut by it, fully opaque
+     through the middle. The mask softens the scrollbar's very
+     ends too, which is fine; the negative-right-margin
+     placement trick above is untouched. The 3D detail card's
+     scroll area (.s3-d-scroll) carries the same cushion. */
+  .icScroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d transparent;margin-right:-12px;margin-top:8px;margin-bottom:8px;padding-right:12px;padding-top:12px;padding-bottom:12px;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 calc(100% - 18px),rgba(0,0,0,0) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 calc(100% - 18px),rgba(0,0,0,0) 100%)}
+  .icFoot{flex:0 0 auto;border-top:1px solid rgba(244,241,234,.16);margin-top:6px}
   #infoCard.flipIn .icCard{animation:icFlip .55s cubic-bezier(.25,.7,.35,1.12) both}
   #infoCard.flipOut .icCard{animation:icFlipOut .26s ease-in both}
   @keyframes icFlip{from{transform:rotateY(-76deg) scale(.93);opacity:0}to{transform:rotateY(0deg) scale(1);opacity:1}}
@@ -1005,8 +1023,18 @@
      card's scroll area (.icScroll) carries, so the first row
      rests with air at the card's top edge and the last row
      clears the pinned footer when scrolled to the very bottom;
-     the 48px side gutters are unchanged. */
-  .s3-d-scroll{overflow-y:auto;min-height:0;padding:30px 48px 20px}
+     the 48px side gutters are unchanged. The cushion (owner's
+     call, 2026-11-09): the scroll window is also inset 8px top
+     and bottom by margins, so its clip lines sit inside the
+     card — below the card's top edge, above the pinned footer —
+     and a mask gradient fixed to the window's own box fades
+     content out over the outer 18px at each end as it leaves,
+     so a row mid-scroll dissolves into card ground instead of
+     slicing at the edge (the whole card scrolls here, kicker
+     and title included). The ✕ close and the ‹ › chevrons are
+     positioned against the CARD, not this window, so they stay
+     exactly where they were. Padding is unchanged. */
+  .s3-d-scroll{overflow-y:auto;min-height:0;padding:30px 48px 20px;margin-top:8px;margin-bottom:8px;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 calc(100% - 18px),rgba(0,0,0,0) 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 18px,#000 calc(100% - 18px),rgba(0,0,0,0) 100%)}
   .s3-d-footer{flex:none;display:flex;gap:8px;flex-wrap:nowrap;align-items:center;padding:12px 14px 14px;border-top:1px solid rgba(201,162,75,.22);background:rgba(0,0,0,.22);border-radius:0 0 13px 13px}
   #s3DetailClose{position:absolute;top:10px;right:10px;z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid rgba(242,234,217,.35);background:rgba(0,0,0,.3);color:#f2ead9;cursor:pointer;font-size:14px}
   #s3Kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#e6c877;margin:0 -28px 6px;padding-right:40px}
