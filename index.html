@@ -466,7 +466,9 @@
      3D — one shelf state). The wrapper, not just the button, stands
      down in the reader so the header there keeps exactly its old
      layout and spacing; the popover anchors to the wrapper, right
-     under the icon, in the Settings panel's position language. */
+     under the icon, in the Settings panel's position language —
+     with its right edge shifted onto the Settings panel's own
+     right edge (see the alignment fix at #shelfOptsPanel). */
   #shelfOptsWrap{display:none}
   body.shelf-open #shelfOptsWrap,html.boot-shelf #shelfOptsWrap{position:relative;display:inline-flex;flex:0 0 auto}
   #shelfOptsBtn{flex:0 0 auto;width:42px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(18,18,18,.34);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);border-radius:50%;cursor:pointer;font:inherit;box-shadow:0 3px 12px rgba(0,0,0,.35)}
@@ -493,7 +495,24 @@
      the Settings panel (charcoal card, hairline border, gold
      selected state) — not a small popover. */
   #shelfHeadActions{display:flex;gap:8px;align-items:flex-start;position:relative;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
-  #shelfOptsPanel{position:absolute;top:calc(100% + 10px);right:0;z-index:30;width:302px;max-width:calc(100vw - 24px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left}
+  /* Shelf options alignment fix (Jon, 2026-11-08): the panel
+     anchors to #shelfOptsWrap — the sliders button's own box —
+     but that button is NOT the header's right edge: the
+     Settings gear (42px wide) plus the #tools gap sit to its
+     right. At right:0 the whole panel therefore sat one button
+     + one gap too far left, and at phone width its left edge
+     ran off the screen ("Shelf options" clipped to "helf
+     options", segment blocks cut at the left) while the
+     Settings panel — anchored to the gear itself, the real
+     right edge — sat properly. The negative right below shifts
+     this panel's right edge exactly onto the Settings panel's
+     right edge: -(42px gear + 12px #tools gap) = -54px. The
+     #tools gap is 8px at phone width and 6px when the header
+     is crowded, so the phone overrides beside the other phone
+     panel rules at the end of this stylesheet carry -50px /
+     -48px. Top is unchanged: the panel still drops from
+     directly under the header buttons. */
+  #shelfOptsPanel{position:absolute;top:calc(100% + 10px);right:-54px;z-index:30;width:302px;max-width:calc(100vw - 24px);background:#242424;color:#f4f1ea;border:1px solid rgba(244,241,234,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 18px 44px rgba(0,0,0,.55);text-align:left}
   #shelfOptsPanel[hidden]{display:none}
   .shelfOptsHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .shelfOptsTitle{font-weight:700;font-size:15px;letter-spacing:.02em}
@@ -1407,6 +1426,28 @@
     #settingsPanel,#shelfOptsPanel{width:340px;max-width:calc(100vw - 16px);padding-left:10px;padding-right:10px}
     .setSeg{padding-left:8px;padding-right:8px}
     #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{padding-left:10px;padding-right:10px;gap:8px}
+  }
+  @media (max-width:560px){
+    /* Alignment fix, phone values: #tools gap is 8px here (6px
+       when hdr-crowded), so the Shelf options panel's right-edge
+       shift is -(42px gear + that gap) — see #shelfOptsPanel. */
+    #shelfOptsPanel{right:-50px}
+    body.hdr-crowded #shelfOptsPanel{right:-48px}
+  }
+  /* ---- Narrow-phone safety (audit P1, 2026-11-08) ----
+     At 360px the panels' total footprint is 362px (340 content
+     + 20 padding + 2 border, content-box), wider than the
+     screen — and the header's own buttons overflow the right
+     edge at that width, so even a right-anchored panel starts
+     from a point already off-screen and its right side clips.
+     At <=380px both panels therefore anchor to the VIEWPORT
+     instead: fixed, 8px in from both edges, dropping from just
+     under the header (their usual top is ~66px). Total width
+     is the viewport minus 16px by construction. Wider phones
+     are untouched: the 340px width, the right-edge alignment
+     above, and the Medium breathing-room measurements stand. */
+  @media (max-width:380px){
+    #viewer #settingsPanel,#viewer #shelfOptsPanel{position:fixed;top:64px;left:8px;right:8px;width:auto;max-width:none;max-height:calc(var(--app-h,100dvh) - 76px)}
   }
 </style></head>
 <body>
