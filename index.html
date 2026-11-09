@@ -1564,7 +1564,7 @@
   body.expanded #viewer{height:auto}
   #expandBtn,#pagesTab,#quickBtn{position:fixed}
   #quickMenu{position:fixed}
-  @media (display-mode: standalone) { #pagesTab, #quickBtn, #expandBtn, #quickMenu { transform: translateY(env(safe-area-inset-top, 0px)); } #pagesTab { transform: translateX(-50%) translateY(env(safe-area-inset-top, 0px)); } }
+  @media (display-mode: standalone) { #pagesTab { padding-bottom: 7px; } #quickBtn, #expandBtn { height: 35px; padding-bottom: 0; } #quickMenu { bottom: 43px; max-height: calc(var(--app-h,100dvh) - 51px); } }
   #sheet,#textSheet{position:fixed}
   /* ============ DIAGNOSTICS (temporary) — window geometry readout.
      Temporary feature: remove this CSS block together with the
