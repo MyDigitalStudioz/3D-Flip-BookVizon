@@ -669,7 +669,10 @@
      (scroll position, READING tag, backdrop). */
   #infoCard{position:absolute;inset:0;z-index:45;background:rgba(10,10,10,.66);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;perspective:1200px}
   #infoCard[hidden]{display:none}
-  .icCard{width:min(430px,100%);max-height:calc(var(--app-h,100dvh) - 28px);display:flex;flex-direction:column;overflow:hidden;background:#242424;color:#f4f1ea;border:1px solid rgba(232,179,75,.4);border-radius:16px;padding:18px;box-sizing:border-box;box-shadow:0 18px 44px rgba(0,0,0,.6);text-align:left}
+  /* Non-selectable like the 3D detail card (see #s3Detail):
+     no text selection, magnifier loupe or callout from touches
+     on the card; its buttons, select and scroll still work. */
+  .icCard{width:min(430px,100%);max-height:calc(var(--app-h,100dvh) - 28px);display:flex;flex-direction:column;overflow:hidden;background:#242424;color:#f4f1ea;border:1px solid rgba(232,179,75,.4);border-radius:16px;padding:18px;box-sizing:border-box;box-shadow:0 18px 44px rgba(0,0,0,.6);text-align:left;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   /* Pinned head + feet, scrolling middle (the app's panel pattern,
      same as the 3D detail card): however much info a book carries,
      the card caps at the screen — its max-height rides the shared
@@ -948,33 +951,52 @@
      markup), so they ride the card at any height — centered on the
      card's vertical middle (50% of its height, the full card
      including its pinned footer), straddling its left/right
-     edges, clear of the cover art above. Resting state is
-     chevron-only: no disc, no ring, no fill — the 48px hit area
-     stays, but nothing covers the About text at the card edges.
-     The gold chevron is slightly larger and bolder so it carries
-     on its own, with a soft dark text-shadow for legibility over
-     light and dark areas of the card alike. While pressed, the
-     dark-glass disc fades in briefly so the tap visibly registers,
-     then fades back out on release. A disabled chevron simply
-     dims — no disc returns. */
-  .s3-detail-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:48px;height:48px;border-radius:50%;appearance:none;cursor:pointer;border:1px solid transparent;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;color:#e6c877;font-size:34px;font-weight:700;line-height:1;display:none;align-items:center;justify-content:center;box-shadow:none;text-shadow:0 1px 5px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65),0 2px 14px rgba(0,0,0,.55);transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,-webkit-backdrop-filter .18s ease,backdrop-filter .18s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+     edges, clear of the cover art above. The button is the plain
+     gold chevron glyph and NOTHING else, in every state — rest,
+     hover, pressed, focused: no disc, no ring, no fill, no
+     border, no backdrop behind it, ever (owner's call,
+     2026-11-09: the press-state glass disc is gone for good).
+     The 48px hit area stays. The only press feedback is the
+     glyph itself dimming slightly; a disabled chevron dims
+     further, to .28. Keyboard focus shows on the glyph (a gold
+     glow), never as an outline ring around the hit area. The
+     scroll region carries side gutters wider than the hit area
+     (see .s3-d-scroll), so the glyphs float over empty margin,
+     never over the About text. */
+  .s3-detail-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:48px;height:48px;appearance:none;cursor:pointer;border:0;background:transparent;color:#e6c877;font-size:34px;font-weight:700;line-height:1;display:none;align-items:center;justify-content:center;box-shadow:none;text-shadow:0 1px 5px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65),0 2px 14px rgba(0,0,0,.55);transition:opacity .18s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #s3Stage.has-detail .s3-detail-nav{display:flex}
-  .s3-detail-nav:active:not(:disabled){background:rgba(22,18,13,.55);border-color:rgba(201,162,75,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(0,0,0,.45)}
+  .s3-detail-nav:active:not(:disabled){opacity:.6}
   .s3-detail-nav:disabled{opacity:.28;cursor:default}
-  .s3-detail-nav:disabled:active{background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .s3-detail-nav:focus-visible{outline:0;color:#f0d48a;text-shadow:0 0 14px rgba(232,179,75,.9),0 1px 5px rgba(0,0,0,.9)}
   .s3-detail-nav.prev{left:-12px}.s3-detail-nav.next{right:-12px}
   /* overflow:visible (not hidden) so the detail nav arrows can
      straddle the card's edges; the scroll area clips its own
      content and the footer rounds its own bottom corners. */
-  #s3Detail{position:absolute;z-index:20;background:linear-gradient(165deg,rgba(38,32,25,.97),rgba(26,22,17,.97));border:1px solid rgba(201,162,75,.35);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:visible;color:#f2ead9;text-align:left}
+  /* Non-selectable (owner's call, 2026-11-09): the card and its
+     text never start a text selection, so a touch, long-press or
+     drag on the card can never raise the iOS magnifier loupe,
+     selection handles or callout. Buttons, the status select and
+     the internal scroll are unaffected. The Classic info card
+     (.icCard) carries the same rule. */
+  #s3Detail{position:absolute;z-index:20;background:linear-gradient(165deg,rgba(38,32,25,.97),rgba(26,22,17,.97));border:1px solid rgba(201,162,75,.35);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:visible;color:#f2ead9;text-align:left;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   #s3Detail[hidden]{display:none}
   @media (min-width:900px){#s3Detail{right:clamp(18px,4vw,56px);top:50%;width:356px;max-height:min(82%,560px);transform:translateY(-50%)}}
   @media (max-width:899px){#s3Detail{left:12px;right:12px;bottom:12px;max-height:56%}.s3-detail-nav.prev{left:-6px}.s3-detail-nav.next{right:-6px}}
-  .s3-d-scroll{overflow-y:auto;min-height:0;padding:18px 20px 8px}
+  /* Side gutters (owner's call, 2026-11-09): the scrolling
+     middle carries 48px side padding — wider than the chevron
+     hit area ever reaches into the card (36px on desktop, 42px
+     at phone width) — so the About text and the meta rows that
+     scroll with it can never run underneath the chevron glyphs
+     at any card width; the glyphs float over empty margin. The
+     header (kicker + thumbnail/title row) pulls itself back out
+     by the extra 28px with negative margins, so it and the
+     pinned footer keep their full-width layout exactly as they
+     were. */
+  .s3-d-scroll{overflow-y:auto;min-height:0;padding:18px 48px 8px}
   .s3-d-footer{flex:none;display:flex;gap:8px;flex-wrap:nowrap;align-items:center;padding:12px 14px 14px;border-top:1px solid rgba(201,162,75,.22);background:rgba(0,0,0,.22);border-radius:0 0 13px 13px}
   #s3DetailClose{position:absolute;top:10px;right:10px;z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid rgba(242,234,217,.35);background:rgba(0,0,0,.3);color:#f2ead9;cursor:pointer;font-size:14px}
-  #s3Kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#e6c877;margin:0 0 6px;padding-right:40px}
-  .s3-d-head{display:flex;gap:12px;align-items:flex-start}
+  #s3Kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#e6c877;margin:0 -28px 6px;padding-right:40px}
+  .s3-d-head{display:flex;gap:12px;align-items:flex-start;margin-left:-28px;margin-right:-28px}
   #s3Cover{width:58px;height:58px;object-fit:cover;border-radius:6px;background:#2b2b2b;flex:0 0 auto}
   #s3Title{margin:0;font-family:Georgia,serif;font-size:21px;line-height:1.2;color:#f2ead9}
   #s3Author{margin:4px 0 0;font-size:13px;color:#c9a24b}
