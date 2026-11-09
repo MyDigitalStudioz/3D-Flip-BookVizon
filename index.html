@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#191919"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/png" href="images/favicon.png">
 <link rel="apple-touch-icon" href="images/favicon.png"><title>Harlow’s Accidental Journey — 3D-Flip-BookVizon-v9</title>
 <script>
@@ -55,6 +55,7 @@
   html,body{margin:0;height:100%;background:#191919;color:#f4f1ea;font:15px/1.3 "Segoe UI",sans-serif}
   #viewer{position:relative;min-height:100%;height:100%;background:#191919;display:flex;flex-direction:column}
   #viewer:fullscreen,#viewer:-webkit-full-screen{width:100%;height:100%;background:#191919}
+  #viewer::backdrop{background:#191919}
   /* position+z-index matter: the banner must form a stacking context
      ABOVE the stage. The page-turn arrows carry z-index 6 inside the
      stage; when the stage had no stacking context of its own, those 6s
@@ -976,6 +977,29 @@
   #expandBtn.is-open .icoCollapse{display:block}
   #expandBtn.is-open .icoExpand{display:none}
   body.shelf-open #expandBtn,body.overlay-open #expandBtn,html.boot-shelf #expandBtn{display:none}
+
+  /* ---- Full-bleed viewport / safe area (landscape bottom-bar fix) ----
+     The viewport meta now claims the whole screen (viewport-fit=cover),
+     so the layout reaches the physical edges instead of stopping at the
+     safe-area boundary and leaving the home-indicator strip to whatever
+     canvas the host webview paints behind the page — dark in normal
+     mode, white in full screen / Expand view. Backgrounds only, by
+     design: no book size or position changes. The fullscreen backdrop
+     is painted above (next to the :fullscreen rule); the rules below
+     extend the bottom dock through the bottom inset — each bottom tab
+     grows by env(safe-area-inset-bottom) with the extra height given
+     back as bottom padding, so the tab's dark dock reaches the screen
+     edge while its glyph keeps the exact spot it had — and lift the
+     quick menu and the two bottom sheets by the same inset. The page
+     arrows clear a side notch / Dynamic Island the same way. On any
+     screen without insets env() is 0 and every value below reduces to
+     the size it replaces. */
+  #prev{left:max(8px,env(safe-area-inset-left,0px))}
+  #next{right:max(8px,env(safe-area-inset-right,0px))}
+  #pagesTab{padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))}
+  #quickBtn,#expandBtn{height:calc(35px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+  #quickMenu{bottom:calc(43px + env(safe-area-inset-bottom,0px))}
+  #sheet,#textSheet{padding-bottom:env(safe-area-inset-bottom,0px)}
 
 </style></head>
 <body>
