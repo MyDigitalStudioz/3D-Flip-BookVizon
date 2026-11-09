@@ -1085,9 +1085,9 @@
      the size it replaces. */
   #prev{left:max(8px,env(safe-area-inset-left,0px))}
   #next{right:max(8px,env(safe-area-inset-right,0px))}
-  #pagesTab{padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))}
-  #quickBtn,#expandBtn{height:calc(35px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
-  #quickMenu{bottom:calc(43px + env(safe-area-inset-bottom,0px))}
+  #pagesTab{padding-bottom:7px}
+  #quickBtn,#expandBtn{height:35px;padding-bottom:0}
+  #quickMenu{bottom:43px}
   #sheet,#textSheet{padding-bottom:env(safe-area-inset-bottom,0px)}
 
   /* ---- Flush shell + small-screen scrolling (landscape round 2,
@@ -1125,7 +1125,7 @@
      search results keep their own scrolling inside it). */
   html,body{overflow:hidden;overscroll-behavior:none}
   #viewer{position:fixed;inset:0;height:auto;min-height:0;overflow:hidden}
-  #quickMenu{max-height:calc(var(--app-h,100dvh) - 51px - env(safe-area-inset-bottom,0px));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d transparent}
+  #quickMenu{max-height:calc(var(--app-h,100dvh) - 51px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#4d4d4d transparent}
   #sheet{max-height:calc(var(--app-h,100dvh) - 12px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #strip{overscroll-behavior:contain}
   /* The Bookshelf rides the same pin: #shelf is inset:0 inside the
@@ -1564,7 +1564,6 @@
   body.expanded #viewer{height:auto}
   #expandBtn,#pagesTab,#quickBtn{position:fixed}
   #quickMenu{position:fixed}
-  @media (display-mode: standalone) { #pagesTab { padding-bottom: 7px; } #quickBtn, #expandBtn { height: 35px; padding-bottom: 0; } #quickMenu { bottom: 43px; max-height: calc(var(--app-h,100dvh) - 51px); } }
   #sheet,#textSheet{position:fixed}
   /* ============ DIAGNOSTICS (temporary) — window geometry readout.
      Temporary feature: remove this CSS block together with the
