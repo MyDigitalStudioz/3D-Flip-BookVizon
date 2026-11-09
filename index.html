@@ -1564,6 +1564,19 @@
   body.expanded #viewer{height:auto}
   #expandBtn,#pagesTab,#quickBtn{position:fixed}
   #quickMenu{position:fixed}
+  /* ---- Bottom dock window-gap shift (standalone probe, 2026-11-09) ----
+     In the standalone app in portrait the layout window is shorter
+     than the physical screen (diagnostics: screen 402x874, inner
+     402x812), so the fixed dock ends at the window's bottom edge and
+     rides ~62pt high with an unpainted band beneath it. --win-gap
+     (set by syncWinGap in the boot script) carries that measured gap
+     in standalone only; it is 0px in every browser and in standalone
+     landscape, where the dock renders exactly as before. Only the
+     dock set shifts — #pagesTab keeps its translateX(-50%) centering
+     composed ahead of the shift. Whether iOS paints fixed elements
+     translated below the layout viewport is what this probes. */
+  #pagesTab,#quickBtn,#expandBtn,#quickMenu{transform:translateY(var(--win-gap,0px))}
+  #pagesTab{transform:translateX(-50%) translateY(var(--win-gap,0px))}
   #sheet,#textSheet{position:fixed}
   /* ============ DIAGNOSTICS (temporary) — window geometry readout.
      Temporary feature: remove this CSS block together with the
@@ -1713,6 +1726,29 @@
     syncAppHeight();
     window.addEventListener("resize", syncAppHeight);
     window.addEventListener("orientationchange", syncAppHeight);
+    /* ---- Window gap: standalone bottom-dock probe (2026-11-09) ----
+       In the standalone app in portrait, the layout window is shorter
+       than the physical screen (diagnostics: screen 402x874, inner
+       402x812), leaving the fixed bottom dock riding high above an
+       unpainted band. --win-gap carries screen.height - innerHeight
+       so the dock's translateY can drop it to the physical bottom.
+       Gated to standalone (display-mode or navigator.standalone) and
+       clamped at 0, so browsers and standalone landscape — where the
+       window already fills the screen — resolve to 0px and the dock
+       renders exactly as before. */
+    function syncWinGap() {
+      try {
+        var standalone = false;
+        try { standalone = window.matchMedia("(display-mode: standalone)").matches; } catch (e) {}
+        if (!standalone && navigator.standalone === true) standalone = true;
+        var gap = standalone ? (window.screen.height - window.innerHeight) : 0;
+        if (!(gap > 0)) gap = 0;
+        document.documentElement.style.setProperty("--win-gap", Math.round(gap) + "px");
+      } catch (err) {}
+    }
+    syncWinGap();
+    window.addEventListener("resize", syncWinGap);
+    window.addEventListener("orientationchange", syncWinGap);
     if (window.visualViewport) window.visualViewport.addEventListener("resize", syncAppHeight);
     var bookWrap = document.getElementById("bookWrap");
     var bookEl = document.getElementById("book");
