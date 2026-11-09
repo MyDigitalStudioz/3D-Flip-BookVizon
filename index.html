@@ -988,19 +988,20 @@
      the view always opens fitted and never persists. */
   #zoomView{position:absolute;inset:0;z-index:49;background:rgba(12,12,12,.98);display:flex;flex-direction:column}
   #zoomView[hidden]{display:none}
-  #zoomBar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;flex-wrap:wrap}
+  #zoomBar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;flex-wrap:nowrap;background:rgba(22,22,21,.85);border-bottom:1px solid rgba(0,0,0,.62)}
   #zoomTitle{font-weight:600;letter-spacing:.03em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #zoomCtrls{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+  #zoomCtrls{display:inline-flex;align-items:center;gap:8px;flex-wrap:nowrap}
   #zoomOut,#zoomIn,#zoomReset{min-height:38px;min-width:38px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.07);color:#f4f1ea;border:1px solid rgba(244,241,234,.45);font:inherit;font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   #zoomPct{font-size:13px;color:#cfc9bd;min-width:44px;text-align:center}
-  #zoomClose{flex:0 0 auto;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#f4f1ea;border:1px solid rgba(244,241,234,.4);border-radius:50%;cursor:pointer}
-  #zoomClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
+  #zoomClose{flex:0 0 auto;width:44px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);color:#f4f1ea;border:1px solid rgba(244,241,234,.65);border-radius:50%;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #zoomClose svg{width:18px;height:18px;stroke:#f4f1ea;fill:none;stroke-width:2.6;stroke-linecap:round;display:block}
   #zoomStage{flex:1;position:relative;overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;cursor:grab}
   #zoomStage:active{cursor:grabbing}
   #zoomContent{display:flex;gap:0;will-change:transform;box-shadow:0 18px 44px rgba(0,0,0,.6)}
   #zoomContent img{display:block;object-fit:contain;background:#2b2b2b;user-select:none;-webkit-user-drag:none}
   @media (max-width:560px){#banner{padding:calc(8px + env(safe-area-inset-top, 0px) * 1.15) 10px 8px;gap:8px;flex-wrap:nowrap}#leftTools{gap:8px}#tools{gap:8px}#mark{font-size:16.5px}#counter{font-size:13.5px;padding:5px 9px}#textBtn{font-size:12.5px;padding:5px 10px;min-height:30px}#editionBadge{font-size:10.5px;letter-spacing:.05em;padding:4px 7px}#compareBtn,#listenBtn{font-size:12px;padding:5px 9px;min-height:30px}#listenBtn .pillTxt{display:none}.cmpLong{display:none}.cmpShort{display:inline}body.hdr-crowded #editionBadge{display:none}#stageTools{top:8px;left:8px}}
   @media (max-width:560px){body.hdr-pills #editionBadge{display:none}body.hdr-crowded #banner{gap:6px}body.hdr-crowded #leftTools{gap:6px}body.hdr-crowded #tools{gap:6px}body.hdr-crowded #textBtn>span{display:none}body.hdr-crowded #compareBtn .cmpShort{display:none}}
+  @media (max-width:560px){#zoomReset{padding:6px 9px}#zoomPct{min-width:38px}#zoomBar{gap:8px;padding:10px 12px}}
 
   /* ---- 3D shelf view (Shelf view: 3D) ----
      A second rendering of the SAME shelf: visibleShelfEntries()
@@ -1909,7 +1910,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v12.9 &middot; Build 2026-11-09 12:43</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v12.9 &middot; Build 2026-11-09 14:53</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -6421,7 +6422,7 @@
       ov.style.top = (a.y * 100) + "%";
       ov.style.width = (a.w * 100) + "%";
       ov.style.height = (a.h * 100) + "%";
-      ov._txt.style.fontSize = Math.max(9, Math.round(a.fs * hw)) + "px";
+      ov._txt.style.fontSize = Math.max(9, a.fs * hw) + "px";
       ov._txt.style.fontFamily = ART_FONTS[a.font] || ART_FONTS.andika;
       ov._txt.style.color = ART_COLORS[a.color];
       ov._txt.style.textAlign = (a.align === "center" || a.align === "right") ? a.align : "left";
@@ -6439,14 +6440,14 @@
          box too short is grown back to the content height here. */
       var hh = host.clientHeight || 1;
       var needPx = ov._txt.scrollHeight;
-      if (needPx > a.h * hh + 1) {
+      if (needPx > a.h * hh * 1.003) {
         var nh = needPx / hh;
         if (a.y + nh > 1) {
           a.y = Math.max(0, 1 - nh);
           if (nh > 1) {
-            while (needPx > hh + 1 && a.fs > 0.024) {
+            while (needPx > hh * 1.003 && a.fs > 0.024) {
               a.fs = Math.max(0.024, a.fs - 0.002);
-              ov._txt.style.fontSize = Math.max(9, Math.round(a.fs * hw)) + "px";
+              ov._txt.style.fontSize = Math.max(9, a.fs * hw) + "px";
               needPx = ov._txt.scrollHeight;
             }
             nh = Math.min(1, needPx / hh);
@@ -7921,6 +7922,12 @@
         }
       });
       function endPtr(e) {
+        if (gStart && gStart.n === 1 && ptrs[e.pointerId] && zoomScale <= 1.05 && (e.clientY - gStart.y) > 80) {
+          delete ptrs[e.pointerId];
+          if (ptrList().length) beginGesture(); else gStart = null;
+          closeZoomView();
+          return;
+        }
         var wasTap = false;
         var tapScale = zoomScale;
         if (gStart && gStart.n === 1 && ptrs[e.pointerId] && !gStart.moved && performance.now() - gStart.t < 350) wasTap = true;
@@ -11084,7 +11091,7 @@
        experiment line (12.x): bump the last number once per review
        round, not per micro-fix. */
     var BUILD_ITERATION = "12.9";
-    var BUILD_STAMP = "2026-11-09 12:43";
+    var BUILD_STAMP = "2026-11-09 14:53";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
@@ -11228,6 +11235,16 @@
       }
     }
     function openShelf() {
+      /* Leaving the reader for the shelf ends Arrange outright:
+         the Style panel is position:fixed and would otherwise
+         float over the shelf, and the arranging state would
+         linger into the next book opened. exitArtArrange is the
+         full teardown — panel (both tiers) closed, gold box and
+         handle gone with the body class, stage lift cleared,
+         header button back to "Arrange", flag cleared. This is
+         the shelf's single funnel: Classic, 3D and the boot
+         landing all show the shelf through here. */
+      if (typeof exitArtArrange === "function") exitArtArrange();
       closeSheet();
       if (document.body.classList.contains("expanded")) setExpanded(false);
       closeTextPanel();
@@ -11864,6 +11881,10 @@
     function removeImportBook(id) {
       var entry = findShelfEntry(id);
       if (!entry || entry.source !== "import") return;
+      /* Removing the book that is open in the reader ends its
+         Arrange with the same full teardown as leaving for the
+         shelf — nothing of the session outlives the book. */
+      if (id === currentEntryId && typeof exitArtArrange === "function") exitArtArrange();
       var kb = entry.keyBase || "";
       delete coverThumbMem[id];
       coverIdbDelete(id);
@@ -11975,6 +11996,10 @@
       check();
     }
     function openShelfBook(id) {
+      /* A switch fully exits the outgoing book's Arrange first,
+         so no Style panel or arranging state crosses into the
+         incoming book (no-op when not arranging, e.g. at boot). */
+      if (typeof exitArtArrange === "function") exitArtArrange();
       if (id === currentEntryId) { recordBookOpened(id); noteBookOpened(); closeShelf(); return; }
       var entry = findShelfEntry(id);
       if (!entry) { closeShelf(); return; }
