@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — a bookshelf of picture books whose covers turn like stiff board and whose pages bend like paper.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v10 (GitHub default is main). v9 is frozen as the restore point (v8, v7 and v6 are frozen restore points too). `main` is synced to the build v10 was cut from — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v10 (GitHub default is main). v9 is frozen as the restore point (v8, v7 and v6 are frozen restore points too). `main` mirrors the v10 tip (GitHub Pages serves `main`) — the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
@@ -21,15 +21,15 @@ The viewer opens on its bookshelf: eight books — two published picture books, 
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v9`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, synced from the v9 working line.
+Captured from the working viewer on `3D-Flip-BookVizon-v10`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, mirrored from the v10 working line.
 
-**Bookshelf** — the front door: every book, its status, and its mark count at a glance.
+**Bookshelf** — the front door: every book at a glance, cover and title only — the ⓘ on a cover's corner opens its info card, and a ★ count rides the cover when the book has marks.
 
-![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611081345)
+![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611081836)
 
 **3D shelf** — the same library standing on a shelf: drag or step along it, and Open pulls the focused book out.
 
-![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611081350)
+![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611081836)
 
 **Mid-book** — the first story spread, pages 6–7.
 
@@ -51,18 +51,18 @@ Captured from the working viewer on `3D-Flip-BookVizon-v9`. The hero book is the
 What the viewer does:
 
 - **Five reading modes** — Hardcover (the default 3D turn), Magazine, Swipe, Scroll, and Simple — with page layout Auto, Single, or Double. Covers turn as stiff board, slower and flat-shaded; interior pages bend like paper.
-- **Two shelves, one library** — a Classic grid or a 3D shelf, with sort, cover size, a Final-editions filter, arrange mode, and hide/restore. Each book carries a status — Test, Review, Print, or Final — shown as a colored dot on the shelf and a badge in the reader. The shelf remembers the last book you opened: its READING tag survives a reload, and Start view: Last book reopens that book.
+- **Two shelves, one library** — a Classic grid or a 3D shelf, with sort, cover size, a Final-editions filter, arrange mode, and hide/restore. Each book carries a status — Test, Review, Print, or Final — named on its info card and shown as a badge in the reader; the shelf itself stays clean (cover, title, and the corner ⓘ). The shelf remembers the last book you opened: its READING tag survives a reload, and Start view: Last book reopens that book.
 - **Marks** — star any spread while proofing; the shelf shows a ★ count per book, and the Pages sheet lists the marked spreads as jump chips.
 - **Per-page text** — the Text button opens the open book's story text, page by page (Harlow carries its full text of record). **Read to me** speaks it with the device's en-US voices, Samantha by default, at three speeds.
 - **Search** inside the open book, from the Pages sheet, with jump-to-page results.
 - **Imports** — the wizard takes a folder of page images, one interior PDF, or a BookVizion book file (`.md`). Wide images and wide PDF pages split at the fold; an odd page count adds a labeled blank facing page. Imports, replaced art, settings, marks, and your place in every book are kept on this device only.
 - **Proofing tools** — Replace a page's art or a whole spread, Insert pages, Compare against the original art, Trim + safety guides at the Lulu spec (safety line 0.5″ in from the 8.5″ trim), and NOT FOR PRINT on exports unless you turn it off.
-- **Quick menu** — first/last page, slideshow, sound, reading mode, page layout, page labels, safety guides, and book info from one tab. **Expand view** hides the chrome for a bigger stage. **Download PDF** assembles the open book as a PDF, and every book has a **deep link** (`#book=<id>`) plus a Copy link button on its info card.
-- **Sound** — a real recorded page turn is the default page-turn effect (a Crisp paper synth, or your own audio file, are the alternatives). Background music starts with the Rainy window ambience — a real rain recording — and also offers Ocean Shore, Forest Stream, Felt Piano, three real piano recordings (Gymnopédie No. 1, Prelude in C, Nocturne) and a Vibraphone Lullaby, or your own audio file. Sound and music are off by default, and the two paths have separate volume sliders — Turn volume and Music volume.
+- **Quick menu** — first/last page, slideshow, sound, reading mode, page layout, page labels, safety guides, and book info from one tab. **Expand view** hides the chrome for a bigger stage. **Download PDF** assembles the open book as a PDF, and every book has a **deep link** (`#book=<id>`) plus a Copy link button on its info card — the card pins its actions at the bottom and scrolls its middle when a book carries more info than fits on screen.
+- **Sound** — a real recorded page turn is the default page-turn effect (a Crisp paper synth, or your own audio file, are the alternatives). Background music starts with Gymnopédie No. 1 — a real piano recording, and the default — then Prelude in C and Nocturne (also real piano recordings), a Vibraphone Lullaby, the Rainy window ambience (a real rain recording), Ocean Shore, Forest Stream, and Felt Piano, or your own audio file. Sound and music are off by default, and the two paths have separate volume sliders — Turn volume and Music volume.
 
 ## Design language
 
-Charcoal stage, cream page paper, and one gold accent (`#e8b34b`) — the same gold as the header title, the Final badge, the mark stars, and the tabs. Controls are rectangular with a 10px corner radius everywhere in menus, panels, and the header (Text, Listen, Compare); only the round icon buttons, the status dots, and the peek tab's grab handle stay circular, by design.
+Charcoal stage, cream page paper, and one gold accent (`#e8b34b`) — the same gold as the header title, the Final badge, the mark stars, and the tabs. Controls are rectangular with a 10px corner radius everywhere in menus, panels, and the header (Text, Listen, Compare); only the round icon buttons, the covers' corner ⓘ buttons, and the peek tab's grab handle stay circular, by design.
 
 The reader header names the open book in gold above the page counter — visible even with the Pages sheet open, because the sheet is a bottom sheet and never covers it. Beside the counter sit the Text, Compare, and Listen buttons when the book offers them; the status badge (Final gold, Print copper, Review steel blue, Test silver-gray) steps aside when the header gets crowded. The mark star and zoom live at the stage's top-left and stand down, with the page arrows, whenever an overlay is open.
 
