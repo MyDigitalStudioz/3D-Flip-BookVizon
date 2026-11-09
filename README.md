@@ -2,14 +2,14 @@
 
 > The BookVizion 3D flipbook viewer — a bookshelf of picture books whose covers turn like stiff board and whose pages bend like paper.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v9 (GitHub default is main). v8, v7 and v6 are frozen restore points. `main` is synced to the v9 build — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v10 (GitHub default is main). v9 is frozen as the restore point (v8, v7 and v6 are frozen restore points too). `main` is synced to the build v10 was cut from — the Wave port: the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Static site](https://img.shields.io/badge/site-static-blue)
-![Version](https://img.shields.io/badge/version-9.0.0-orange)
+![Version](https://img.shields.io/badge/version-10.0.0-orange)
 
 ## Live preview
 
