@@ -25,11 +25,11 @@ Captured from the working viewer on `3D-Flip-BookVizon-v11`. The hero book is th
 
 **Bookshelf** — the front door: every book at a glance, cover and title only — the ⓘ on a cover's corner opens its info card, and a ★ count rides the cover when the book has marks.
 
-![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611082005)
+![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611082305)
 
 **3D shelf** — the same library standing on a shelf: drag or step along it, and Open pulls the focused book out.
 
-![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611082005)
+![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611082305)
 
 **Mid-book** — the first story spread, pages 6–7.
 
@@ -52,6 +52,7 @@ What the viewer does:
 
 - **Five reading modes** — Hardcover (the default 3D turn), Magazine, Swipe, Scroll, and Simple — with page layout Auto, Single, or Double. Covers turn as stiff board, slower and flat-shaded; interior pages bend like paper.
 - **Two shelves, one library** — a Classic grid or a 3D shelf, with sort, cover size, a Final-editions filter, arrange mode, and hide/restore. Each book carries a status — Test, Review, Print, or Final — named on its info card and shown as a badge in the reader; the shelf itself stays clean (cover, title, and the corner ⓘ). The shelf remembers the last book you opened: its READING tag survives a reload, and Start view: Last book reopens that book.
+- **Shelf dressing** — seven backdrops (Charcoal, Ambient book, Midnight, Walnut, Slate, Library, Matte Black) dress the Classic shelf and the 3D room, with a Show shelves switch and three shelf styles (Classic, Slim ledge, Library beam); the picks are remembered per device.
 - **Marks** — star any spread while proofing; the shelf shows a ★ count per book, and the Pages sheet lists the marked spreads as jump chips.
 - **Per-page text** — the Text button opens the open book's story text, page by page (Harlow carries its full text of record). **Read to me** speaks it with the device's en-US voices, Samantha by default, at three speeds.
 - **Search** inside the open book, from the Pages sheet, with jump-to-page results.
