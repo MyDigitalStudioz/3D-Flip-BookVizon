@@ -9,7 +9,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Repo size](https://img.shields.io/github/repo-size/MyDigitalStudioz/3D-Flip-BookVizon)
 ![Static site](https://img.shields.io/badge/site-static-blue)
-![Version](https://img.shields.io/badge/version-11.0.0-orange)
+![Version](https://img.shields.io/badge/version-13.0.0-orange)
 
 ## Live preview
 
