@@ -226,7 +226,6 @@
      the arrows / leaf layers / shelf inside it can never outrank the
      banner (30) and its Settings panel, no matter their inner z-index. */
   #stage{flex:1;width:100%;min-height:0;background:#373737;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;z-index:1;-webkit-touch-callout:none}
-  #backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;background:#373737}
   /* Book switch: while a different book is swapped in, the book
      surfaces keep their layout but paint nothing (see the
      .switching handling in openShelfBook) until the incoming
@@ -243,6 +242,7 @@
      label naming the INCOMING book — never a frame of any other. */
   #switchNote{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;max-width:calc(100% - 48px);background:rgba(20,20,20,.72);color:#f4f1ea;border:1px solid rgba(244,241,234,.3);border-radius:10px;padding:8px 14px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;box-shadow:0 4px 18px rgba(0,0,0,.35)}
   #switchNote[hidden]{display:none}
+  #backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;background:#373737}
   /* Lightbox treatment for a reader's own image: cover fit, dimmed and
      lightly blurred so the book stays the lit hero; scaled a touch so
      the blur never shows a soft edge against the stage. */
@@ -272,12 +272,7 @@
   #shadeL{background:linear-gradient(to left,rgba(0,0,0,.55),rgba(0,0,0,0) 75%)}
   #shadeR{background:linear-gradient(to right,rgba(0,0,0,.55),rgba(0,0,0,0) 75%)}
   #gl{position:absolute;z-index:5;display:none;pointer-events:none}
-  #leafFB{position:absolute;top:0;height:100%;z-index:5;display:none;transform-origin:left center;transform-style:preserve-3d;will-change:transform}
-  #leafFB .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#2b2b2b}
-  #leafFB .face img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
-  #leafFB .face.back{transform:rotateY(180deg)}
-  #leafFB .fshade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
-  /* 5, not 8: this gutter wash must sit under the magazine sheet (#flipLayer is 6). 8 painted it across the turning leaf. It still covers the hardcover leaf because #gl and #leafFB are 5 and come first in the DOM. */
+  /* 5, not 8: this gutter wash must sit under the magazine sheet (#flipLayer is 6). 8 painted it across the turning leaf. It still covers the hardcover leaf because #gl is 5 and comes first in the DOM. */
   #spineShade{position:absolute;top:0;height:100%;z-index:5;pointer-events:none;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.16) 38%,rgba(0,0,0,.30) 50%,rgba(0,0,0,.16) 62%,rgba(0,0,0,0) 100%)}
   #castShade{position:absolute;top:0;height:100%;z-index:4;pointer-events:none;opacity:0;background:linear-gradient(to right,rgba(0,0,0,0) 0%,rgba(0,0,0,.85) 50%,rgba(0,0,0,0) 100%)}
   #botLayer{position:absolute;top:0;height:100%;z-index:4;display:none;pointer-events:none;background:#2b2b2b}
@@ -802,12 +797,12 @@
   #icClose svg{width:15px;height:15px;stroke:#f4f1ea;fill:none;stroke-width:2.4;stroke-linecap:round;display:block}
   #icAbout{margin:14px 0 0;font-size:14px;line-height:1.55;color:#e9e4d8}
   #icStats{margin-top:14px;border-top:1px solid rgba(244,241,234,.16)}
-  .icStat{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid rgba(244,241,234,.16);font-size:13.5px}
-  .icStatK{color:#b9b2a4;flex:0 0 auto}
   /* The marks line on both book cards (Classic info card + 3D
      detail card): shown only when the book has marked pages. */
   .marksLine{margin:12px 0 0;font-size:13.5px;font-weight:600;color:#e8b34b}
   .marksLine[hidden]{display:none}
+  .icStat{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid rgba(244,241,234,.16);font-size:13.5px}
+  .icStatK{color:#b9b2a4;flex:0 0 auto}
   .icStatV{color:#f4f1ea;text-align:right;font-weight:600}
   #icLinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   /* The card's one editable field: the book's status. Changing it
@@ -2888,7 +2883,11 @@
   #settingsPanel,#shelfOptsPanel{background:linear-gradient(180deg,rgba(54,52,50,.86),rgba(39,38,36,.89));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
   #quickMenu{background:linear-gradient(180deg,rgba(45,45,48,.86),rgba(33,33,36,.89));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
   .wizCard,.icCard{background:linear-gradient(180deg,rgba(58,55,52,.88),rgba(43,41,39,.91));-webkit-backdrop-filter:blur(20px) saturate(1.25);backdrop-filter:blur(20px) saturate(1.25)}
+  .qmItem,#settingsPanel select,#fxPick,#musPick,#pdfLayout,#bookSize,#wizBack,#icStatus,#icUpdate,#icRemove,#icHide,#icConfirmNo,#s3Status,#s3Remove,#s3Hide,#s3ConfirmNo,.hiddenRestore{background-color:rgba(118,113,106,.30)}
+  #settingsPanel .setBtn{background-color:rgba(118,113,106,.30)}
   #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+  .shelfOptBtn:not([aria-pressed="true"]),.wizChoice:not([aria-pressed="true"]),#speedSeg button:not([aria-pressed="true"]){background-color:rgba(118,113,106,.30)}
+  #settingsPanel input[type="checkbox"]:not(:checked),#wiz input[type="checkbox"]:not(:checked){background-color:rgba(118,113,106,.30)}
   .qmVal{background:rgba(10,10,10,.55);border-color:rgba(0,0,0,.45)}
   #sheet{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
   #textSheet{background:rgba(30,29,27,.90);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
@@ -2912,7 +2911,8 @@
      shades form the three-step ladder Jon pointed at in his
      close crop of the Settings selects: the panel ground is
      darkest, the control boxes sit one shade UP from it — a
-     step lighter and slightly warm, the stone-charcoal wash — and the quick menu's gold-value
+     step lighter and slightly warm, the stone-charcoal wash
+     rgba(118,113,106,.30) — and the quick menu's gold-value
      chips stay deepest of all. So the select/dropdown boxes
      and their kin (Settings buttons, quick-menu rows,
      unselected Shelf / wizard choice buttons, the Speed
@@ -2929,7 +2929,11 @@
      changes darkness and shade separation only. */
   #settingsPanel,#shelfOptsPanel,#quickMenu,.wizCard,.icCard{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
   #textSheet{background:rgba(22,22,21,.85);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2)}
+  .qmItem,#settingsPanel select,#fxPick,#musPick,#pdfLayout,#bookSize,#wizBack,#icStatus,#icUpdate,#icRemove,#icHide,#icConfirmNo,#s3Status,#s3Remove,#s3Hide,#s3ConfirmNo,.hiddenRestore{background-color:rgba(118,113,106,.30)}
+  #settingsPanel .setBtn{background-color:rgba(118,113,106,.30)}
   #guidesBtn[aria-pressed="true"]{background-color:rgba(232,179,75,.22)}
+  .shelfOptBtn:not([aria-pressed="true"]),.wizChoice:not([aria-pressed="true"]),#speedSeg button:not([aria-pressed="true"]){background-color:rgba(118,113,106,.30)}
+  #settingsPanel input[type="checkbox"]:not(:checked),#wiz input[type="checkbox"]:not(:checked){background-color:rgba(118,113,106,.30)}
 
   /* ---- Control boxes go darker, not lighter (v11 Lab test,
      Jon 2026-11-08) ----
@@ -2937,7 +2941,7 @@
      (Swipe / Auto / Numbers / Off) and the unchecked boxes beside
      them: "maybe these boxes go darker not lighter." The last
      round sat those boxes one shade UP from the panel ground on
-     the lighter stone-charcoal wash; over
+     the lighter stone-charcoal wash rgba(118,113,106,.30); over
      the Pages-dark panels that read as pale gray slabs floating
      on the menu. So the direction flips: the same box family now
      sits one shade DOWN — a near-black wash rgba(0,0,0,.42),
@@ -3002,31 +3006,25 @@
   .wizField input[type="text"]{border-color:rgba(0,0,0,.62)}
   #settingsClose,#shelfOptsClose,#wizX{border-color:rgba(0,0,0,.55)}
   #qmLast{margin-bottom:6px}
-
-  /* ---- Segment width reclaim (sync #18 PORT-SIDE addition,
-     Jon 2026-11-08 — not a Lab-export delta; Lab mirror pending) ----
-     Jon, reviewing Shelf options on his phone: the new segment
-     blocks nest padding inside an already narrow panel — panel
-     padding outside segment padding — and the segmented button
-     rows (three-across Cover size, two-across Shelf view) came
-     out squished, labels crowding the gold check. Spacing and
-     width only, phone widths only: the panels run wider, panel
-     and segment side padding come down, and the segmented
-     buttons' own side padding and label-to-check gap come down.
-     No design value moves — grounds, inset washes, strokes,
-     gold tints and checks are exactly as approved — and the
-     label font size is untouched. */
+  /* ---- Phone breathing room (Lab mirror of GitHub sync #18) ----
+     Jon: the selected "Medium" button in COVER SIZE had no
+     breathing room — label nearly on its left edge, check nearly
+     on its right. At phone width the nested padding (panel, then
+     segment, then button) starved the row. Fix is width back,
+     not smaller type: panels go a little wider with slimmer side
+     padding, segments slim their sides, and the Shelf view /
+     Cover size buttons trade a little side padding for a clear
+     label-to-check gap. Values are the exact shipped sync #18
+     measurements — do not reinterpret. */
   @media (max-width:560px){
     #settingsPanel,#shelfOptsPanel{width:340px;max-width:calc(100vw - 16px);padding-left:10px;padding-right:10px}
-    .setSeg{padding-left:8px;padding-right:8px}
-    #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{padding-left:10px;padding-right:10px;gap:8px}
-  }
-  @media (max-width:560px){
     /* Alignment fix, phone values: #tools gap is 8px here (6px
        when hdr-crowded), so the Shelf options panel's right-edge
        shift is -(42px gear + that gap) — see #shelfOptsPanel. */
     #shelfOptsPanel{right:-50px}
     body.hdr-crowded #shelfOptsPanel{right:-48px}
+    .setSeg{padding-left:8px;padding-right:8px}
+    #shelfViewSeg .shelfOptBtn,#coverSizeSeg .shelfOptBtn{padding-left:10px;padding-right:10px;gap:8px}
   }
   /* ---- Narrow-phone safety (audit P1, 2026-11-08) ----
      At 360px the panels' total footprint is 362px (340 content
@@ -3454,7 +3452,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.42 &middot; Build 2026-11-10 13:48</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.43 &middot; Build 2026-11-10 15:24</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -3466,10 +3464,6 @@
         <div class="shade" id="shadeR"></div>
         <canvas id="gl"></canvas>
         <div id="castShade"></div>
-        <div id="leafFB">
-          <div class="face front"><img alt=""><div class="fshade"></div></div>
-          <div class="face back"><img alt=""><div class="fshade"></div></div>
-        </div>
         <div id="botLayer"><img alt=""></div>
         <div id="flipLayer"><img alt=""></div>
         <canvas id="shadeCv"></canvas>
@@ -3623,9 +3617,7 @@
     }
     var shadeL = document.getElementById("shadeL"), shadeR = document.getElementById("shadeR");
     var canvas = document.getElementById("gl");
-    var leafFB = document.getElementById("leafFB");
-    var fbFrontImg = leafFB.querySelector(".front img"), fbBackImg = leafFB.querySelector(".back img");
-    var fbShades = leafFB.querySelectorAll(".fshade");
+    var ctx2d = canvas.getContext("2d");
     var canvasDpr = 1;
     var botLayer = document.getElementById("botLayer");
     var flipLayer = document.getElementById("flipLayer");
@@ -3708,6 +3700,20 @@
       noticeEl.style.display = "block";
     }
 
+    /* ================= 2D canvas leaf =================
+       The turning sheet is drawn slice by slice on a plain 2D canvas,
+       using the same bend integral and perspective projection the old
+       WebGL sheet used — but with no WebGL context, no GL textures, and
+       no CSS 3D. That is deliberate: in embedded webviews (WKWebView in
+       the Muse iOS app) those paths composite unreliably — the GL
+       canvas and preserve-3d / backface-visibility leaves can render
+       semi-transparent or doubled there, so the page underneath bleeds
+       through mid-turn while the same code looks fine in desktop
+       browsers. Canvas 2D drawImage behaves identically in every
+       engine, so this leaf is opaque by construction: each frame paints
+       exactly the turning page's own pixels — the front face before the
+       leaf passes vertical, its mirrored back face after. */
+    var FLEX_RAD = 24 * Math.PI / 180;           // total tip lag at mid-turn
     /* ---- Leaf materials ----
        A turn whose moving leaf IS the front or back cover is BOARD:
        a rigid flat plane (flex 0), a touch slower and heavier, with
@@ -3728,141 +3734,70 @@
     var leafDurMul = 1;
     var leafShadeMul = 1;
     function easeHeavy(t) { return 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(t, 1.15)); }
-    /* Port: on GitHub the turning sheet is the WebGL leaf below;
-       its bend integral is gated by leafFlex, so a BOARD turn
-       (leafFlex 0) stays a rigid plane and a PAPER turn flexes
-       geometrically — the Lab's 2D shading approximation
-       translated onto the real 3D engine. */
-    /* ================= WebGL leaf ================= */
-    var M = 24;                                  // strip columns (shared vertices = no seams)
-    var FLEX_RAD = 24 * Math.PI / 180;           // total tip lag at mid-turn
     var PERSP = 2300;
-    var gl = null, glOK = false;
-    var gProg, gPosBuf, gUvBuf, gIdxBuf, gTexF = null, gTexB = null;
-    var uHalf, uWin, uP, uShadeL, uBendL, aPosL, aUvL;
     var winW = 0, winH = 0;                      // canvas window size in CSS px
-    (function initGL() {
-      try {
-        gl = canvas.getContext("webgl", { antialias: true, alpha: true, depth: false, stencil: false, premultipliedAlpha: false });
-        if (!gl) return;
-        var vs = "attribute vec3 aPos; attribute vec2 aUv; uniform vec2 uHalf; uniform vec2 uWin; uniform float uP; varying vec2 vUv;" +
-          "void main(){ float X = aPos.x - uHalf.x; float Y = aPos.y - uHalf.y; float d = uP - aPos.z;" +
-          " float px = X * uP / d; float py = Y * uP / d;" +
-          " gl_Position = vec4(px / uWin.x, -py / uWin.y, 0.0, 1.0); vUv = aUv; }";
-        var fs = "precision mediump float; varying vec2 vUv; uniform sampler2D uFront; uniform sampler2D uBack; uniform float uShade; uniform float uBend;" +
-          "void main(){ vec4 c; if (gl_FrontFacing) { c = texture2D(uFront, vUv); } else { c = texture2D(uBack, vec2(1.0 - vUv.x, vUv.y)); }" +
-          " c.rgb *= (1.0 - uShade); c.rgb += uBend * 0.05 * smoothstep(0.93, 1.0, vUv.x); gl_FragColor = vec4(c.rgb, 1.0); }";
-        function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
-        gProg = gl.createProgram();
-        gl.attachShader(gProg, sh(gl.VERTEX_SHADER, vs));
-        gl.attachShader(gProg, sh(gl.FRAGMENT_SHADER, fs));
-        gl.linkProgram(gProg);
-        if (!gl.getProgramParameter(gProg, gl.LINK_STATUS)) { gl = null; return; }
-        gl.useProgram(gProg);
-        aPosL = gl.getAttribLocation(gProg, "aPos");
-        aUvL = gl.getAttribLocation(gProg, "aUv");
-        uHalf = gl.getUniformLocation(gProg, "uHalf");
-        uWin = gl.getUniformLocation(gProg, "uWin");
-        uP = gl.getUniformLocation(gProg, "uP");
-        uShadeL = gl.getUniformLocation(gProg, "uShade");
-        uBendL = gl.getUniformLocation(gProg, "uBend");
-        gl.uniform1i(gl.getUniformLocation(gProg, "uFront"), 0);
-        gl.uniform1i(gl.getUniformLocation(gProg, "uBack"), 1);
-        // static uv + index buffers
-        var uv = new Float32Array((M + 1) * 2 * 2);
-        var idx = [];
-        for (var i = 0; i <= M; i++) {
-          uv[(i * 2) * 2] = i / M; uv[(i * 2) * 2 + 1] = 1;
-          uv[(i * 2 + 1) * 2] = i / M; uv[(i * 2 + 1) * 2 + 1] = 0;
-          if (i < M) { var a = i * 2, b = a + 1, c = a + 2, d = a + 3; idx.push(a, b, c, b, d, c); }
-        }
-        gUvBuf = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, gUvBuf);
-        gl.bufferData(gl.ARRAY_BUFFER, uv, gl.STATIC_DRAW);
-        gIdxBuf = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gIdxBuf);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
-        gPosBuf = gl.createBuffer();
-        gl.disable(gl.DEPTH_TEST);
-        gl.disable(gl.CULL_FACE);
-        glOK = true;
-      } catch (e) { gl = null; glOK = false; }
-    })();
+    var leafFrontImg = null, leafBackImg = null; // images of the flying leaf
 
-    // The sheet's texture is pre-scaled to 1024x1024 (power of two) through
-    // the browser's own high-quality 2D resampler, with mipmaps on. That
-    // makes the flying sheet's pixels land almost exactly where the flat
-    // <img> page puts them — the raw 1200px texture under plain GL LINEAR
-    // filtering resamples differently, which is what made the landing
-    // crossfade (and the old swap) visible at all.
-    var texCanvas = document.createElement("canvas");
-    texCanvas.width = 1024; texCanvas.height = 1024;
-    var texCtx = texCanvas.getContext("2d");
-    texCtx.imageSmoothingEnabled = true;
-    texCtx.imageSmoothingQuality = "high";
-    function dropGL(err) {
-      glOK = false;
-      reportNotice("3D turn is off in this browser. Flat pages still turn. " + (err && err.message ? err.message : ""));
-    }
-    function makeTex(img) {
-      try {
-        texCtx.drawImage(img, 0, 0, 1024, 1024);
-        var t = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texCanvas);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        return t;
-      } catch (err) {
-        dropGL(err);
-        return null;
+    function projLeaf(s, y, W, H, th, lag) {
+      var x, z;
+      if (Math.abs(lag) < 1e-5) { x = W + s * Math.cos(th); z = -s * Math.sin(th); }
+      else {
+        var a1 = th + lag * s / W;
+        x = W + (W / lag) * (Math.sin(a1) - Math.sin(th));
+        z = (W / lag) * (Math.cos(a1) - Math.cos(th));
       }
+      var d = PERSP - z;
+      return [winW / 2 + (x - W) * PERSP / d, winH / 2 + (y - H / 2) * PERSP / d];
     }
 
-    function drawLeafGL(thetaDeg, lagSign, shade, mx, my, bend) {
-      var W = pageSize, spineX = W;
+    function clearLeaf() {
+      ctx2d.setTransform(1, 0, 0, 1, 0, 0);
+      ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawLeaf2D(thetaDeg, lagSign, shade, bend) {
+      var W = pageSize, H = pageH;
+      var frontToward = Math.cos(thetaDeg * Math.PI / 180) >= 0;
+      var im = frontToward ? leafFrontImg : leafBackImg;
+      clearLeaf();
+      if (!im || !imgReady(im)) return;
       var th = thetaDeg * Math.PI / 180;
-      var lag = lagSign * FLEX_RAD * leafFlex * Math.sin(Math.PI * Math.abs(thetaDeg) / 180); // port: leaf materials — board rigid, paper flexes
-      var pos = new Float32Array((M + 1) * 2 * 3);
-      var step = W / M;
-      for (var i = 0; i <= M; i++) {
-        var s = i * step, x, z;
-        if (Math.abs(lag) < 1e-5) { x = spineX + s * Math.cos(th); z = -s * Math.sin(th); }
-        else {
-          var a1 = th + lag * s / W;
-          x = spineX + (W / lag) * (Math.sin(a1) - Math.sin(th));
-          z = (W / lag) * (Math.cos(a1) - Math.cos(th));
-        }
-        var o = i * 6;
-        pos[o] = x; pos[o + 1] = 0; pos[o + 2] = z;
-        pos[o + 3] = x; pos[o + 4] = pageH; // port: sheet height follows the page box (square-only build used W) pos[o + 5] = z;
+      var lag = lagSign * FLEX_RAD * leafFlex * Math.sin(Math.PI * Math.abs(thetaDeg) / 180);
+      var iw = im.naturalWidth, ih = im.naturalHeight;
+      var SLICES = 64;
+      ctx2d.setTransform(canvasDpr, 0, 0, canvasDpr, 0, 0);
+      ctx2d.imageSmoothingEnabled = true;
+      try { ctx2d.imageSmoothingQuality = "high"; } catch (err) {}
+      for (var i = 0; i < SLICES; i++) {
+        var s0 = W * i / SLICES, s1 = W * (i + 1) / SLICES;
+        var t0 = projLeaf(s0, 0, W, H, th, lag), b0 = projLeaf(s0, H, W, H, th, lag);
+        var t1 = projLeaf(s1, 0, W, H, th, lag);
+        var dx = Math.min(t0[0], t1[0]) - 0.5;
+        var dw = Math.abs(t1[0] - t0[0]) + 1;
+        var dy = t0[1] - 0.5, dh = (b0[1] - t0[1]) + 1;
+        // The back face is the same sheet seen from behind: mirrored.
+        var sx = frontToward ? iw * s0 / W : iw * (1 - s1 / W);
+        var sw = iw * (s1 - s0) / W;
+        ctx2d.drawImage(im, sx, 0, sw, ih, dx, dy, dw, dh);
       }
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.useProgram(gProg);
-      gl.uniform2f(uHalf, W, pageH / 2); // port: page box height (was W / 2)
-      gl.uniform2f(uWin, winW / 2, winH / 2);
-      gl.uniform1f(uP, PERSP);
-      gl.uniform1f(uShadeL, shade);
-      gl.uniform1f(uBendL, bend || 0);
-      gl.bindBuffer(gl.ARRAY_BUFFER, gPosBuf);
-      gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
-      gl.enableVertexAttribArray(aPosL);
-      gl.vertexAttribPointer(aPosL, 3, gl.FLOAT, false, 0, 0);
-      gl.bindBuffer(gl.ARRAY_BUFFER, gUvBuf);
-      gl.enableVertexAttribArray(aUvL);
-      gl.vertexAttribPointer(aUvL, 2, gl.FLOAT, false, 0, 0);
-      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, gTexF);
-      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, gTexB);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gIdxBuf);
-      gl.drawElements(gl.TRIANGLES, M * 6, gl.UNSIGNED_SHORT, 0);
+      // Same shading the GL sheet applied: a uniform dim over the leaf
+      // plus a faint highlight at the bending tip, clipped to the leaf.
+      ctx2d.globalCompositeOperation = "source-atop";
+      if (shade > 0.001) {
+        ctx2d.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")";
+        ctx2d.fillRect(0, 0, winW, winH);
+      }
+      if (bend > 0.001) {
+        var spinePt = projLeaf(0, 0, W, H, th, lag), tipPt = projLeaf(W, 0, W, H, th, lag);
+        var grad = ctx2d.createLinearGradient(spinePt[0], 0, tipPt[0], 0);
+        grad.addColorStop(0.9, "rgba(255,255,255,0)");
+        grad.addColorStop(1, "rgba(255,255,255," + (bend * 0.05).toFixed(3) + ")");
+        ctx2d.fillStyle = grad;
+        ctx2d.fillRect(0, 0, winW, winH);
+      }
+      ctx2d.globalCompositeOperation = "source-over";
     }
-    /* =============== end WebGL leaf =============== */
+    /* =============== end 2D canvas leaf =============== */
     var focusMode = false;
     var shelfIsOpen = false;
     var flipped = 0;
@@ -3944,10 +3879,9 @@
     /* ---- Spread names ----
        A book whose manifest flags itself "structured" names its pairs
        from that layout (cover alone, then its named pairs, back cover
-       alone). The built-in book (Harlow) flags itself structured in
-       images/manifest.js. Every other book — the shelf books, loaded
-       PDFs and folders — uses the generic scheme instead: Cover,
-       Spread 01 … , Back Cover. */
+       alone). Every other book — the built-in Pippa storybook, the
+       shelf books, loaded PDFs and folders — uses the generic scheme
+       instead: Cover, Spread 01 … , Back Cover. */
     function pad2(n) { return (n < 10 ? "0" : "") + n; }
     function structuredBook() {
       try {
@@ -4551,8 +4485,6 @@
       spineShade.style.display = "block";
       spineShade.style.left = (pageSize - 36) + "px";
       spineShade.style.width = "72px";
-      leafFB.style.left = pageSize + "px";
-      leafFB.style.width = pageSize + "px";
       // WebGL canvas window: book + margins so the swinging leaf is never clipped
       var mx = Math.round(bookW * 0.38);
       var my = Math.round(pageH * 0.45);
@@ -4564,7 +4496,6 @@
       canvas.style.height = winH + "px";
       canvas.width = Math.round(winW * dpr);
       canvas.height = Math.round(winH * dpr);
-      canvas.dataset.mx = mx; canvas.dataset.my = my;
       canvasDpr = dpr;
       botLayer.style.width = pageSize + "px";
       flipLayer.style.width = pageSize + "px";
@@ -4583,16 +4514,8 @@
     }
 
     function setLeafImages(frontIdx, backIdx) {
-      if (glOK) {
-        if (gTexF) gl.deleteTexture(gTexF);
-        if (gTexB) gl.deleteTexture(gTexB);
-        gTexF = makeTex(pageImgs[frontIdx]);
-        if (glOK) gTexB = makeTex(pageImgs[backIdx]);
-      }
-      if (!glOK) {
-        fbFrontImg.src = pageSrc(PAGES[frontIdx]);
-        fbBackImg.src = pageSrc(PAGES[backIdx]);
-      }
+      leafFrontImg = effImg(frontIdx);
+      leafBackImg = effImg(backIdx);
     }
 
     /* ================= corner-fold leaf (magazine / flipbook17) =================
@@ -4777,39 +4700,27 @@
 
     function showLeaf() {
       if (isMag()) { showTurn(); return; }
-      var el = glOK ? canvas : leafFB;
-      el.style.opacity = "";
-      el.style.display = "block";
+      canvas.style.opacity = "";
+      canvas.style.display = "block";
     }
     function hideLeaf() {
       canvas.style.display = "none";
       canvas.style.opacity = "";
-      leafFB.style.display = "none";
-      leafFB.style.opacity = "";
-      leafFB.style.transform = "";
+      clearLeaf();
       shadeL.style.opacity = 0; shadeR.style.opacity = 0;
-      fbShades[0].style.opacity = 0; fbShades[1].style.opacity = 0;
       castShade.style.opacity = 0;
       hideTurn();
     }
 
     function poseLeaf(theta, lagSign, glideNow) {
       var s = Math.sin(Math.PI * Math.abs(theta) / 180);
-      if (glOK) {
-        // translate book coords into the canvas window (margin offset)
-        var mx = parseFloat(canvas.dataset.mx || 0), my = parseFloat(canvas.dataset.my || 0);
-        // Board face FLAT: leafFlex is 0 for board turns, so the GL
-        // sheet gets zero face shading and zero tip bend here (the
-        // flat fallback leaf's face shades gate the same way below).
-        // Paper turns (leafFlex 1) are unchanged.
-        drawLeafGL(theta, lagSign, s * 0.13 * leafFlex, mx, my, s * leafFlex);
-      } else {
-        leafFB.style.transform = "rotateY(" + theta + "deg)";
-        var fs = (s * 0.13 * leafFlex).toFixed(3);
-        fbShades[0].style.opacity = fs; fbShades[1].style.opacity = fs;
-      }
-      if (lagSign > 0) { shadeR.style.opacity = (s * 0.34).toFixed(3); shadeL.style.opacity = (s * 0.20).toFixed(3); }
-      else { shadeL.style.opacity = (s * 0.34).toFixed(3); shadeR.style.opacity = (s * 0.20).toFixed(3); }
+      // Board face FLAT: zero face shading and zero tip highlight for
+      // cover turns (leafShadeMul still firms the shadows under and
+      // cast by the leaf below — those were right). Paper unchanged.
+      var isBoardLeaf = leafMaterial === "board";
+      drawLeaf2D(theta, lagSign, isBoardLeaf ? 0 : s * 0.13 * leafShadeMul, isBoardLeaf ? 0 : s * leafFlex);
+      if (lagSign > 0) { shadeR.style.opacity = (s * 0.34 * leafShadeMul).toFixed(3); shadeL.style.opacity = (s * 0.20 * leafShadeMul).toFixed(3); }
+      else { shadeL.style.opacity = (s * 0.34 * leafShadeMul).toFixed(3); shadeR.style.opacity = (s * 0.20 * leafShadeMul).toFixed(3); }
       // cast shadow: a soft band on the pages beneath, tracking the leaf tip's
       // ground projection (same bend integral as the GL sheet), peaking mid-turn.
       // For board turns leafFlex is 0, so lagR is 0 and tipDx is the rigid
@@ -4822,7 +4733,7 @@
       var bandW = pageSize * (0.55 + 0.55 * s);
       castShade.style.left = (pageSize + tipDx - bandW / 2) + "px";
       castShade.style.width = bandW + "px";
-      castShade.style.opacity = (0.32 * s).toFixed(3);
+      castShade.style.opacity = (0.32 * s * leafShadeMul).toFixed(3);
       if (glideNow !== null && glideNow !== undefined) glideEl.style.transform = "translateX(" + glideNow + "px)";
     }
 
@@ -6790,6 +6701,11 @@
     }
     function artBookId() { return (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin"; }
     function artEntry() { try { return findShelfEntry(artBookId()); } catch (err) { return null; } }
+    function isCatalogId(id) {
+      if (typeof CATALOG === "undefined" || !CATALOG) return false;
+      for (var ci = 0; ci < CATALOG.length; ci++) if (CATALOG[ci].id === id) return true;
+      return false;
+    }
     function loadArtOverrides(id) {
       var gen = ++artGen;
       artReplaced = {};
@@ -7899,8 +7815,8 @@
        render exactly as they always did. */
     var ART_PLATE_COLORS = { ink: "16,13,10", ivory: "246,239,221", gold: "232,179,75", white: "255,255,255", black: "0,0,0" };
     /* v12.7 — the font picker: five curated faces for the on-art
-       overlay text, loaded from Google Fonts at the end of the
-       body (non-blocking; every stack ends in the page's long-standing
+       overlay text, loaded from Google Fonts at the end of the body (non-
+       blocking; every stack ends in the page's long-standing
        fallback faces, so a font that fails to load just renders
        in the fallback and nothing breaks). "andika" is the
        default — the book-production story font — and pages saved
@@ -10378,7 +10294,6 @@
         lbCodeEl.textContent = code + "-" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(lbVer);
         lbCodeEl.classList.toggle("gold", isGold);
       }
-    }
       if (lbVerLabelEl) lbVerLabelEl.hidden = !lbMulti;
       if (lbVerPrevBtn) lbVerPrevBtn.hidden = !lbMulti;
       if (lbVerNextBtn) lbVerNextBtn.hidden = !lbMulti;
@@ -10422,6 +10337,7 @@
       lbPaintArt();
       lbArtEl.classList.remove("lbFading");
       lbWarmNeighbours();
+    }
     function lbRender(fade) {
       /* Immediate paint (the open path): sync the target to the
          spread/version being shown and warm its neighbours. */
@@ -10609,7 +10525,6 @@
       if (typeof zoomIsOpen !== "undefined" && zoomIsOpen && typeof fitZoomContent === "function") fitZoomContent();
     });
 
-
     /* ---- Settled relayout on viewport return (v13.9) ----
        The rotation round-trip bug: rotate the reader to
        landscape and back and the open spread came back stranded
@@ -10659,6 +10574,7 @@
     window.addEventListener("orientationchange", scheduleSettledFit);
     window.addEventListener("resize", scheduleSettledFit);
     if (window.visualViewport) window.visualViewport.addEventListener("resize", scheduleSettledFit);
+
     /* Folder of images. The manifest book stays the default until a folder arrives. */
     var blankCanvas = document.createElement("canvas");
     blankCanvas.width = 8; blankCanvas.height = 8;
@@ -10678,8 +10594,8 @@
     var tempBlank = false;
     var coverOpened = false;
     var markEl = document.getElementById("mark");
-    /* Header label at home is the built-in book's title ("Harlow’s
-       Accidental Journey" in the banner markup, for first paint only);
+    /* Header label at home is the built-in book's title ("Pippa and
+       the Red Scarf" in the banner markup, for first paint only);
        applyMark re-derives it from the open book's catalog entry /
        manifest, so the header names the open book for every book.
        The manifest keeps the book edition (BOOK.version /
@@ -10773,11 +10689,6 @@
       flushSection();
       if (aboutLines.length) { var ab = aboutLines.join("\n").trim(); out.about = ab || null; }
       return out;
-    }
-    function isCatalogId(id) {
-      if (typeof CATALOG === "undefined" || !CATALOG) return false;
-      for (var ci = 0; ci < CATALOG.length; ci++) if (CATALOG[ci].id === id) return true;
-      return false;
     }
     /* A book file's Format line, applied to a shelf entry: the entry
        gains the matching aspect (what the stage shapes itself with)
@@ -12527,10 +12438,10 @@
        visit only: its pages live in this tab, so a fresh visit starts
        again with the books that live here — nothing pretends otherwise.
        Opening a book swaps the reader's page set wholesale and restores
-       that book's own remembered place. Shelf books label their spreads
-       with the generic scheme (Cover / Spread NN / Back Cover); the
-       built-in book's structured spread names engage because its
-       manifest (images/manifest.js) flags itself structured. */
+       that book's own remembered place. Every book here — the built-in
+       Pippa storybook included — labels its spreads with the generic
+       scheme (Cover / Spread NN / Back Cover); the structured spread
+       names only engage for a manifest that flags itself structured. */
     function shelfPages(slug) {
       var out = [];
       for (var i = 1; i <= 6; i++) out.push("shelf/" + slug + "/0" + i + ".jpg");
@@ -12734,21 +12645,6 @@
       if (entry.pages) entry.seedPages = entry.pages.slice();
       if (entry.text) entry.seedText = entry.text.slice();
     });
-    /* Port (Batch C): the manifest book is resident from boot, and
-       openShelfBook() early-returns for the already-open book, so the
-       built-in entry's text array is seeded into the resident book
-       here as well — BOOK.text for the open path's fallback, and
-       pageTexts directly (this runs during init, when the resident
-       book is necessarily the built-in). */
-    (function () {
-      var be = null;
-      for (var bi = 0; bi < CATALOG.length; bi++) if (CATALOG[bi].id === "builtin") be = CATALOG[bi];
-      if (be && be.text) {
-        if (typeof BOOK !== "undefined") BOOK.text = be.text.slice();
-        pageTexts = be.text.slice();
-        applyTextOverrides("builtin");
-      }
-    })();
     CATALOG.forEach(function (entry) {
       var m = metaStore[entry.id];
       if (!m) return;
@@ -12757,9 +12653,7 @@
       if (m.author) entry.info.author = m.author;
       if (m.about) entry.info.about = m.about;
       if (m.format) applyFormatToEntry(entry, m.format);
-      /* Repo port: the header fallback label is the built-in
-         book's title, so a book-file rename updates the catalog
-         title only. */
+      if (entry.id === "builtin" && m.title) { markHome = m.title; applyMark(); }
     });
     var shelfEl = document.getElementById("shelf");
     var shelfRowsEl = document.getElementById("shelfRows");
@@ -13150,11 +13044,11 @@
     function setShelfOpts(open) {
       var wasOpen = shelfOptsOpen;
       shelfOptsOpen = !!open;
+      if (shelfOptsPanel) shelfOptsPanel.hidden = !shelfOptsOpen;
+      if (shelfOptsBtn) shelfOptsBtn.setAttribute("aria-expanded", shelfOptsOpen ? "true" : "false");
       document.body.classList.toggle("shelf-opts-open", shelfOptsOpen);
       if (shelfOptsOpen) document.addEventListener("touchmove", shelfOptsTouchGuard, { passive: false });
       else document.removeEventListener("touchmove", shelfOptsTouchGuard);
-      if (shelfOptsPanel) shelfOptsPanel.hidden = !shelfOptsOpen;
-      if (shelfOptsBtn) shelfOptsBtn.setAttribute("aria-expanded", shelfOptsOpen ? "true" : "false");
       if (shelfOptsOpen) { rememberReturnFocus("shelfopts", shelfOptsBtn, shelfOptsPanel); syncShelfOptsUI(); if (shelfOptsPanel) shelfOptsPanel.scrollTop = 0; }
       else if (wasOpen) { restoreReturnFocus("shelfopts", shelfOptsPanel, shelfOptsBtn); }
     }
@@ -13318,11 +13212,11 @@
         var el = document.getElementById(id);
         if (el && el.getAttribute("data-src") !== src) { el.setAttribute("data-src", src); el.style.backgroundImage = bg; }
       });
-    }
       /* The extended reach (reader stage + Overview) wears the same
          ambient art — keep its source current and repaint. */
       shelfAmbientSrc = src;
       paintExtendedBackdrop();
+    }
     /* Active-filter chip: while Show is anything but All books, the
        shelf itself names the filter and offers a one-tap reset —
        no need to reopen Shelf options to clear it. */
@@ -13583,13 +13477,13 @@
       addStat("Source", sourceLabel(entry.source, entry));
       (info.details || []).forEach(function (d) { if (d && d.length > 1) addStat(d[0], d[1]); });
       stats.hidden = !stats.children.length;
-      document.getElementById("s3Status").value = bookStatus(entry.id);
       var s3MarksEl = document.getElementById("s3Marks");
       if (s3MarksEl) {
         var s3MarkN = marksCountFor(entry.id);
         s3MarksEl.hidden = !(s3MarkN > 0);
         s3MarksEl.textContent = s3MarkN > 0 ? marksLineText(s3MarkN) : "";
       }
+      document.getElementById("s3Status").value = bookStatus(entry.id);
       var links = document.getElementById("s3Links"); links.innerHTML = "";
       (info.links || []).forEach(function (l) {
         if (!l || !l.label || !l.url) return;
@@ -13846,8 +13740,8 @@
     /* Build stamp — bump on every build. The iteration is the v13
        line (13.x), opened by the Ravyn backdrop + plank test round:
        bump the last number once per review round, not per micro-fix. */
-    var BUILD_ITERATION = "13.42";
-    var BUILD_STAMP = "2026-11-10 13:48";
+    var BUILD_ITERATION = "13.43";
+    var BUILD_STAMP = "2026-11-10 15:24";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
@@ -14378,15 +14272,15 @@
          here; the card's middle scrolls to hold them. */
       (info.details || []).forEach(function (d) { if (d && d.length > 1) addStat(d[0], d[1]); });
       stats.hidden = !stats.children.length;
-      icBookId = entry.id;
-      icStatusEl.value = bookStatus(entry.id);
-      refreshCoverSeg();
       var icMarksEl = document.getElementById("icMarks");
       if (icMarksEl) {
         var icMarkN = marksCountFor(entry.id);
         icMarksEl.hidden = !(icMarkN > 0);
         icMarksEl.textContent = icMarkN > 0 ? marksLineText(icMarkN) : "";
       }
+      icBookId = entry.id;
+      icStatusEl.value = bookStatus(entry.id);
+      refreshCoverSeg();
       var links = document.getElementById("icLinks");
       links.innerHTML = "";
       (info.links || []).forEach(function (l) {
@@ -14555,7 +14449,8 @@
       if (textChanged && inCat) saveTextStore();
       if (isOpen) {
         if (bf.title) {
-          if (id !== "builtin" && !pdfName) customTitle = entry.title;
+          if (id === "builtin") markHome = bf.title;
+          else if (!pdfName) customTitle = entry.title;
           applyMark();
         }
         if (bf.format) { bookAspect = entry.aspect || 1; fit(); }
@@ -15080,9 +14975,8 @@
     loadPersistedImports(function () {
       clearTimeout(landingGuard);
       finishLanding();
-      // Cover versions load alongside the landing, never in front of
-      // it: the shelf re-renders with each book's chosen cover as soon
-      // as they arrive, so the boot path touches no new database first.
+      // Cover versions no longer gate the landing: they load after
+      // it and swap in when ready, re-rendering the shelf if open.
       loadCoverVersions(function () {
         if (shelfIsOpen && typeof buildShelf === "function") { try { buildShelf(); } catch (err) {} }
       });
@@ -15180,11 +15074,8 @@
     if (refreshBtn) refreshBtn.addEventListener('click', render);
   })();
   </script>
-  <!-- Google Fonts for the On-art text styles: loaded at the end of <body>
-       so the head stays byte-identical to the last device-proven build;
-       a stylesheet here is non-blocking by construction and the On-art
-       font stacks fall back gracefully until it arrives. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Gaegu:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@500;700&display=swap">
+<!-- Google Fonts for the On-art text styles: loaded at the end of <body> so the head stays byte-identical to the last device-proven build; a stylesheet here is non-blocking by construction and the On-art font stacks fall back gracefully until it arrives. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Gaegu:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@500;700&display=swap">
 </body></html>
