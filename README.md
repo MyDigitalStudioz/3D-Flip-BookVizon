@@ -136,3 +136,9 @@ Changes land on new branches. `main` is the published mirror, and GitHub Pages s
 - `media/` — the screenshots shown in this README.
 - `vendor/` — the bundled pdf.js library used for PDF imports.
 - `scripts/` — a small build helper that generates Harlow's page data.
+
+## Updates — sync #45 (2026-11-10): eighteen backdrop scenes
+
+Correction to the Shelf dressing note above, which predates the backdrop rounds: the viewer now offers **eighteen backdrop scenes**, not seven. The seven originals (Charcoal, Ambient book, Midnight, Walnut, Slate, Library, Matte Black) are joined by seven photographic walls — Ebony Alcove, Honey Pine, Plaster Charcoal, Fluted Night, Noir Marble, Brick Noir, and Oxblood Study — and four gradient scenes added in v13.41: **Graphite, Ember, Oxblood, and Gilt**. The procedural scenes (the originals and the gradients) also dress the **reader stage** and the **Overview**; the photographic walls dress the Classic shelf and the 3D room. Shelf styles are **nine**, not three: Classic, Slim ledge, Library beam, Gallery Cord, Brass Rail, Shadow Float, Walnut Beam, Iron Bracket, and Goldline Glass. The picks are still remembered per device.
+
+This sync (v13.42) also ships the Overview work of v13.9–v13.41: version identity (code chip + Gold state) on every spread card and in the lightbox, a session-only viewed-version memory shared between cards and lightbox, a lightbox that preloads version art off-DOM and swaps atomically, backdrop imagery stored once instead of twice (the page is about 3.2 MB lighter), and the Overview options sheet and lightbox deck rebuilt in the same menu language as Settings.
