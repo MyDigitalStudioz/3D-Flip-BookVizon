@@ -125,3 +125,14 @@ Changes land on new branches. `main` is the published mirror, and GitHub Pages s
 | **Books** | 8 on the shelf — 2 published picture books + 6 demo books |
 | **Preview** | 🌐 [mydigitalstudioz.github.io/3D-Flip-BookVizon](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/) |
 | **Status** | 🟢 Live preview |
+
+## Repository layout
+
+- `index.html` — the whole viewer as a single file; the demo books' and Santa's art and text live inside it.
+- `images/` — Harlow's page images (the built-in book), flat on purpose: the files are numbered in reading order (01-front.jpg onward), so the folder sorts itself into the book. Any future file-based book gets its own folder at this level rather than merging into this one.
+- `shelf/<book>/` — page art for the file-based books (Pippa, Santa, and the five demo books), one folder per book.
+- `versions/<book>/` — alternate-version art for the Overview version steppers, one folder per book (sample data for the demo books and Santa; Harlow has none).
+- `icons/` — the app icons used for home-screen installs.
+- `media/` — the screenshots shown in this README.
+- `vendor/` — the bundled pdf.js library used for PDF imports.
+- `scripts/` — a small build helper that generates Harlow's page data.
