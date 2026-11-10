@@ -2,7 +2,7 @@
 
 > The BookVizion 3D flipbook viewer — a bookshelf of picture books whose covers turn like stiff board and whose pages bend like paper.
 
-**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v11 (GitHub default is main). v10 is frozen as the restore point (v9, v8, v7 and v6 are frozen restore points too). `main` mirrors the v11 tip (GitHub Pages serves `main`) — the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
+**Branch policy:** work happens on the latest *-vN / project branch. List branches before editing. Never assume the GitHub default is the working line. Working line: 3D-Flip-BookVizon-v13 (GitHub default is main). v10 is frozen as the restore point (v9, v8, v7 and v6 are frozen restore points too). `main` mirrors the v11 tip (GitHub Pages serves `main`) — the Penguin Lab feature set (bookshelf + 3D shelf, five reading modes, quick menu, in-book search, per-page text) on the shipped BEST-25d book.
 
 [![Preview](https://img.shields.io/badge/Preview-Live-brightgreen)](https://mydigitalstudioz.github.io/3D-Flip-BookVizon/)
 ![GitHub Pages](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/actions/workflows/pages/pages-build-deployment/badge.svg)
@@ -21,7 +21,7 @@ The viewer opens on its bookshelf: eight books — two published picture books, 
 
 ## Screenshots
 
-Captured from the working viewer on `3D-Flip-BookVizon-v11`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, mirrored from the v11 working line.
+Captured from the working viewer on `3D-Flip-BookVizon-v11`. The hero book is the BEST-25d 60-page print set. Refresh these files, and the `?v=` stamp, whenever the shots are retaken. Pages serves `main`, mirrored from the v11 shipped line.
 
 **Bookshelf** — the front door: every book at a glance, cover and title only — the ⓘ on a cover's corner opens its info card, and a ★ count rides the cover when the book has marks.
 
