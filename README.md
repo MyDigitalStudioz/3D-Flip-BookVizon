@@ -17,7 +17,7 @@
 
 The viewer opens on its bookshelf: eight books — two published picture books, *Harlow's Accidental Journey* (the BEST-25d final) and *The Night I Met Santa*, plus six demo books. Pick one and it opens in the reader; a link like `#book=the-night-i-met-santa` opens that book directly. It is one static page — it runs from GitHub Pages or straight off disk by double-clicking `index.html`, with no server and no build step. Harlow's pages also ride along as data URIs in `images/pages-data.js`, loaded before the first turn, so the resident book never waits on a download mid-flip.
 
-![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611081324)
+![Harlow cover on the dark hardcover stage](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/hero.jpg?v=202611101752)
 
 ## Screenshots
 
@@ -25,19 +25,19 @@ Captured from the working viewer on `3D-Flip-BookVizon-v11`. The hero book is th
 
 **Bookshelf** — the front door: every book at a glance, cover and title only — the ⓘ on a cover's corner opens its info card, and a ★ count rides the cover when the book has marks.
 
-![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611082305)
+![Bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf.jpg?v=202611101752)
 
 **3D shelf** — the same library standing on a shelf: drag or step along it, and Open pulls the focused book out.
 
-![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611082305)
+![3D bookshelf](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/shelf-3d.jpg?v=202611101752)
 
 **Mid-book** — the first story spread, pages 6–7.
 
-![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611081324)
+![Story spread, pages 6 and 7](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/spread.jpg?v=202611101752)
 
 **Phone** — the same cover at a 390px-wide window.
 
-![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=202611081324)
+![Phone view of the cover](https://github.com/MyDigitalStudioz/3D-Flip-BookVizon/raw/main/media/mobile.jpg?v=202611101752)
 
 ## What's inside
 
