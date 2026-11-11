@@ -58,7 +58,7 @@
 })();
 </script>
 <style>
-  html,body{margin:0;height:100%;background:#191919;color:#f4f1ea;font:15px/1.3 "Segoe UI",sans-serif}
+  html,body{margin:0;height:100%;background:#191919;color:#f4f1ea;font:15px/1.3 "Segoe UI",sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%}
   #viewer{position:relative;min-height:100%;height:100%;background:#191919;display:flex;flex-direction:column}
   #viewer:fullscreen,#viewer:-webkit-full-screen{width:100%;height:100%;background:#191919}
   #viewer::backdrop{background:#191919}
@@ -458,7 +458,7 @@
      bottom sheet returns. */
   #textSheet.editing #textBar{flex:0 0 auto}
   @media (min-width:701px) and (min-height:501px){#textSheet.editing .tedit{height:40vh;min-height:200px}}
-  #textSheet.editing-full{position:fixed;right:auto;bottom:auto;max-height:none;z-index:80;box-sizing:border-box}
+  #textSheet.editing-full{position:fixed;right:auto;bottom:auto;max-height:none;z-index:80;box-sizing:border-box;padding-bottom:0}
   #textSheet.editing-full .sheetHandle{display:none}
   #textSheet.editing-full #textBar{flex:0 0 auto;padding-top:12px}
   #textSheet.editing-full #textBody{flex:1 1 auto;min-height:0;flex-direction:column;flex-wrap:nowrap;overflow-y:auto}
@@ -966,7 +966,7 @@
   .searchResult mark,#textBody mark{background:#e8b34b;color:#191919;border-radius:3px;padding:0 1px}
   #searchEmpty{margin:10px 0 0;font-size:13.5px;color:#b9b2a4}
   #searchEmpty[hidden]{display:none}
-  #sheet.searching{position:fixed;right:auto;bottom:auto;max-height:none;z-index:80;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box}
+  #sheet.searching{position:fixed;right:auto;bottom:auto;max-height:none;z-index:80;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;padding-bottom:0}
   #sheet.searching #searchResults{max-height:none;overflow:visible}
   /* ---- Read-to-me settings rows ---- */
   #speedSeg{display:inline-flex;gap:0;flex:0 0 auto}
@@ -3527,7 +3527,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.49 &middot; Build 2026-11-10 20:17</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.50 &middot; Build 2026-11-10 22:05</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -7722,6 +7722,7 @@
        book kind, to the override store or the import's shelf entry;
        Cancel simply re-renders the reading view. */
     var textEditing = false;
+    var textEditBookId = null;
     var editIdxs = [];
     var textEditBtn = document.getElementById("textEdit");
     var textSaveBtn = document.getElementById("textSave");
@@ -7781,13 +7782,64 @@
     var editNarrowMq = window.matchMedia ? window.matchMedia("(max-width: 700px), (max-height: 500px)") : { matches: false };
     function applyTextVV() {
       if (!textFullEdit) return;
-      var vv = window.visualViewport;
-      textSheet.style.top = (vv ? vv.offsetTop : 0) + "px";
-      textSheet.style.left = (vv ? vv.offsetLeft : 0) + "px";
-      textSheet.style.width = (vv ? vv.width : window.innerWidth) + "px";
-      textSheet.style.height = (vv ? vv.height : window.innerHeight) + "px";
+      pinTextSheet();
       var act = document.activeElement;
       if (act && act.classList && act.classList.contains("tedit")) keepCaretVisible(act);
+    }
+    /* Pin the full-screen editor box to the visual viewport.
+       The vv values are the first guess; then the loop CLOSES:
+       the sheet's client rect is measured and any residual
+       translation or size error is folded back into
+       top/left/width/height, so the box ends up covering the
+       visual viewport exactly — client rect (0, 0, vv.width,
+       vv.height) — under any engine offset model. This matters
+       because iOS can pan the visual viewport for the keyboard
+       without firing vv resize/scroll events (and in the
+       standalone app the reported offsets can lag or stay at
+       zero): a formula-only pin goes stale and takes the
+       Save/Cancel/✕ bar (the box's first flex child) off the
+       visible area with it, worst in portrait where the pan is
+       largest. getBoundingClientRect never lies about what is
+       visible, so the correction holds even then. Run from
+       applyTextVV (events) and continuously from the rAF pin
+       watch below for as long as the editor is in full mode. */
+    function pinTextSheet() {
+      if (!textFullEdit) return;
+      var vv = window.visualViewport;
+      var tw = vv ? vv.width : window.innerWidth;
+      var th = vv ? vv.height : window.innerHeight;
+      var wantTop = (vv ? vv.offsetTop : 0) + "px";
+      var wantLeft = (vv ? vv.offsetLeft : 0) + "px";
+      if (textSheet.style.top !== wantTop) textSheet.style.top = wantTop;
+      if (textSheet.style.left !== wantLeft) textSheet.style.left = wantLeft;
+      if (textSheet.style.width !== tw + "px") textSheet.style.width = tw + "px";
+      if (textSheet.style.height !== th + "px") textSheet.style.height = th + "px";
+      for (var pass = 0; pass < 2; pass++) {
+        var r = textSheet.getBoundingClientRect();
+        if (!r.width && !r.height) break;
+        var dx = -r.left, dy = -r.top;
+        var dw = tw - r.width, dh = th - r.height;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(dw) < 1 && Math.abs(dh) < 1) break;
+        textSheet.style.left = ((parseFloat(textSheet.style.left) || 0) + dx) + "px";
+        textSheet.style.top = ((parseFloat(textSheet.style.top) || 0) + dy) + "px";
+        if (Math.abs(dw) >= 1) textSheet.style.width = ((parseFloat(textSheet.style.width) || 0) + dw) + "px";
+        if (Math.abs(dh) >= 1) textSheet.style.height = ((parseFloat(textSheet.style.height) || 0) + dh) + "px";
+      }
+    }
+    /* While the full-screen editor is up, keep re-pinning every
+       frame (the artWatch idiom): a viewport change that arrives
+       without any event — the iOS keyboard pan — is then
+       corrected within a frame or two instead of stranding the
+       editor until the user rotates. The loop stops itself when
+       full mode tears down. */
+    var textPinWatchOn = false;
+    function textPinWatch() {
+      if (!textFullEdit) { textPinWatchOn = false; return; }
+      pinTextSheet();
+      requestAnimationFrame(textPinWatch);
+    }
+    function textPinKick() {
+      if (!textPinWatchOn && textFullEdit) { textPinWatchOn = true; requestAnimationFrame(textPinWatch); }
     }
     function teardownTextFull() {
       if (window.visualViewport) {
@@ -7815,6 +7867,7 @@
           window.visualViewport.addEventListener("scroll", applyTextVV);
         }
         applyTextVV();
+        textPinKick();
       } else {
         teardownTextFull();
       }
@@ -7840,6 +7893,7 @@
        nothing is pinned or editing. */
     function onViewportChange() {
       syncTextEditLayout();
+      if (textMode === "onart") syncOnArt();
       if (sheet.classList.contains("open") && typeof searchInputEl !== "undefined" && searchInputEl && document.activeElement === searchInputEl) {
         if (editNarrowMq.matches) {
           if (searchKbActive) applySearchVV();
@@ -7882,6 +7936,7 @@
       // textareas, and the reading view they return to is plain too.
       searchHighlightQuery = "";
       textEditing = true;
+      textEditBookId = (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin";
       editIdxs = visibleTextIdxs().slice();
       textEditBtn.hidden = true;
       textSaveBtn.hidden = false;
@@ -7898,6 +7953,7 @@
     }
     function exitTextEdit() {
       textEditing = false;
+      textEditBookId = null;
       editIdxs = [];
       textEditBtn.hidden = false;
       textSaveBtn.hidden = true;
@@ -7908,6 +7964,14 @@
     function saveTextEdits() {
       if (!textEditing) return;
       var id = (typeof currentEntryId !== "undefined" && currentEntryId) ? currentEntryId : "builtin";
+      /* Cross-book guard (v13.50): the fields were rendered from
+         textEditBookId's pages. If the book on stage is no longer
+         that book, cancel instead of writing — saving here would
+         persist the outgoing book's words under the incoming
+         book's id. (openShelfBook already cancels editing on a
+         switch; this is the backstop for any path that swaps
+         books another way.) */
+      if (textEditBookId && textEditBookId !== id) { exitTextEdit(); if (textIsOpen) updateTextPanel(); return; }
       var persist = isCatalogId(id);
       var tas = textBody.querySelectorAll("textarea.tedit");
       for (var ti2 = 0; ti2 < tas.length; ti2++) {
@@ -8096,9 +8160,10 @@
          downward from its top edge; if growth would run off the
          page's bottom edge the box shifts up inside the page; and
          if the text still cannot fit the page, the font size caps
-         at the largest size that fits at this width. The fitted
-         height (and capped size) is what gets remembered, so a
-         revisit renders the same box. Extra height above the fit
+         at the largest size that fits at this width. The fit is
+         recomputed from the saved arrangement on every apply, so
+         a revisit at the same geometry renders the same box.
+         Extra height above the fit
          is left alone — only too-short boxes change. This also
          gives corner-resizing its floor: a drag that makes the
          box too short is grown back to the content height here. */
@@ -8121,7 +8186,15 @@
         a.h = nh;
         ov.style.top = (a.y * 100) + "%";
         ov.style.height = (a.h * 100) + "%";
-        artSave(idx, a);
+        /* Fit is render-time only — NOT saved (v13.50): the
+           fitted height / capped size are computed for THIS
+           host size, and persisting them poisoned the plate's
+           geometry in the other orientation (a portrait fit
+           kept its capped font and full-height box in
+           landscape). The saved arrangement stays the user's;
+           every apply re-fits deterministically from it, so a
+           revisit at the same geometry renders the same box
+           and a new geometry renders the correct one. */
       }
       // The plate color is its own pick now, fully independent of
       // the text color; "ink" is the original dark plate.
@@ -8231,7 +8304,7 @@
       var target = busy ? "0" : "1";
       if (ovL.style.opacity !== target) ovL.style.opacity = target;
       if (ovR.style.opacity !== target) ovR.style.opacity = target;
-      var sig = flipped + "|" + focus + "|" + (focusMode ? 1 : 0) + "|" + onArtBookId() + "|" + N + "|" + turnMode;
+      var sig = flipped + "|" + focus + "|" + (focusMode ? 1 : 0) + "|" + onArtBookId() + "|" + N + "|" + turnMode + "|" + window.innerWidth + "x" + window.innerHeight;
       if (!busy && sig !== artLastSig) { artLastSig = sig; syncOnArt(); }
       requestAnimationFrame(artWatch);
     }
@@ -13967,8 +14040,8 @@
     /* Build stamp — bump on every build. The iteration is the v13
        line (13.x), opened by the Ravyn backdrop + plank test round:
        bump the last number once per review round, not per micro-fix. */
-    var BUILD_ITERATION = "13.49";
-    var BUILD_STAMP = "2026-11-10 20:17";
+    var BUILD_ITERATION = "13.50";
+    var BUILD_STAMP = "2026-11-10 22:05";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
@@ -14898,6 +14971,13 @@
       pendingDir = null;
       pendingBook = false;
       hideLeaf();
+      /* A switch cancels any in-progress page-text edit and
+         closes its panel (v13.50 guard): the editor's fields
+         belong to the outgoing book, and saveTextEdits binds to
+         the book on stage, so an edit riding across a switch
+         would write the outgoing book's words into this book.
+         (Arrange mode exits the same way, above.) */
+      if (textEditing) { exitTextEdit(); closeTextPanel(); }
       if (sheet.classList.contains("open")) closeSheet();
       // The Pages sheet always binds to the open book: a switch
       // resets the search query, its results, and any highlights.
