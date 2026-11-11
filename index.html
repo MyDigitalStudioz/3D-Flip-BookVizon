@@ -1063,7 +1063,7 @@
   .ovArt.ovFading img{opacity:0;transition:opacity .16s ease}
   .ovVer{margin:10px 2px 0}
   .ovVerTop{display:flex;align-items:center;gap:8px;min-height:44px}
-  .ovCode{font-size:13px;font-weight:700;letter-spacing:.06em;color:#f4f1ea;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);box-shadow:inset 0 1px 3px rgba(0,0,0,.5);border-radius:10px;padding:5px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .ovCode{color:#f4f1ea;background:rgba(0,0,0,.38);border:1px solid rgba(0,0,0,.62);box-shadow:inset 0 1px 3px rgba(0,0,0,.5);border-radius:10px}
   .ovCode.gold{color:#171512;background:#e8b34b;border-color:#e8b34b;box-shadow:none}
   .ovCount{font-size:12.5px;color:#b9b2a4;white-space:nowrap;font-variant-numeric:tabular-nums}
   .ovVerSpacer{flex:1 1 auto}
@@ -1091,7 +1091,7 @@
   #ovCards.ovCompact .ovStar{width:38px;height:38px;font-size:16px}
   #ovCards.ovCompact .ovVer{margin:8px 1px 0}
   #ovCards.ovCompact .ovVerTop{flex-wrap:wrap;min-height:36px;gap:6px}
-  #ovCards.ovCompact .ovCode{font-size:11.5px;padding:4px 8px}
+  #ovCards.ovCompact .ovCodeTxt{font-size:11.5px}
   #ovCards.ovCompact .ovCount{font-size:11.5px}
   #ovCards.ovCompact .ovGoldBanner{font-size:10.5px;padding:5px 8px}
   #ovCards.ovCompact .ovMakeGold{min-height:36px;padding:6px 10px;font-size:12.5px}
@@ -1511,7 +1511,7 @@
      = 36px from the sheet's edge, against the 20px it measured
      through v13.18–v13.22. */
   .ovVer{background:rgba(0,0,0,.42);border:1px solid rgba(0,0,0,.62);border-radius:12px;box-shadow:inset 0 1px 4px rgba(0,0,0,.45),inset 0 1px 0 rgba(244,241,234,.04)}
-  .ovVer .ovCode{background:rgba(255,255,255,.08);border-color:rgba(0,0,0,.7)}
+  .ovVer .ovCode{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.28)}
   .ovVer .ovCode.gold{background:#e8b34b;border-color:#e8b34b}
   .ovVer .ovMakeGold{background:rgba(232,179,75,.2);border-color:rgba(232,179,75,.75)}
   .ovVer .ovMakeGold:active{background:rgba(232,179,75,.32)}
@@ -1728,7 +1728,7 @@
   #ovCards.ovCompact .ovVerStep{width:26px;height:36px;flex:0 1 auto;min-width:20px;position:relative}
   #ovCards.ovCompact .ovVerStep svg{width:15px;height:15px}
   #ovCards.ovCompact .ovVerStep::before{content:"";position:absolute;inset:-4px -9px;background:transparent}
-  #ovCards.ovCompact .ovCode{font-size:11px;padding:4px 6px}
+  #ovCards.ovCompact .ovCodeTxt{font-size:11px}
   #ovCards.ovCompact .ovCount{font-size:11px}
   /* (5) COMPACT CAPTION RESERVE (audit P1 fix): in Compact
      the caption shares its narrow row with the badge, so at
@@ -2337,7 +2337,7 @@
      here at deck scope so it outranks the new non-gold rule
      exactly as .ovVer .ovCode.gold outranks .ovVer .ovCode on
      the cards. */
-  #lbBottom .ovCode{background:rgba(255,255,255,.08);border-color:rgba(0,0,0,.7)}
+  #lbBottom .ovCode{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.28)}
   #lbBottom .ovCode.gold{background:#e8b34b;border-color:#e8b34b}
 
   /* ---- One chip geometry in both states (v13.40) ----
@@ -2362,9 +2362,11 @@
      text; the chip box, the count, the chevrons, the field, the
      card heights and the deck size cannot move. Colours,
      radius (kept 8px in-field), behaviour, stores and every
-     other surface are untouched. */
-  .ovCode{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;height:29px;min-width:63px;padding:5px 10px}
-  #ovCards.ovCompact .ovCode{height:24px;min-width:49px;padding:4px 6px}
+     other surface are untouched. (Superseded in v13.44: the
+     chip is rebuilt as a fixed slot with a child label element
+     — see the final block of this stylesheet.) */
+  .ovCode{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:63px;height:29px;padding:0;margin:0;overflow:hidden;flex:0 0 auto}
+  #ovCards.ovCompact .ovCode{width:49px;height:24px}
 
   /* ---- 3D shelf view (Shelf view: 3D) ----
      A second rendering of the SAME shelf: visibleShelfEntries()
@@ -3407,42 +3409,44 @@
   #shelfOptsPanel.view-3d #classicOptsBody{display:flex;flex-direction:column;gap:7px}
   #shelfOptsPanel.view-3d #classicOptsBody[hidden]{display:none}
   #classicOptsBody>*{flex:0 0 auto}
-  /* ---- Chip geometry enforced in both states (v13.42) ----
-     The hunt: the version code chip's FULL computed style was
-     dumped in the gold and non-gold states — Overview cards
-     (Large and Compact) and the lightbox deck (#lbCode) — in
-     Chromium and in WebKit (Playwright WebKitGTK, launched
-     cleanly; no repair needed). The markup is identical in
-     both states: the same <span class="ovCode"> with a single
-     text child; the card builder and the deck updater toggle
-     only the .gold class and the text. The computed diff
-     between states contained ONLY colour properties
-     (background, border colours, text colour and the colours
-     derived from it) plus ONE non-colour property:
-     box-shadow — the non-gold state's inset shadow
-     (inset 0 1px 3px rgba(0,0,0,.5)) against the gold
-     state's none. An inset shadow paints INSIDE the border
-     box and cannot change the outer size, and measured
-     rects agreed in both engines: 63x29 (Large cards and
-     deck) and 49x24 (Compact), identical in both states.
-     So no geometry divergence reproduces in either available
-     engine and no culprit property exists in the shipped
-     cascade — the on-device difference Jon photographed
-     (footer LAB · v13.40) is not reproducible here. This
-     block therefore enforces the equality BY CONSTRUCTION:
-     both state selectors are spelled out with the COMPLETE
-     geometry — width and height with min/max on both axes,
-     padding, border-width, line-height, box-sizing,
-     font-size, font-weight, display, alignment, flex and
-     text-size behaviour — as the last rules in the cascade,
-     so no state rule anywhere can add or remove size in
-     either state. Target sizes unchanged: 63x29 (Large
-     cards + deck), 49x24 (Compact). Colours untouched in
-     both states; the box-shadow difference above is paint
-     inside the box, deliberately left as designed. */
-  .ovCode,.ovCode.gold{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;vertical-align:baseline;flex:0 0 auto;width:63px;min-width:63px;max-width:63px;height:29px;min-height:29px;max-height:29px;padding:5px 10px;border-width:1px;line-height:1.3;font-size:13px;font-weight:700;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-  #ovCards.ovCompact .ovCode,#ovCards.ovCompact .ovCode.gold{width:49px;min-width:49px;max-width:49px;height:24px;min-height:24px;max-height:24px;padding:4px 6px;font-size:11px}
-  #lbBottom .ovCode,#lbBottom .ovCode.gold{width:63px;min-width:63px;max-width:63px;height:29px;min-height:29px;max-height:29px;padding:5px 10px;border-width:1px;line-height:1.3;font-size:13px}
+  /* ---- Version chip as a FIXED SLOT (v13.44) ----
+     Supersedes the v13.40 one-size rules and the v13.42
+     late-cascade geometry-enforcement block. The v13.42 hunt
+     had dumped the chip's full computed style in both states
+     (Chromium and WebKitGTK): markup identical, the state
+     diff colour-only plus the non-gold inset shadow, measured
+     rects equal in both engines — yet on the owner's iPhone
+     the chip still rendered ~25% taller in its gold state
+     than in its non-gold state (measured from his photos
+     against the stepper field: gold ≈59% of field height,
+     gray ≈47%; widths equal), and the v13.42 pinning did not
+     change what the device renders. So this round changes
+     the CONSTRUCTION, not the properties: .ovCode is a fixed
+     slot — explicit width and height (63x29 on Large cards
+     and in the lightbox deck, 49x24 on Compact cards),
+     box-sizing border-box, padding 0, margin 0, a fixed 1px
+     border, overflow hidden, display flex centring its one
+     child. The version label ("S01-A") is that child
+     (.ovCodeTxt), carrying ONLY font styling — family, size,
+     weight, letter-spacing, line-height 1, white-space
+     nowrap — identical in both states. The gold / non-gold
+     state survives ONLY as paint rules earlier in the
+     cascade (background, text colour, border-colour,
+     box-shadow); no state rule anywhere sets or influences
+     the slot's width, height, padding, margin or
+     border-width, or the label's font metrics, so a state
+     difference in size is structurally impossible. Paint is
+     exactly as shipped in v13.43: gold = solid gold fill
+     #e8b34b (rgb(232,179,75)) with dark text; non-gold
+     in-field = ivory-wash fill rgba(255,255,255,.08), border
+     rgba(0,0,0,.7), ivory text, the base inset shadow kept.
+     Corner radius stays the kept concentric 8px in-field.
+     These are the last chip rules in the cascade. */
+  .ovCode{box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:63px;height:29px;padding:0;margin:0;border-width:1px;overflow:hidden}
+  .ovCodeTxt{font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+  #ovCards.ovCompact .ovCode{width:49px;height:24px}
+  #ovCards.ovCompact .ovCodeTxt{font-size:11px}
+  #lbBottom .ovCode{width:63px;height:29px}
 </style></head>
 <body>
   <div id="viewer">
@@ -3452,7 +3456,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.43 &middot; Build 2026-11-10 15:24</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.46 &middot; Build 2026-11-10 16:46</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -3513,7 +3517,7 @@
     <div id="infoCard" hidden role="dialog" aria-modal="true" aria-label="Book information"><div class="icCard"><div class="icHead"><img id="icCover" alt=""><div class="icHeadText"><h3 id="icTitle"></h3><p id="icAuthor"></p></div><button id="icClose" type="button" aria-label="Close book information"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="icScroll"><p id="icAbout"></p><div id="icStats"></div><p id="icMarks" class="marksLine" hidden></p><div class="icStatusRow"><span class="icStatK">Status</span><select id="icStatus" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div class="icCoverSeg" id="icCoverSeg"><span class="icCoverLbl">Cover</span><div class="icCoverRow"><button id="icCoverPrev" class="icCoverNav" type="button" aria-label="Previous cover version" disabled>&#8249;</button><img id="icCoverPreview" alt=""><button id="icCoverNext" class="icCoverNav" type="button" aria-label="Next cover version" disabled>&#8250;</button></div><p id="icCoverLabel">Original &middot; 1 of 1</p><button id="icCoverUpload" type="button">Upload new cover&hellip;</button></div><div id="icLinks"></div></div><div class="icFoot"><div id="icActions"><button id="icCopyLink" class="icActionBtn" type="button">Copy link to this book</button><button id="icDownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="icUpdate" type="button">Update from book file&hellip;</button><button id="icRemove" type="button" hidden>Remove from shelf</button><button id="icHide" type="button" hidden>Hide from shelf</button><div id="icConfirm" hidden><p id="icConfirmText"></p><div class="icConfirmRow"><button id="icConfirmYes" type="button">Remove book</button><button id="icConfirmNo" type="button">Keep it</button></div></div><p id="icNote" hidden></p></div></div></div>
     <div id="zoomView" hidden role="dialog" aria-modal="true" aria-label="Zoomed page view" data-scale="1"><div id="zoomBar"><span id="zoomTitle">Page</span><span id="zoomCtrls"><button id="zoomOut" type="button" aria-label="Zoom out">&minus;</button><span id="zoomPct">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomReset" type="button">Reset view</button><button id="zoomClose" type="button" aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="zoomStage"><div id="zoomContent"></div></div></div>
     <div id="overviewView" hidden role="dialog" aria-modal="true" aria-label="Overview &#8212; All Spreads"><div id="ovBar"><span id="ovTitle"><span id="ovBookTitle"></span><span id="ovSub">Overview</span></span><span id="ovBarBtns"><button id="ovGear" type="button" aria-label="Overview options" title="Overview options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button id="ovClose" type="button" aria-label="Close overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="ovScroll"><p id="ovIntro">Tap a spread to view it big.</p><div id="ovCards"></div></div><div id="ovOptsScrim" hidden></div><div id="ovOpts" role="dialog" aria-label="Overview options" aria-hidden="true"><div id="ovOptsHead"><span id="ovOptsTitle">Overview options</span><button id="ovOptsClose" type="button" aria-label="Close overview options"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="setSeg"><div class="ovOptRow"><span>Card size</span><span class="ovSeg" id="ovOptSizeSeg" role="group" aria-label="Overview card size"><button type="button" data-ov-size="large" aria-pressed="true">Large</button><button type="button" data-ov-size="compact" aria-pressed="false">Compact</button></span></div><div class="ovOptRow"><span>Marked only</span><span class="ovSeg" id="ovOptMarkedSeg" role="group" aria-label="Overview marked only"><button type="button" data-ov-marked="off" aria-pressed="true">Off</button><button type="button" data-ov-marked="on" aria-pressed="false">On</button></span></div><div class="ovOptRow"><span>Page text</span><span class="ovSeg" id="ovOptTextSeg" role="group" aria-label="Overview page text"><button type="button" data-ov-text="show" aria-pressed="true">Show</button><button type="button" data-ov-text="hide" aria-pressed="false">Hide</button></span></div><div class="ovOptRow"><span>Safety guides</span><span class="ovSeg" id="ovOptGuidesSeg" role="group" aria-label="Safety guides"><button type="button" data-ov-guides="off" aria-pressed="true">Off</button><button type="button" data-ov-guides="on" aria-pressed="false">On</button></span></div></div></div></div>
-    <div id="lbView" hidden role="dialog" aria-modal="true" aria-label="Spread lightbox"><div id="lbBar"><span id="lbTitle"><span id="lbBookTitle"></span><span id="lbSpreadLabel"></span></span><span id="lbBarRight"><button id="lbStar" class="ovStar" type="button" aria-pressed="false" aria-label="Mark this spread">&#9733;</button><button id="lbClose" type="button" aria-label="Close lightbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="lbStage"><div id="lbArt"></div><button id="lbPrev" class="lbStep prev" type="button" aria-label="Previous spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button id="lbNext" class="lbStep next" type="button" aria-label="Next spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div><div id="lbBottom"><p id="lbCap" class="ovVerCap"></p><span id="lbReadPad"><button id="lbOpenReader" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.5C10.9 5.2 9.2 4.5 7.2 4.5H3.5v14h3.7c2 0 3.7.7 4.8 2 1.1-1.3 2.8-2 4.8-2h3.7v-14h-3.7c-2 0-3.7.7-4.8 2z"/><path d="M12 6.5v14"/></svg><span>Read</span></button></span><div id="lbVerRow"><span id="lbVerCtl"><span id="lbVerCtlRow"><span id="lbVerStepRow"><button id="lbVerPrev" class="lbVerStep" type="button" aria-label="Previous version"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span id="lbCode" class="ovCode"></span><span id="lbCount" class="ovCount"></span><button id="lbVerNext" class="lbVerStep" type="button" aria-label="Next version"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></span></span></span></div><span id="lbGoldPad"><span id="lbGoldBanner" class="ovGoldBanner" hidden>GOLD</span><button id="lbMakeGold" class="ovMakeGold" type="button" hidden>Make Gold</button></span></div></div>
+    <div id="lbView" hidden role="dialog" aria-modal="true" aria-label="Spread lightbox"><div id="lbBar"><span id="lbTitle"><span id="lbBookTitle"></span><span id="lbSpreadLabel"></span></span><span id="lbBarRight"><button id="lbStar" class="ovStar" type="button" aria-pressed="false" aria-label="Mark this spread">&#9733;</button><button id="lbClose" type="button" aria-label="Close lightbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div><div id="lbStage"><div id="lbArt"></div><button id="lbPrev" class="lbStep prev" type="button" aria-label="Previous spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button id="lbNext" class="lbStep next" type="button" aria-label="Next spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div><div id="lbBottom"><p id="lbCap" class="ovVerCap"></p><span id="lbReadPad"><button id="lbOpenReader" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.5C10.9 5.2 9.2 4.5 7.2 4.5H3.5v14h3.7c2 0 3.7.7 4.8 2 1.1-1.3 2.8-2 4.8-2h3.7v-14h-3.7c-2 0-3.7.7-4.8 2z"/><path d="M12 6.5v14"/></svg><span>Read</span></button></span><div id="lbVerRow"><span id="lbVerCtl"><span id="lbVerCtlRow"><span id="lbVerStepRow"><button id="lbVerPrev" class="lbVerStep" type="button" aria-label="Previous version"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span id="lbCode" class="ovCode"><span class="ovCodeTxt" id="lbCodeTxt"></span></span><span id="lbCount" class="ovCount"></span><button id="lbVerNext" class="lbVerStep" type="button" aria-label="Next version"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></span></span></span></div><span id="lbGoldPad"><span id="lbGoldBanner" class="ovGoldBanner" hidden>GOLD</span><button id="lbMakeGold" class="ovMakeGold" type="button" hidden>Make Gold</button></span></div></div>
   </div>
   <!-- DIAGNOSTICS (temporary) — window geometry readout panel + safe-area probe -->
   <div id="diagPanel" hidden role="dialog" aria-label="Window diagnostics">
@@ -9893,6 +9897,9 @@
           verTop.className = "ovVerTop";
           var codeEl = document.createElement("span");
           codeEl.className = "ovCode";
+          var codeTxt = document.createElement("span");
+          codeTxt.className = "ovCodeTxt";
+          codeEl.appendChild(codeTxt);
           var countEl = document.createElement("span");
           countEl.className = "ovCount";
           var spacer = document.createElement("span");
@@ -9928,7 +9935,7 @@
           function refreshVerUI() {
             var gold = spreadGoldPick(ovBookKey, k);
             var isGold = shownVer === gold;
-            codeEl.textContent = code + "-" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(shownVer);
+            codeTxt.textContent = code + "-" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(shownVer);
             codeEl.classList.toggle("gold", isGold);
             countEl.hidden = !multiVer;
             countEl.textContent = multiVer ? (shownVer + 1) + " of " + verCount : "";
@@ -10111,6 +10118,7 @@
     var lbVerPrevBtn = document.getElementById("lbVerPrev");
     var lbVerNextBtn = document.getElementById("lbVerNext");
     var lbCodeEl = document.getElementById("lbCode");
+    var lbCodeTxtEl = document.getElementById("lbCodeTxt");
     var lbCountEl = document.getElementById("lbCount");
     var lbCapEl = document.getElementById("lbCap");
     var lbBannerEl = document.getElementById("lbGoldBanner");
@@ -10291,7 +10299,7 @@
       var isGold = lbVer === gold;
       var code = spreadCodeFor(lbK);
       if (lbCodeEl) {
-        lbCodeEl.textContent = code + "-" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(lbVer);
+        if (lbCodeTxtEl) lbCodeTxtEl.textContent = code + "-" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(lbVer);
         lbCodeEl.classList.toggle("gold", isGold);
       }
       if (lbVerLabelEl) lbVerLabelEl.hidden = !lbMulti;
@@ -13740,8 +13748,8 @@
     /* Build stamp — bump on every build. The iteration is the v13
        line (13.x), opened by the Ravyn backdrop + plank test round:
        bump the last number once per review round, not per micro-fix. */
-    var BUILD_ITERATION = "13.43";
-    var BUILD_STAMP = "2026-11-10 15:24";
+    var BUILD_ITERATION = "13.46";
+    var BUILD_STAMP = "2026-11-10 16:46";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
