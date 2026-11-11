@@ -1024,6 +1024,8 @@
   .ovCard{background:#1d1d1b;border:1px solid rgba(216,190,140,.22);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px rgba(0,0,0,.32);padding:12px;margin:0 0 18px;cursor:pointer;box-sizing:border-box;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease;-webkit-tap-highlight-color:transparent}
   .ovCard:active{transform:translateY(-2px);box-shadow:0 2px 3px rgba(0,0,0,.35),0 16px 34px rgba(0,0,0,.4)}
   .ovCard.here{border-color:#e8b34b;box-shadow:0 0 0 1px #e8b34b,0 12px 30px rgba(0,0,0,.42)}
+  #ovView.ovSettling .ovCard{transition:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  #overviewView.ovSettling .ovCard{transition:none;-webkit-backdrop-filter:none;backdrop-filter:none}
   .ovHead{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:0 2px 10px;min-height:44px}
   .ovHeadRight{margin-left:auto}
   .ovLabel{font-size:14.5px;font-weight:600;color:#f4f1ea;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3525,7 +3527,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.48 &middot; Build 2026-11-10 19:15</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.49 &middot; Build 2026-11-10 20:17</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -4500,9 +4502,66 @@
       if (dir === "next") return [2 * flipped, 2 * flipped + 1, 2 * flipped + 2];
       return [2 * flipped - 2, 2 * flipped - 1, 2 * flipped - 3];
     }
+    function dragTurnReady(dir) {
+      var list = turnIndices(dir);
+      for (var i = 0; i < list.length; i++) {
+        var idx = list[i];
+        if (idx < 0 || idx >= N) continue;
+        var im = effImg(idx);
+        if (im && !imgReady(im)) return false;
+      }
+      return true;
+    }
+    function activateDragFlip(d, dir) {
+      if (!setupTurn(dir, d.corner)) {
+        if (drag === d) drag = null;
+        return false;
+      }
+      d.kind = "flip";
+      d.dir = dir;
+      d.active = true;
+      d.g0 = glideFor(flipped);
+      d.g1 = glideFor(stateAfter(dir));
+      showLeaf();
+      bookWrap.classList.add("grabbing");
+      return true;
+    }
+    function poseDragAt(d) {
+      if (isMag()) {
+        var F = dragF(d, d.lastX, d.lastY);
+        d.F = F;
+        var pNow = poseTurn(F, null);
+        d.p = pNow;
+        glideEl.style.transform = "translateX(" + (d.g0 + (d.g1 - d.g0) * pNow) + "px)";
+      } else {
+        var th = dragTheta(d);
+        d.theta = th;
+        poseLeaf(th, d.dir === "next" ? 1 : -1, d.g0 + (d.g1 - d.g0) * (Math.abs(th - (d.dir === "next" ? 0 : -180)) / 180));
+      }
+    }
+    function gateDragFlip(d, dir) {
+      d.corner = isMag() ? grabCorner(d.y0) : "bottom";
+      if (dragTurnReady(dir)) { activateDragFlip(d, dir); return; }
+      if (d.pendingDir === dir) return;
+      d.pendingDir = dir;
+      var waits = 0;
+      function waitOnce() {
+        ensureIndices(turnIndices(dir), function () {
+          if (drag !== d || d.active || d.pendingDir !== dir) return;
+          waits++;
+          if (dragTurnReady(dir) || waits >= 4) {
+            d.pendingDir = null;
+            if (activateDragFlip(d, dir)) poseDragAt(d);
+          } else {
+            waitOnce();
+          }
+        });
+      }
+      waitOnce();
+    }
     function warmAround() {
       var c = 2 * flipped;
-      [c - 5, c - 4, c - 3, c - 2, c - 1, c, c + 1, c + 2, c + 3, c + 4, c + 5, c + 6].forEach(function (i) {
+      [c - 6, c - 5, c - 4, c - 3, c - 2, c - 1, c, c + 1, c + 2, c + 3, c + 4, c + 5, c + 6].forEach(function (i) {
         if (i < 0 || i >= N) return;
         var im = pageImgs[i];
         if (im && !imgReady(im) && im.decode) im.decode().catch(function () {});
@@ -5438,6 +5497,8 @@
       if (drag.tapOnly) return;
       drag.samples.push({ t: performance.now(), dx: drag.dx });
       if (drag.samples.length > 12) drag.samples.shift();
+      drag.lastX = e.clientX;
+      drag.lastY = e.clientY;
       if (turnMode === "swipe" || turnMode === "simple") {
         if (!drag.active) {
           if (Math.abs(drag.dx) < 8) return;
@@ -5458,6 +5519,8 @@
         if (Math.abs(drag.dx) < 8) return;
         if (focusMode) {
           var intent = drag.dx < 0 ? "next" : "prev";
+          if (drag.pendingDir && drag.pendingDir !== intent) drag.pendingDir = null;
+          if (drag.pendingDir) return;
           var canSlide = flipped > 0 && flipped < HALF &&
             ((intent === "next" && focus === 0) || (intent === "prev" && focus === 1));
           if (canSlide) {
@@ -5469,15 +5532,7 @@
             drag.active = true;
             bookWrap.classList.add("grabbing");
           } else {
-            drag.corner = isMag() ? grabCorner(drag.y0) : "bottom";
-            if (!setupTurn(intent, drag.corner)) { drag = null; return; }
-            drag.kind = "flip";
-            drag.dir = intent;
-            drag.active = true;
-            drag.g0 = glideFor(flipped);
-            drag.g1 = glideFor(stateAfter(intent));
-            showLeaf();
-            bookWrap.classList.add("grabbing");
+            gateDragFlip(drag, intent);
           }
         } else {
           var dir;
@@ -5485,17 +5540,12 @@
           var spineX = r.left + pageSize;
           if (e.clientX - drag.dx < spineX) dir = "prev"; else dir = "next";
           if ((dir === "next" && flipped >= HALF) || (dir === "prev" && flipped <= 0)) dir = drag.dx < 0 ? "next" : "prev";
-          drag.corner = isMag() ? grabCorner(drag.y0) : "bottom";
-          if (!setupTurn(dir, drag.corner)) { drag = null; return; }
-          drag.kind = "flip";
-          drag.dir = dir;
-          drag.active = true;
-          drag.g0 = glideFor(flipped);
-          drag.g1 = glideFor(stateAfter(dir));
-          showLeaf();
-          bookWrap.classList.add("grabbing");
+          if (drag.pendingDir && drag.pendingDir !== dir) drag.pendingDir = null;
+          if (drag.pendingDir) return;
+          gateDragFlip(drag, dir);
         }
       }
+      if (!drag || !drag.active) return;
       if (drag.kind === "slide") {
         var lo = Math.min(drag.camFrom, drag.camTo), hi = Math.max(drag.camFrom, drag.camTo);
         setCam(Math.max(lo, Math.min(hi, drag.camFrom + drag.dx)));
@@ -5520,6 +5570,22 @@
       bookWrap.classList.remove("grabbing");
       if (d.active) manualNav();
       if (!d.active) {
+        if (d.pendingDir) {
+          var pdir = d.pendingDir;
+          d.pendingDir = null;
+          if (!cancelled) {
+            var nowP = performance.now(), velP = 0, sP = d.samples[0];
+            for (var ip = d.samples.length - 1; ip >= 0; ip--) {
+              if (nowP - d.samples[ip].t > 90) { sP = d.samples[ip]; break; }
+            }
+            if (sP && nowP > sP.t) velP = (d.dx - sP.dx) / (nowP - sP.t);
+            var flickP = pdir === "next" ? velP < -0.45 : velP > 0.45;
+            if (Math.abs(d.dx) > 60 || flickP) {
+              if (pdir === "next") flipNext(); else flipPrev();
+            }
+          }
+          return;
+        }
         // A press that never became a peel is a tap: flip by side, like the
         // original viewer. In focus mode a tap simply advances. While the
         // slideshow runs, though, a tap pauses it instead of flipping —
@@ -10121,6 +10187,16 @@
       }
       return curCard;
     }
+    var ovSettleTimer = 0;
+    function ovNoteViewport() {
+      if (!overviewIsOpen || !ovView) return;
+      ovView.classList.add("ovSettling");
+      void ovView.offsetHeight;
+      clearTimeout(ovSettleTimer);
+      ovSettleTimer = setTimeout(function () { ovView.classList.remove("ovSettling"); }, 420);
+    }
+    window.addEventListener("orientationchange", function () { requestAnimationFrame(ovNoteViewport); });
+    window.addEventListener("resize", ovNoteViewport);
     function openOverview(invoker, fromSheet) {
       if (overviewIsOpen || !ovView || shelfIsOpen) return;
       if (typeof zoomIsOpen !== "undefined" && zoomIsOpen) return;
@@ -13891,8 +13967,8 @@
     /* Build stamp — bump on every build. The iteration is the v13
        line (13.x), opened by the Ravyn backdrop + plank test round:
        bump the last number once per review round, not per micro-fix. */
-    var BUILD_ITERATION = "13.48";
-    var BUILD_STAMP = "2026-11-10 19:15";
+    var BUILD_ITERATION = "13.49";
+    var BUILD_STAMP = "2026-11-10 20:17";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
