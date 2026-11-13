@@ -249,7 +249,7 @@
   #backdrop.bd-img{background-size:cover;background-position:center;filter:blur(7px) brightness(.55);transform:scale(1.06)}
   #bookWrap{position:relative;z-index:1;cursor:grab;touch-action:none;will-change:transform}
   #bookWrap.grabbing{cursor:grabbing}
-  #book{position:relative;perspective:2300px}
+  #book{position:relative;perspective:1600px}   /* transplant (v13.64): the original Harlow viewer's hardcover perspective (1600px) for the DOM-sheet scene */
   #book.single{overflow:hidden}
   .base{position:absolute;top:0;height:100%;z-index:1;background:#2b2b2b;box-shadow:0 24px 55px rgba(0,0,0,.5)}
   .base img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
@@ -280,6 +280,25 @@
   #flipLayer{position:absolute;z-index:6;display:none;pointer-events:none;background:#2b2b2b;will-change:transform,clip-path}
   #flipLayer img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
   #shadeCv{position:absolute;left:0;top:0;z-index:7;display:none;pointer-events:none}
+  /* ---- Transplant (v13.64): ORIGINAL Harlow sheet engine ----
+     Pages are DOM sheets in the book's 3D scene: each sheet sits on
+     the right half with its transform-origin at the spine, carries a
+     front and a back face (plain page images, never deformed, so
+     text stays pixel-crisp), and turns via a CSS transition on
+     transform — cubic-bezier(.3,.7,.3,1) over the hardcover
+     FLIP_TURN_MS (1000 ms). The curl is shading only: a per-face
+     shade overlay (dark at the spine easing out, a light band just
+     past middle, darkening to the free edge) whose opacity the turn
+     driver animates per frame, plus the shared #castShade band. */
+  #sheetStack{position:absolute;inset:0;z-index:4;pointer-events:none;transform-style:preserve-3d}
+  .sheet{position:absolute;top:0;left:50%;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;display:none;will-change:transform}
+  .sheet.on{display:block}
+  .sheet .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#2b2b2b;overflow:hidden}
+  .sheet .face.back{transform:rotateY(180deg)}
+  .sheet .face img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
+  .sheetShade{position:absolute;inset:0;opacity:0;pointer-events:none}
+  .face.front .sheetShade{background:linear-gradient(to right,rgba(0,0,0,.55) 0%,rgba(0,0,0,.18) 22%,rgba(0,0,0,0) 42%,rgba(255,255,255,.30) 58%,rgba(255,255,255,.05) 82%,rgba(0,0,0,.38) 100%)}
+  .face.back .sheetShade{background:linear-gradient(to left,rgba(0,0,0,.55) 0%,rgba(0,0,0,.18) 22%,rgba(0,0,0,0) 42%,rgba(255,255,255,.30) 58%,rgba(255,255,255,.05) 82%,rgba(0,0,0,.38) 100%)}
   .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:64px;height:96px;margin:0;padding:0;border:0;outline:0;box-shadow:none;background:transparent;color:#fff;font-size:52px;cursor:pointer;line-height:1;pointer-events:auto;appearance:none;-webkit-appearance:none}
   .arrow:hover,.arrow:focus,.arrow:focus-visible,.arrow:active{border:0;outline:0;box-shadow:none;background:transparent}
   #prev{left:8px}#next{right:8px}
@@ -3531,7 +3550,7 @@
       <div id="backdrop" aria-hidden="true"></div>
       <div id="switchNote" role="status" hidden>Opening <span id="switchTitle"></span>&hellip;</div>
       <div id="stageTools"><button id="markBtn" type="button" aria-label="Mark this spread" aria-pressed="false" title="Mark this spread"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.7 4.5 1.2 6.3L12 17.3l-5.7 3 1.2-6.3L2.8 9.5l6.4-.9z"/></svg></button><button id="zoomBtn" type="button" aria-label="Zoom into this spread" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button></div>
-      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.58 &middot; Build 2026-11-11 18:13</span></span><span id="shelfFootCount">8 books</span></div></div>
+      <div id="shelf" hidden role="dialog" aria-label="Bookshelf" data-backdrop="charcoal" data-shelf-style="classic" data-show-shelves="on"><div id="shelfAmbient" aria-hidden="true"></div><div id="shelfHead"><div><h2 id="shelfTitle">Bookshelf</h2><p id="shelfSub"><span class="hintS">Tap a book to open it.</span> <span class="hintS">Tap the &#9432; for its card.</span></p></div><div id="shelfHeadActions"><button id="shelfBack" type="button" hidden>Back to book</button></div></div><div id="shelfFilterBar" hidden><span id="shelfFilterChip">Showing: <strong>Final editions only</strong></span><button id="shelfFilterReset" type="button">Show all books</button></div><div id="shelf3d" hidden><div id="s3Room"><div id="s3Ambient" aria-hidden="true"></div><div id="s3Tint" aria-hidden="true"></div><div id="s3Stage" tabindex="0" aria-label="3D bookshelf. Use left and right arrow keys to move along the shelf, Enter to pull out the focused book."><div id="s3Board" aria-hidden="true"></div><div id="s3Track"></div><aside id="s3Detail" aria-live="polite" hidden><button id="s3DetailPrev" class="s3-detail-nav prev" type="button" aria-label="Previous book">&#8249;</button><button id="s3DetailNext" class="s3-detail-nav next" type="button" aria-label="Next book">&#8250;</button><button id="s3DetailClose" type="button" aria-label="Close book details">&#10005;</button><div class="s3-d-scroll"><p id="s3Kicker"></p><div class="s3-d-head"><img id="s3Cover" alt=""><div><h3 id="s3Title"></h3><p id="s3Author"></p></div></div><p id="s3About"></p><div id="s3Stats"></div><p id="s3Marks" class="marksLine" hidden></p><div class="s3-status-row"><span>Status</span><select id="s3Status" aria-label="Book status"><option value="test">Test</option><option value="review">Review</option><option value="print">Print</option><option value="final">Final</option><option value="none">None</option></select></div><div id="s3Links"></div><div id="s3Actions"><button id="s3DownloadPdf" class="icActionBtn" type="button">Download PDF</button></div><button id="s3Remove" type="button" hidden>Remove from shelf</button><button id="s3Hide" type="button" hidden>Hide from shelf</button><div id="s3Confirm" hidden><p id="s3ConfirmText"></p><div style="display:flex;gap:8px"><button id="s3ConfirmYes" type="button">Remove book</button><button id="s3ConfirmNo" type="button">Keep it</button></div></div><p id="s3Note" hidden style="font-size:12.5px;color:#f0c66d"></p><p style="font-size:12px;color:#b9ac93;margin:12px 0 0">Drag the book to turn it in your hands.</p></div><div class="s3-d-footer"><button id="s3Read" type="button">Read this book</button><button id="s3FootCopy" type="button">Copy link to this book</button></div></aside></div><div id="s3Bar"><div class="s3-bar-top"><span id="s3Counter">01 / 01</span><span id="s3BarTitle"></span></div><div class="s3-bar-row"><button id="s3Prev" class="s3-chev" type="button" aria-label="Previous book">&#8249;</button><button id="s3Open" type="button">Open</button><button id="s3Next" class="s3-chev" type="button" aria-label="Next book">&#8250;</button><div id="s3Dashes" role="tablist" aria-label="Books on the shelf"></div></div></div><p id="s3Empty" class="shelfEmpty" hidden></p><div id="s3EmptyActions" class="shelfEmptyActions" hidden><button id="s3Import" class="goldImportBtn" type="button">Import a book&hellip;</button></div></div></div><div id="shelfScroll"><div id="shelfRows"></div></div><div id="shelfFoot" aria-hidden="true"><span class="shelfFootLeft"><span class="shelfFootBrand">BOOKVIZION</span><span id="shelfFootStamp"> &middot; v13.65 &middot; Build 2026-11-12 13:55</span></span><span id="shelfFootCount">8 books</span></div></div>
       <button id="prev" class="arrow" type="button" aria-label="Previous">&#8249;</button>
       <button id="next" class="arrow" type="button" aria-label="Next">&#8250;</button>
       <div id="bookWrap"><div id="glide"><div id="book">
@@ -3547,6 +3566,7 @@
         <div id="flipLayer"><img alt=""></div>
         <canvas id="shadeCv"></canvas>
         <div id="spineShade"></div>
+        <div id="sheetStack" aria-hidden="true"></div>
       </div></div></div>
       <div id="scrollView" hidden aria-label="Scrolling book view"><div id="scrollCol"></div></div>
     </div>
@@ -3841,24 +3861,20 @@
        engine, so this leaf is opaque by construction: each frame paints
        exactly the turning page's own pixels — the front face before the
        leaf passes vertical, its mirrored back face after. */
-    var FLEX_RAD = 24 * Math.PI / 180;           // total tip lag at mid-turn
+    var FLEX_RAD = 0;           // engine swap (v13.61): RIGID leaf — the original Harlow flip engine. Tip lag is ZERO: the sheet rotates as one flat plane, so the page image is never bent or texture-warped and text stays pixel-crisp mid-turn. The curl is conveyed by lighting alone (the shading sweep in drawLeaf2D, the cast shadow in poseLeaf). The v13.59/v13.60 segmented-bend profile (36° tip lag) is retired.
     /* ---- Leaf materials ----
-       A turn whose moving leaf IS the front or back cover is BOARD:
-       a rigid flat plane (flex 0), a touch slower and heavier, with
-       a firmer edge shadow — cardboard, not paper. Every interior
-       leaf is PAPER: the existing subtle flex and shading, unchanged.
-       setupTurn picks the material per turn, so tap, arrow, and
-       drag turns all share the profile. The difference is meant to
-       be a whisper: duration +18%, shadow +35%, flex on/off.
-       The board's FACE also stays flat: no bend gradient across the
-       sheet and no bright tip kiss are painted on a turning board —
-       a rigid board barely shades as it swings, so its face reads
-       as one flat plane of art. Only the shadows UNDER and CAST BY
-       the leaf keep the firmer board weight; the cast shadow tracks
-       the rigid sheet's tip (flex 0, so no paper-lag in its
-       projection). Paper turns keep their roll shading untouched. */
+       Engine swap (v13.61): BOTH materials are rigid flat planes —
+       the original Harlow flip engine never bends the sheet. A turn
+       whose moving leaf IS the front or back cover is BOARD: the
+       same rigid rotation, a touch slower and heavier, with firmer
+       shading — cardboard, not paper. Every interior leaf is PAPER:
+       the same rigid rotation at the base duration. setupTurn picks
+       the material per turn, so tap, arrow, keyboard and drag turns
+       all share the profile. The only difference left between the
+       materials is weight: duration +13%, shadow +35%, flex off
+       for both. */
     var leafMaterial = "paper";
-    var leafFlex = 1;
+    var leafFlex = 0;
     var leafDurMul = 1;
     var leafShadeMul = 1;
     function easeHeavy(t) { return 0.5 - 0.5 * Math.cos(Math.PI * Math.pow(t, 1.15)); }
@@ -3883,7 +3899,7 @@
       ctx2d.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function drawLeaf2D(thetaDeg, lagSign, shade, bend) {
+    function drawLeaf2D(thetaDeg, lagSign, shade, sweep) {
       var W = pageSize, H = pageH;
       var frontToward = Math.cos(thetaDeg * Math.PI / 180) >= 0;
       var im = frontToward ? leafFrontImg : leafBackImg;
@@ -3911,20 +3927,31 @@
         var sw = iw * (s1 - s0) / W;
         ctx2d.drawImage(im, sx, 0, sw, ih, dx, dy, dw, dh);
       }
-      // Same shading the GL sheet applied: a uniform dim over the leaf
-      // plus a faint highlight at the bending tip, clipped to the leaf.
+      // Original-engine shading (v13.61): the sheet itself stays flat,
+      // so the curl is painted as light, not geometry — a uniform
+      // mid-turn face dip (the `shade` fill) plus a soft gradient
+      // sweep across the leaf, clipped to the leaf: shadow gathered
+      // at the spine crease, a broad highlight band across the middle
+      // of the sheet, and a slight falloff at the free edge. The
+      // sweep strength follows the turn (peaks mid-turn, gone at
+      // rest), so the light appears to travel as the leaf swings.
       ctx2d.globalCompositeOperation = "source-atop";
       if (shade > 0.001) {
         ctx2d.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")";
         ctx2d.fillRect(0, 0, winW, winH);
       }
-      if (bend > 0.001) {
+      if (sweep > 0.001) {
         var spinePt = projLeaf(0, 0, W, H, th, lag), tipPt = projLeaf(W, 0, W, H, th, lag);
-        var grad = ctx2d.createLinearGradient(spinePt[0], 0, tipPt[0], 0);
-        grad.addColorStop(0.9, "rgba(255,255,255,0)");
-        grad.addColorStop(1, "rgba(255,255,255," + (bend * 0.05).toFixed(3) + ")");
-        ctx2d.fillStyle = grad;
-        ctx2d.fillRect(0, 0, winW, winH);
+        if (Math.abs(tipPt[0] - spinePt[0]) > 2) {
+          var grad = ctx2d.createLinearGradient(spinePt[0], 0, tipPt[0], 0);
+          grad.addColorStop(0, "rgba(0,0,0," + (sweep * 0.22).toFixed(3) + ")");   // pace round (v13.62): deeper spine shade (0.16 -> 0.22)
+          grad.addColorStop(0.42, "rgba(0,0,0,0)");   // pace round (v13.62): spine shade reaches wider across the leaf (0.32 -> 0.42)
+          grad.addColorStop(0.64, "rgba(255,255,255," + (sweep * 0.15).toFixed(3) + ")");   // pace round (v13.62): stronger broad highlight band (0.11 -> 0.15)
+          grad.addColorStop(0.88, "rgba(255,255,255," + (sweep * 0.04).toFixed(3) + ")");
+          grad.addColorStop(1, "rgba(0,0,0," + (sweep * 0.14).toFixed(3) + ")");   // pace round (v13.62): firmer free-edge falloff (0.10 -> 0.14)
+          ctx2d.fillStyle = grad;
+          ctx2d.fillRect(0, 0, winW, winH);
+        }
       }
       ctx2d.globalCompositeOperation = "source-over";
     }
@@ -3953,9 +3980,58 @@
     var animating = false;
     var pendingBook = false;
     var turnGen = 0;
-    var pendingDir = null;   // one-deep queue: a tap mid-flip lines up the next turn
+    var pendingQueue = [];   // bend round: FIFO queue for nav taps that land mid-turn — drained one per turn finish, in tap order, so a queued tap never computes its target from mid-turn state, never reverses the in-flight leaf, and is never silently overwritten (the old one-deep pendingDir slot lost taps and let an opposite tap replace a queued one)
+    var PENDING_CAP = 3;   // taps beyond the cap are dropped
+    function queuePending(dir) { if (pendingQueue.length < PENDING_CAP) pendingQueue.push(dir); }
+    /* Fix Round 2 (Sol Finding 1): the drain must be able to tell a
+       dispatched tap that STARTED an asynchronous step from one that
+       resolved synchronously without starting anything — a back- /
+       front-cover boundary return, or an initial-pose catch. navSeq
+       is bumped where an async step actually begins (animateLeaf,
+       animateTurnF, swipeSpread, slideTo); navStartPending marks a
+       flip start handed to ensureIndices whose images have not
+       decoded yet (it lands later and either animates — its finish
+       drains — or no-ops, in which case startFlipNext /
+       startFlipPrev drain themselves). Before, drainPending shifted
+       exactly one entry and relied on a later finish to continue,
+       so a no-op in the middle stranded the rest of the queue. */
+    var navSeq = 0;
+    var navStartPending = false;
+    var drainingPending = false;   // re-entrancy guard: one drain loop owns the queue; nested calls from inside a dispatch (the settleSwipeBack boundary path) return at once and let the running loop continue
+    function drainPending() {
+      if (drainingPending || !pendingQueue.length) return;
+      drainingPending = true;
+      try {
+        var budget = pendingQueue.length;   // dispatch at most the entries present when this drain began
+        while (budget-- > 0 && pendingQueue.length) {
+          if (drag) break;   // a live drag owns navigation and its settle drains the queue; dispatching against it would only eat entries as no-ops
+          var seq = navSeq;
+          var pd = pendingQueue.shift();
+          if (pd === "next") flipNext(); else flipPrev();
+          if (navSeq !== seq || navStartPending) break;   // a step started (or a start is outstanding): its completion drains further
+          // otherwise the tap resolved synchronously as a no-op — continue with the next entry
+        }
+      } finally { drainingPending = false; }
+    }
+    /* Pace round (v13.62): settle beat — the original book never chains
+       turns: each turn lands and settles before the next can start.
+       animateLeaf's finish arms a ~140 ms beat instead of draining at
+       once; taps landing inside the beat join the FIFO queue (flipNext /
+       flipPrev check settleTimer) and the beat's end drains it in order,
+       so cap, order and no-reversal behaviour are exactly as built.
+       Single turns are unaffected — the beat is armed only AFTER a turn
+       completes, so nothing delays a first turn. Magazine turns
+       (animateTurnF) keep their shipping immediate drain, untouched. */
+    var SETTLE_MS = 140;
+    var settleTimer = null;
+    function armSettleBeat() {
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(function () { settleTimer = null; drainPending(); }, SETTLE_MS);
+    }
+    var slideGen = 0;   // bend-round fix: generation guard for the focus-slide drain in slideTo — bumped wherever a slide's camera tween is superseded without a successor that owns the queue (book/mode resets clear the queue; a drag taking over the slide settles and drains itself), so a stale slide completion can never fire a tap into the wrong book or state
     var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var FLIP_MS = REDUCED ? 320 : 950;
+    var FLIP_MS = REDUCED ? 320 : 1000;   // transplant (v13.64): FLIP_TURN_MS — the original Harlow viewer's hardcover turn duration (900 ms); the sheet's CSS transition and this rAF shading driver share it   // pace round (v13.62): the original Harlow flip engine's turn, slowed — 1150 ms interior (v13.61 ran 900 ms); board turns scale from this via leafDurMul in setupTurn (~1300 ms); same easeOriginal curve, just more time in it; magazine timing (magMs) untouched // v13.65 pace (Jon: slow the turn just a tad) — FLIP_TURN_MS 900 -> 1000 ms; the sheet CSS transition, the rAF shading driver, the camera tween and the drag-release snap all derive from FLIP_MS, so this single value slows the whole turn.
+    var BOARD_SHADE_MUL = 1.35;   // bend-round knob: board shadow multiplier (shipping value 1.35; the old book ran 1.0) — flip this one value to A/B it
 
     function isSingle() {
       if (layoutMode === "single") return true;
@@ -3963,6 +4039,27 @@
       return stage.clientHeight > stage.clientWidth;
     }
     function easeInOutSine(t) { return 0.5 - 0.5 * Math.cos(Math.PI * t); }
+    /* Engine swap (v13.61): the original Harlow flip engine's easing —
+       CSS cubic-bezier(0.3, 0.7, 0.3, 1), solved here for the rAF
+       animator: an eased, weighted sweep that settles into the
+       landing instead of the sine profile's symmetric swell.
+       animateLeaf and the camera tweens paired with a leaf turn both
+       run on it, so leaf, glide and camera stay in sync. */
+    function cubicBezierEase(p1x, p1y, p2x, p2y) {
+      function sx(u) { var v = 1 - u; return 3 * v * v * u * p1x + 3 * v * u * u * p2x + u * u * u; }
+      function sy(u) { var v = 1 - u; return 3 * v * v * u * p1y + 3 * v * u * u * p2y + u * u * u; }
+      function sdx(u) { var v = 1 - u; return 3 * v * v * p1x + 6 * v * u * (p2x - p1x) + 3 * u * u * (1 - p2x); }
+      return function (t) {
+        if (t <= 0) return 0;
+        if (t >= 1) return 1;
+        var u = t, i, x, dx;
+        for (i = 0; i < 5; i++) { x = sx(u) - t; if (Math.abs(x) < 1e-4) return sy(u); dx = sdx(u); if (Math.abs(dx) < 1e-4) break; u -= x / dx; }
+        var lo = 0, hi = 1; u = t;
+        while (hi - lo > 1e-4) { if (sx(u) < t) lo = u; else hi = u; u = (lo + hi) / 2; }
+        return sy(u);
+      };
+    }
+    var easeOriginal = cubicBezierEase(0.3, 0.7, 0.3, 1);
     function glideFor(f) { return focusMode ? 0 : (f === 0 ? -pageSize / 2 : (f === HALF ? pageSize / 2 : 0)); }
 
     /* ---- camera: in focus (portrait) mode the spread stays whole and the
@@ -3974,7 +4071,7 @@
       if (fx === HALF) return pageSize / 2;
       return foc === 0 ? pageSize / 2 : -pageSize / 2;
     }
-    function tweenCam(to, dur, easeFn) {
+    function tweenCam(to, dur, easeFn, onDone) {
       if (camAnim) cancelAnimationFrame(camAnim);
       var from = camX, t0 = null; dur = dur || 500;
       function fr(ts) {
@@ -3982,18 +4079,31 @@
         var raw = Math.min(1, (ts - t0) / dur);
         var e = easeFn ? easeFn(raw) : Math.sin(raw * Math.PI / 2);
         setCam(from + (to - from) * e);
-        if (raw < 1) camAnim = requestAnimationFrame(fr); else camAnim = null;
+        if (raw < 1) camAnim = requestAnimationFrame(fr); else { camAnim = null; if (onDone) onDone(); }
       }
       camAnim = requestAnimationFrame(fr);
     }
     function slideTo(side) {
+      navSeq++;   // Fix Round 2 (Sol Finding 1): a focus slide is an async navigation step — see drainPending
       focus = side;
       // A focus slide changes the reader's page without a render,
       // and render() is the usual placeSave caller — save here too
       // or the remembered place keeps the spread's left page.
       placeSave();
       if (typeof updateShelfAmbient === "function") updateShelfAmbient();
-      tweenCam(camTargetFor(flipped, side), REDUCED ? 180 : 500);
+      // Bend-round fix: a focus slide is a navigation step like a turn,
+      // so its completion drains one queued tap, exactly as the three
+      // finish() paths do — without this, a tap drained INTO a slide
+      // stranded the rest of the queue until some later turn's finish
+      // fired it as a ghost page. The watchdog mirrors the turn
+      // engines': if the camera tween is cancelled or its frames die,
+      // the drain still lands, a beat late. slideGen guards both paths:
+      // a superseded slide (reset, drag takeover) never drains.
+      var slideDur = REDUCED ? 180 : 500;
+      var sg = ++slideGen, slideDrained = false;
+      var drainSlide = function () { if (slideDrained || sg !== slideGen) return; slideDrained = true; drainPending(); };
+      tweenCam(camTargetFor(flipped, side), slideDur, null, drainSlide);
+      setTimeout(drainSlide, slideDur + 600);
       counter.textContent = label();
       if (typeof updateTextPanel === "function") updateTextPanel();
       if (typeof refreshCompareChrome === "function") refreshCompareChrome();
@@ -4577,6 +4687,7 @@
        sound preference is on. */
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) {
+        flushTailPlace();
         if (musAudio && !musAudio.paused) { try { musAudio.pause(); } catch (err) {} musHiddenPaused = true; }
         if (!AC) return;
         if (AC.state === "running" && AC.suspend) { try { AC.suspend(); } catch (err) {} }
@@ -4592,6 +4703,20 @@
         }
       }
     });
+    /* Fix Round 2 (Sol Finding 5): the render split defers the tail
+       — placeSave included — to the turn's finish. A document
+       freeze or discard between the swap and the finish would lose
+       the already-committed place, because a discarded document
+       never runs the turn watchdog. On hide / pagehide, bank the
+       place immediately: placeSave writes exactly the committed
+       flipped/focus the tail would write, so the later finish-path
+       flush can only rewrite the same values (no double-apply).
+       The tail itself stays pending: its chrome, ambient and
+       scroll-sync parts are layout work that must not be forced
+       while hidden — if the document survives, finish() runs the
+       whole tail as usual. */
+    function flushTailPlace() { if (renderTailPending) placeSave(); }
+    window.addEventListener("pagehide", function () { flushTailPlace(); });
     /* A returning reader whose saved prefs have sound on still needs a
        gesture in THIS session before any audio may start: the first
        tap or keypress creates/resumes the context (and starts the
@@ -4675,9 +4800,28 @@
         poseLeaf(th, d.dir === "next" ? 1 : -1, d.g0 + (d.g1 - d.g0) * (Math.abs(th - (d.dir === "next" ? 0 : -180)) / 180));
       }
     }
+    var dragPaintRaf = 0;
+    function queueDragPaint(d) {
+      if (dragPaintRaf) return;
+      dragPaintRaf = requestAnimationFrame(function () {
+        dragPaintRaf = 0;
+        if (drag !== d || !d.active) return;
+        poseDragAt(d);
+      });
+    }
+    function cancelDragPaint() {
+      if (dragPaintRaf) { cancelAnimationFrame(dragPaintRaf); dragPaintRaf = 0; }
+    }
     function gateDragFlip(d, dir) {
       d.corner = isMag() ? grabCorner(d.y0) : "bottom";
-      if (dragTurnReady(dir)) { activateDragFlip(d, dir); return; }
+      // Fix Round 2 (Sol Finding 2): the activation pose paints
+      // synchronously in BOTH branches — the image-wait branch below
+      // already did (poseDragAt right after activateDragFlip). This
+      // ready branch used to fall back to the pointermove's rAF
+      // queue, so with decoded images the first pose waited a frame
+      // and an immediate release cancelled it unseen. rAF coalescing
+      // applies to subsequent pointermove paints only.
+      if (dragTurnReady(dir)) { if (activateDragFlip(d, dir)) poseDragAt(d); return; }
       if (d.pendingDir === dir) return;
       d.pendingDir = dir;
       var waits = 0;
@@ -4744,6 +4888,28 @@
       warmAround();
     }
 
+    /* Bend round (render split): while a turn is in flight, the
+       swap-time render() paints ONLY the base srcs, the glide and the
+       counter (plus warmAround, as the old book did); the heavier tail
+       — the four chrome refreshes, placeSave, the shelf ambient and
+       the scroll sync — is deferred to the turn's OWN finish() via
+       renderTail(), never carried across turns, so backgrounding
+       mid-turn cannot lose the place. Renders outside a turn (boot,
+       goTo, fit, book switch) run the tail immediately, as before. */
+    var renderTailPending = false;
+    function renderTail() {
+      renderTailPending = false;
+      // The Text pill exists only for books carrying text, and an open
+      // text panel follows every landed flip.
+      if (typeof refreshTextChrome === "function") refreshTextChrome();
+      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
+      if (typeof refreshListenChrome === "function") refreshListenChrome();
+      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+      placeSave();
+      if (typeof updateShelfAmbient === "function") updateShelfAmbient();
+      if (typeof syncScrollView === "function") syncScrollView();
+    }
+
     function render() {
       var li = flipped === 0 ? null : 2 * flipped - 1;
       var ri = flipped === HALF ? null : 2 * flipped;
@@ -4754,16 +4920,10 @@
       // would slam the book sideways at the swap, then step it back.
       if (!animating) glideEl.style.transform = "translateX(" + glideFor(flipped) + "px)";
       counter.textContent = label();
-      // The Text pill exists only for books carrying text, and an open
-      // text panel follows every landed flip.
-      if (typeof refreshTextChrome === "function") refreshTextChrome();
-      if (typeof refreshCompareChrome === "function") refreshCompareChrome();
-      if (typeof refreshListenChrome === "function") refreshListenChrome();
-      if (typeof refreshMarkChrome === "function") refreshMarkChrome();
+      if (typeof syncSheets === "function") syncSheets();
       warmAround();
-      placeSave();
-      if (typeof updateShelfAmbient === "function") updateShelfAmbient();
-      if (typeof syncScrollView === "function") syncScrollView();
+      if (animating) { renderTailPending = true; }
+      else renderTail();
       // A landed flip re-arms the slideshow from this spread; renders
       // that happen mid-flight leave the running timer alone.
       if (slideSec && !animating) scheduleSlide();
@@ -5011,10 +5171,103 @@
     function linearEase(t) { return t; }
     /* =============== end corner-fold leaf =============== */
 
+    /* =============== Transplant (v13.64): ORIGINAL Harlow sheet engine ===============
+       The hardcover turn is no longer the canvas leaf (drawLeaf2D and
+       its 64-slice projection are retired from the turn path). Pages
+       are DOM sheets in the book's 3D scene, lifted from the original
+       flipbook-master-print viewer: #book carries the hardcover
+       perspective (1600px, in the CSS), each sheet is preserve-3d
+       with front/back faces and its transform-origin at the spine,
+       the flipped state is rotateY(-180deg), and animated turns are
+       driven by a CSS transition on transform —
+       cubic-bezier(.3,.7,.3,1) over FLIP_TURN_MS (1000 ms, FLIP_MS).
+       The curl is shading, never image deformation: per-face shade
+       overlays fade in/out across the turn, the faces' brightness is
+       animated per frame (front dipping toward ~0.82 at mid-turn,
+       back starting ~1.12 and settling to 1.0), and the blurred
+       #castShade band tracks the turn's progress per frame. Drags
+       rotate the sheet directly with the finger (transition off)
+       and snap complete/cancel on release. Mid-turn the turning
+       sheet rides above the stack (z-index boost) and settles back.
+       The static spread still paints on the base layers underneath
+       (they carry the guides and the on-art text boxes, which fade
+       out during any turn as before); the sheets exist for every
+       leaf of the current book and are rebuilt whenever the book's
+       page list changes. Magazine's peel engine is untouched. */
+    var sheetStack = document.getElementById("sheetStack");
+    var sheets = [], activeSheet = null, builtSheetSig = "";
+    function sheetSig() { return N + "|" + HALF + "|" + PAGES[0] + "|" + PAGES[N - 1]; }
+    function buildSheets() {
+      sheets = []; activeSheet = null;
+      if (!sheetStack) return;
+      sheetStack.innerHTML = "";
+      for (var k = 0; k < HALF; k++) {
+        var sh = document.createElement("div"); sh.className = "sheet";
+        var fr = document.createElement("div"); fr.className = "face front";
+        var fim = document.createElement("img"); fim.alt = ""; fim.setAttribute("draggable", "false");
+        var fsh = document.createElement("div"); fsh.className = "sheetShade";
+        fr.appendChild(fim); fr.appendChild(fsh);
+        var bk = document.createElement("div"); bk.className = "face back";
+        var bim = document.createElement("img"); bim.alt = ""; bim.setAttribute("draggable", "false");
+        var bsh = document.createElement("div"); bsh.className = "sheetShade";
+        bk.appendChild(bim); bk.appendChild(bsh);
+        sh.appendChild(fr); sh.appendChild(bk);
+        sh._front = fr; sh._back = bk; sh._fim = fim; sh._bim = bim; sh._fsh = fsh; sh._bsh = bsh; sh._k = k;
+        sheetStack.appendChild(sh); sheets.push(sh);
+      }
+      builtSheetSig = sheetSig();
+    }
+    function syncSheets() {
+      if (!sheetStack) return;
+      if (builtSheetSig !== sheetSig() || sheets.length !== HALF) buildSheets();
+      for (var k = 0; k < sheets.length; k++) {
+        var sh = sheets[k];
+        if (sh === activeSheet) continue;   // the turning sheet owns its faces mid-turn
+        var fs = pageSrc(effSrc(2 * k)), bs = (2 * k + 1 < N) ? pageSrc(effSrc(2 * k + 1)) : "";
+        if (sh._fim.getAttribute("src") !== fs) sh._fim.src = fs;
+        if (bs && sh._bim.getAttribute("src") !== bs) sh._bim.src = bs;
+      }
+    }
+    function sheetPrepare(k) {
+      syncSheets();
+      activeSheet = (k >= 0 && k < sheets.length) ? sheets[k] : null;
+      if (!activeSheet) return;
+      var fs = pageSrc(effSrc(2 * k)), bs = (2 * k + 1 < N) ? pageSrc(effSrc(2 * k + 1)) : "";
+      if (activeSheet._fim.getAttribute("src") !== fs) activeSheet._fim.src = fs;
+      if (bs && activeSheet._bim.getAttribute("src") !== bs) activeSheet._bim.src = bs;
+      activeSheet.style.transition = "none";
+      activeSheet.style.zIndex = 999;   // mid-turn the turning sheet rides above the stack
+      activeSheet.style.transform = "rotateY(" + (k < flipped ? -180 : 0) + "deg)";
+      activeSheet._fsh.style.opacity = 0; activeSheet._bsh.style.opacity = 0;
+      activeSheet._front.style.filter = ""; activeSheet._back.style.filter = "";
+    }
+    function showSheet() {
+      if (!activeSheet) return;
+      activeSheet.classList.add("on", "turning");
+    }
+    function hideSheet() {
+      if (activeSheet) {
+        activeSheet.classList.remove("on", "turning");
+        activeSheet.style.transition = "none";
+        activeSheet.style.zIndex = "";
+        activeSheet._fsh.style.opacity = 0; activeSheet._bsh.style.opacity = 0;
+        activeSheet._front.style.filter = ""; activeSheet._back.style.filter = "";
+        activeSheet = null;
+      }
+    }
+    function poseSheetFx(theta) {
+      if (!activeSheet) return;
+      var s = Math.sin(Math.PI * Math.abs(theta) / 180);
+      activeSheet._fsh.style.opacity = s.toFixed(3);
+      activeSheet._bsh.style.opacity = s.toFixed(3);
+      activeSheet._front.style.filter = "brightness(" + (1 - 0.18 * s).toFixed(3) + ")";
+      activeSheet._back.style.filter = "brightness(" + (1 + 0.12 * s).toFixed(3) + ")";
+    }
+    /* =============== end sheet engine core =============== */
+
     function showLeaf() {
       if (isMag()) { showTurn(); return; }
-      canvas.style.opacity = "";
-      canvas.style.display = "block";
+      showSheet();
     }
     function hideLeaf() {
       canvas.style.display = "none";
@@ -5022,31 +5275,37 @@
       clearLeaf();
       shadeL.style.opacity = 0; shadeR.style.opacity = 0;
       castShade.style.opacity = 0;
+      hideSheet();
       hideTurn();
     }
 
-    function poseLeaf(theta, lagSign, glideNow) {
+    function poseLeaf(theta, lagSign, glideNow, fxOnly) {
       var s = Math.sin(Math.PI * Math.abs(theta) / 180);
-      // Board face FLAT: zero face shading and zero tip highlight for
-      // cover turns (leafShadeMul still firms the shadows under and
-      // cast by the leaf below — those were right). Paper unchanged.
-      var isBoardLeaf = leafMaterial === "board";
-      drawLeaf2D(theta, lagSign, isBoardLeaf ? 0 : s * 0.13 * leafShadeMul, isBoardLeaf ? 0 : s * leafFlex);
+      // Transplant (v13.64): the pose drives the turning SHEET. For a
+      // finger drag (fxOnly unset) the sheet's rotateY is set directly
+      // with its transition off, following the finger. For an animated
+      // turn the CSS transition owns the angle and this runs fxOnly:
+      // per-frame lighting only — the shade overlays + face brightness
+      // (poseSheetFx), the gutter shades on the pages beneath, and the
+      // cast shadow band sweeping under the leaf. Strengths follow s
+      // (sin of the turn angle), so every effect peaks mid-turn and
+      // settles to the rest values at both ends, as in the original.
+      if (!fxOnly && activeSheet) {
+        activeSheet.style.transition = "none";
+        activeSheet.style.transform = "rotateY(" + theta + "deg)";
+      }
+      poseSheetFx(theta);
       if (lagSign > 0) { shadeR.style.opacity = (s * 0.34 * leafShadeMul).toFixed(3); shadeL.style.opacity = (s * 0.20 * leafShadeMul).toFixed(3); }
       else { shadeL.style.opacity = (s * 0.34 * leafShadeMul).toFixed(3); shadeR.style.opacity = (s * 0.20 * leafShadeMul).toFixed(3); }
-      // cast shadow: a soft band on the pages beneath, tracking the leaf tip's
-      // ground projection (same bend integral as the GL sheet), peaking mid-turn.
-      // For board turns leafFlex is 0, so lagR is 0 and tipDx is the rigid
-      // sheet's plain projection — no paper-lag in the cast shadow.
+      // cast shadow: a soft blurred band on the pages beneath, tracking
+      // the turning sheet tip's ground projection, peaking mid-turn and
+      // sweeping across the spread as the sheet passes over it.
       var thR = theta * Math.PI / 180;
-      var lagR = lagSign * FLEX_RAD * leafFlex * s;
-      var tipDx;
-      if (Math.abs(lagR) < 1e-4) tipDx = pageSize * Math.cos(thR);
-      else tipDx = (pageSize / lagR) * (Math.sin(thR + lagR) - Math.sin(thR));
-      var bandW = pageSize * (0.55 + 0.55 * s);
+      var tipDx = pageSize * Math.cos(thR);
+      var bandW = pageSize * (0.65 + 0.75 * s);
       castShade.style.left = (pageSize + tipDx - bandW / 2) + "px";
       castShade.style.width = bandW + "px";
-      castShade.style.opacity = (0.32 * s * leafShadeMul).toFixed(3);
+      castShade.style.opacity = (0.44 * s * leafShadeMul).toFixed(3);
       if (glideNow !== null && glideNow !== undefined) glideEl.style.transform = "translateX(" + glideNow + "px)";
     }
 
@@ -5061,8 +5320,18 @@
          the front cover (0) or the back cover (N-1), it's board. */
       var leafPages = dir === "next" ? [2 * flipped, 2 * flipped + 1] : [2 * flipped - 2, 2 * flipped - 1];
       leafMaterial = (leafPages.indexOf(0) >= 0 || leafPages.indexOf(N - 1) >= 0) ? "board" : "paper";
-      if (leafMaterial === "board") { leafFlex = 0; leafDurMul = REDUCED ? 1.1 : 1.18; leafShadeMul = 1.35; }
-      else { leafFlex = 1; leafDurMul = 1; leafShadeMul = 1; }
+      // Engine swap (v13.61): hardcover turns — board and paper alike —
+      // run the ORIGINAL rigid profile: flex 0 for both (the sheet is
+      // never bent), the 1150 ms FLIP_MS on the original's
+      // cubic-bezier(0.3, 0.7, 0.3, 1) easing (animateLeaf and the
+      // paired camera tweens both run easeOriginal, so leaf, glide
+      // and camera stay in sync). Board keeps only its weight: a
+      // touch slower (leafDurMul 1.13, ~1300 ms at the v13.62 pace) and the firmer
+      // shading via the BOARD_SHADE_MUL knob. Magazine keeps its
+      // shipping board profile untouched.
+      if (leafMaterial === "board" && !isMag()) { leafFlex = 0; leafDurMul = 1; leafShadeMul = BOARD_SHADE_MUL; }   // transplant (v13.64): density timing is per-book in the original — board turns run the same 900 ms hardcover FLIP_TURN_MS; board keeps only its firmer shading
+      else if (leafMaterial === "board") { leafFlex = 0; leafDurMul = REDUCED ? 1.1 : 1.18; leafShadeMul = BOARD_SHADE_MUL; }
+      else { leafFlex = 0; leafDurMul = 1; leafShadeMul = 1; }
       if (dir === "next") {
         if (flipped >= HALF) return false;
         var f = flipped;
@@ -5074,6 +5343,7 @@
           else botLayer.style.visibility = "hidden";
         } else {
           setLeafImages(2 * f, 2 * f + 1);
+          sheetPrepare(f);
           if (nr < N) { baseR.style.display = "block"; imgR.src = pageSrc(effSrc(nr)); } else baseR.style.display = "none";
         }
       } else {
@@ -5087,6 +5357,7 @@
           else botLayer.style.visibility = "hidden";
         } else {
           setLeafImages(2 * g - 2, 2 * g - 1);
+          sheetPrepare(g - 1);
           if (pl >= 0) { baseL.style.display = "block"; imgL.src = pageSrc(effSrc(pl)); } else baseL.style.display = "none";
         }
       }
@@ -5113,6 +5384,7 @@
     function animateLeaf(fromDeg, toDeg, gFrom, gTo, lagSign, dur, onSwap, onDone) {
       var gen = ++turnGen;
       animating = true;
+      navSeq++;   // Fix Round 2 (Sol Finding 1): an async navigation step has begun — see drainPending
       var t0 = null, swapped = false, finished = false;
       var leafEl = canvas;
       function finish() {
@@ -5125,11 +5397,8 @@
         if (pendingBook) { pendingBook = false; render(); }
         if (onDone) onDone();
         if (typeof maybeRespeak === "function") maybeRespeak();
-        if (pendingDir) {
-          var pd = pendingDir;
-          pendingDir = null;
-          if (pd === "next") flipNext(); else flipPrev();
-        }
+        if (renderTailPending) renderTail();
+        armSettleBeat();   // pace round (v13.62): settle ~140 ms after the turn lands, then the queue drains — see armSettleBeat
         flushWarm();
         if (slideSec) scheduleSlide();
       }
@@ -5141,7 +5410,7 @@
         try {
           if (t0 === null) t0 = ts;
           var raw = Math.min(1, (ts - t0) / dur);
-          var e = leafMaterial === "board" ? easeHeavy(raw) : easeInOutSine(raw);
+          var e = easeOriginal(raw);   // engine swap (v13.61): the original's cubic-bezier(0.3, 0.7, 0.3, 1) for board and paper alike; the glide derives from this same eased angle and the paired camera tweens run easeOriginal too, so all three stay in sync
           var ang = fromDeg + (toDeg - fromDeg) * e;
           var frac = Math.abs(ang - fromDeg) / 180;
           poseLeaf(ang, lagSign, gFrom + (gTo - gFrom) * frac);
@@ -5162,10 +5431,21 @@
       requestAnimationFrame(frame);
     }
 
-    var SWAP_P = 0.93;
-    function animateTurnF(dir, F0, F1, g0, g1, dur, onSwap, onDone) {
+    /* Animated sheet turn (transplant, v13.64): the angle is driven
+       by the sheet's own CSS transition — transform over dur with
+       cubic-bezier(.3,.7,.3,1), the original viewer's timing — while
+       this rAF loop runs the per-frame lighting (poseLeaf fxOnly) on
+       the SAME easeOriginal curve, so shade, brightness, cast shadow,
+       glide and angle stay in sync. Completion mirrors animateLeaf's
+       guarantee: a single finish(), a watchdog at dur + 600, the
+       landing swap within SWAP_DEG of touchdown (the base spread
+       commits under the still-turning sheet — its faces carry the
+       same images, so the handoff is seamless), and the v13.62 settle
+       beat arming the FIFO queue drain. */
+    function animateSheetTurn(fromDeg, toDeg, gFrom, gTo, lagSign, dur, onSwap, onDone) {
       var gen = ++turnGen;
       animating = true;
+      navSeq++;   // Fix Round 2 (Sol Finding 1): an async navigation step has begun — see drainPending
       var t0 = null, swapped = false, finished = false;
       function finish() {
         if (finished) return;
@@ -5177,11 +5457,60 @@
         if (pendingBook) { pendingBook = false; render(); }
         if (onDone) onDone();
         if (typeof maybeRespeak === "function") maybeRespeak();
-        if (pendingDir) {
-          var pd = pendingDir;
-          pendingDir = null;
-          if (pd === "next") flipNext(); else flipPrev();
-        }
+        if (renderTailPending) renderTail();
+        armSettleBeat();
+        flushWarm();
+        if (slideSec) scheduleSlide();
+      }
+      var wd = setTimeout(function () { if (gen === turnGen) finish(); }, dur + 600);
+      showLeaf();
+      playTurnFx();
+      if (activeSheet) {
+        activeSheet.style.transition = "none";
+        activeSheet.style.transform = "rotateY(" + fromDeg + "deg)";
+        void activeSheet.offsetWidth;   // commit the start angle before the transition is armed
+        activeSheet.style.transition = "transform " + dur + "ms cubic-bezier(.3,.7,.3,1)";
+        activeSheet.style.transform = "rotateY(" + toDeg + "deg)";
+      }
+      function frame(ts) {
+        if (gen !== turnGen || finished) return;
+        try {
+          if (t0 === null) t0 = ts;
+          var raw = Math.min(1, (ts - t0) / dur);
+          var e = easeOriginal(raw);
+          var ang = fromDeg + (toDeg - fromDeg) * e;
+          var frac = Math.abs(ang - fromDeg) / 180;
+          poseLeaf(ang, lagSign, gFrom + (gTo - gFrom) * frac, true);
+          var remain = Math.abs(toDeg - ang);
+          if (!swapped && remain <= SWAP_DEG) {
+            swapped = true;
+            if (onSwap) onSwap();
+          }
+          if (raw < 1) { requestAnimationFrame(frame); return; }
+          finish();
+        } catch (err) { finish(); }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    var SWAP_P = 0.93;
+    function animateTurnF(dir, F0, F1, g0, g1, dur, onSwap, onDone) {
+      var gen = ++turnGen;
+      animating = true;
+      navSeq++;   // Fix Round 2 (Sol Finding 1): an async navigation step has begun — see drainPending
+      var t0 = null, swapped = false, finished = false;
+      function finish() {
+        if (finished) return;
+        finished = true;
+        clearTimeout(wd);
+        if (!swapped) { swapped = true; if (onSwap) onSwap(); }
+        hideLeaf();
+        animating = false;
+        if (pendingBook) { pendingBook = false; render(); }
+        if (onDone) onDone();
+        if (typeof maybeRespeak === "function") maybeRespeak();
+        if (renderTailPending) renderTail();
+        drainPending();
         flushWarm();
         if (slideSec) scheduleSlide();
       }
@@ -5214,24 +5543,26 @@
       if (turnMode === "scroll") { scrollStep(1); return; }
       if (turnMode === "simple") { navStepInstant("next"); return; }
       if (turnMode === "swipe") {
-        if (animating) { pendingDir = "next"; return; }
+        if (animating) { queuePending("next"); return; }
         if (focusMode && flipped > 0 && flipped < HALF && focus === 0) { slideTo(1); return; }
         swipeSpread("next", 0);
         return;
       }
-      if (animating) { pendingDir = "next"; return; }
+      if (animating || settleTimer) { queuePending("next"); return; }   // pace round (v13.62): a tap inside the settle beat queues in order instead of overtaking the queued turns
       if (focusMode && flipped > 0 && flipped < HALF && focus === 0) { slideTo(1); return; }
+      navStartPending = true;   // Fix Round 2 (Sol Finding 1): a flip start is outstanding until startFlipNext lands — see drainPending
       ensureIndices(turnIndices("next"), startFlipNext);
     }
     function startFlipNext() {
+      navStartPending = false;   // Fix Round 2 (Sol Finding 1): the outstanding start has landed; the outcomes below decide the queue — a turn started here finishes and drains, the no-turn outcomes drain now (a live drag's return deliberately does not: its settle owns the drain)
       if (drag) return;
       // Stale-callback guard: this start can arrive late (it waits on
       // image decoding). If the reading mode changed while it waited,
       // the switch already re-anchored the book in the new mode — a
       // leaf turn from the old mode must not fire on top of it.
-      if (turnMode !== "hardcover" && turnMode !== "magazine") return;
-      if (animating) { pendingDir = "next"; return; }
-      if (!setupTurn("next", "bottom")) return;
+      if (turnMode !== "hardcover" && turnMode !== "magazine") { drainPending(); return; }
+      if (animating) { queuePending("next"); return; }
+      if (!setupTurn("next", "bottom")) { drainPending(); return; }
       var g0 = glideFor(flipped), g1 = glideFor(flipped + 1);
       var done = function () { commitTurn("next"); focus = 0; render(); };
       // The first pose is painted synchronously, before the animator
@@ -5245,10 +5576,10 @@
           animateTurnF("next", turnStartF("bottom"), turnEndF("bottom"), g0, g1, magMs() * leafDurMul, done, null);
         } else {
           showLeaf(); poseLeaf(0, 1, g0);   // cover the swapped base in this same task — no bare incoming-page frame
-          tweenCam(camTargetFor(flipped + 1, 0), FLIP_MS * leafDurMul, easeInOutSine);
-          animateLeaf(0, -180, g0, g1, 1, FLIP_MS * leafDurMul, done, null);
+          tweenCam(camTargetFor(flipped + 1, 0), FLIP_MS * leafDurMul, easeOriginal);
+          animateSheetTurn(0, -180, g0, g1, 1, FLIP_MS * leafDurMul, done, null);
         }
-      } catch (err) { hideLeaf(); animating = false; render(); }
+      } catch (err) { hideLeaf(); animating = false; render(); drainPending(); }   // Fix Round 2 (Sol Finding 1): the first-pose throw means this start began nothing — without the drain, any queued remainder strands here
     }
 
     function flipPrev() {
@@ -5257,20 +5588,22 @@
       if (turnMode === "scroll") { scrollStep(-1); return; }
       if (turnMode === "simple") { navStepInstant("prev"); return; }
       if (turnMode === "swipe") {
-        if (animating) { pendingDir = "prev"; return; }
+        if (animating) { queuePending("prev"); return; }
         if (focusMode && flipped > 0 && flipped < HALF && focus === 1) { slideTo(0); return; }
         swipeSpread("prev", 0);
         return;
       }
-      if (animating) { pendingDir = "prev"; return; }
+      if (animating || settleTimer) { queuePending("prev"); return; }   // pace round (v13.62): as in flipNext — a tap inside the settle beat queues in order
       if (focusMode && flipped > 0 && flipped < HALF && focus === 1) { slideTo(0); return; }
+      navStartPending = true;   // Fix Round 2 (Sol Finding 1): a flip start is outstanding until startFlipPrev lands — see drainPending
       ensureIndices(turnIndices("prev"), startFlipPrev);
     }
     function startFlipPrev() {
+      navStartPending = false;   // Fix Round 2 (Sol Finding 1): the outstanding start has landed — see startFlipNext
       if (drag) return;
-      if (turnMode !== "hardcover" && turnMode !== "magazine") return;   // stale-callback guard, as in startFlipNext
-      if (animating) { pendingDir = "prev"; return; }
-      if (!setupTurn("prev", "bottom")) return;
+      if (turnMode !== "hardcover" && turnMode !== "magazine") { drainPending(); return; }   // stale-callback guard, as in startFlipNext
+      if (animating) { queuePending("prev"); return; }
+      if (!setupTurn("prev", "bottom")) { drainPending(); return; }
       var g0 = glideFor(flipped), g1 = glideFor(flipped - 1);
       var done = function () { commitTurn("prev"); focus = 1; render(); };
       try {
@@ -5281,17 +5614,17 @@
           animateTurnF("prev", turnStartF("bottom"), turnEndF("bottom"), g0, g1, magMs() * leafDurMul, done, null);
         } else {
           showLeaf(); poseLeaf(-180, -1, g0);   // same-task cover, prev side
-          tweenCam(camTargetFor(flipped - 1, 1), FLIP_MS * leafDurMul, easeInOutSine);
-          animateLeaf(-180, 0, g0, g1, -1, FLIP_MS * leafDurMul, done, null);
+          tweenCam(camTargetFor(flipped - 1, 1), FLIP_MS * leafDurMul, easeOriginal);
+          animateSheetTurn(-180, 0, g0, g1, -1, FLIP_MS * leafDurMul, done, null);
         }
-      } catch (err) { hideLeaf(); animating = false; render(); }
+      } catch (err) { hideLeaf(); animating = false; render(); drainPending(); }   // Fix Round 2 (Sol Finding 1): as in startFlipNext's catch
     }
 
     function goTo(firstIdx) {
       manualNav();
       turnGen++;
       animating = false;
-      pendingDir = null;
+      pendingQueue.length = 0; slideGen++; navStartPending = false;   // Fix Round 2 (Sol Finding 1): the reset retires any outstanding flip start with its queue
       hideLeaf();
       if (turnMode === "scroll") { scrollToPage(firstIdx, true); if (typeof maybeRespeak === "function") maybeRespeak(); return; }
       if (focusMode) {
@@ -5339,7 +5672,7 @@
       }
     }
     function settleSwipeBack(fromOffset) {
-      if (!fromOffset) { setCam(camX); return; }
+      if (!fromOffset) { setCam(camX); drainPending(); return; }
       var gen = turnGen;
       var cam0 = camX, start = cam0 + fromOffset, t0 = null;
       function fr(ts) {
@@ -5351,7 +5684,7 @@
         var raw = Math.min(1, (ts - t0) / 160);
         var e = 1 - Math.pow(1 - raw, 2);
         bookWrap.style.transform = "translateX(" + (start + (cam0 - start) * e) + "px)";
-        if (raw < 1) requestAnimationFrame(fr); else setCam(cam0);
+        if (raw < 1) requestAnimationFrame(fr); else { setCam(cam0); drainPending(); }
       }
       requestAnimationFrame(fr);
     }
@@ -5360,6 +5693,7 @@
       if (dir === "prev" && flipped <= 0) { settleSwipeBack(fromOffset || 0); return; }
       var gen = ++turnGen;
       animating = true;
+      navSeq++;   // Fix Round 2 (Sol Finding 1): an async navigation step has begun — see drainPending
       var dist = Math.max(160, focusMode ? pageSize : pageSize * 2);
       var out = dir === "next" ? -dist : dist;
       var startOff = fromOffset || 0;
@@ -5382,7 +5716,8 @@
         setCam(camTargetFor(flipped, focus));
         animating = false;
         if (typeof maybeRespeak === "function") maybeRespeak();
-        if (pendingDir) { var pd = pendingDir; pendingDir = null; if (pd === "next") flipNext(); else flipPrev(); }
+        if (renderTailPending) renderTail();
+        drainPending();
         flushWarm();
         if (slideSec) scheduleSlide();
       }
@@ -5575,7 +5910,7 @@
       var anchor = turnMode === "scroll" ? scrollCurIdx : currentFirst();
       turnGen++;
       animating = false;
-      pendingDir = null;
+      pendingQueue.length = 0; slideGen++; navStartPending = false;   // Fix Round 2 (Sol Finding 1): as in goTo
       drag = null;
       bookWrap.classList.remove("grabbing");
       hideLeaf();
@@ -5701,6 +6036,7 @@
             ((intent === "next" && focus === 0) || (intent === "prev" && focus === 1));
           if (canSlide) {
             if (camAnim) { cancelAnimationFrame(camAnim); camAnim = null; }
+            slideGen++;
             drag.kind = "slide";
             drag.slideTarget = intent === "next" ? 1 : 0;
             drag.camFrom = camX;
@@ -5727,22 +6063,37 @@
         setCam(Math.max(lo, Math.min(hi, drag.camFrom + drag.dx)));
         return;
       }
+      // Bend round (drag-rAF, surgical): the release state — drag.theta
+      // / drag.F — is still computed synchronously on EVERY move,
+      // exactly as before, so endDrag's release/settle computation is
+      // unchanged. Only the PAINT is coalesced: at most one pose per
+      // frame, always the latest stored state, painted by poseDragAt.
+      // The activation pose (gateDragFlip -> poseDragAt) stays
+      // synchronous — no bare incoming-page frame.
       if (isMag()) {
-        var F = dragF(drag, e.clientX, e.clientY);
-        drag.F = F;
-        var pNow = poseTurn(F, null);
-        drag.p = pNow;
-        glideEl.style.transform = "translateX(" + (drag.g0 + (drag.g1 - drag.g0) * pNow) + "px)";
+        drag.F = dragF(drag, e.clientX, e.clientY);
+        queueDragPaint(drag);
         return;
       }
-      var th = dragTheta(drag);
-      drag.theta = th;
-      var frac = Math.abs(th - (drag.dir === "next" ? 0 : -180)) / 180;
-      poseLeaf(th, drag.dir === "next" ? 1 : -1, drag.g0 + (drag.g1 - drag.g0) * frac);
+      drag.theta = dragTheta(drag);
+      queueDragPaint(drag);
     });
     function endDrag(cancelled) {
       if (!drag) return;
-      var d = drag; drag = null;
+      var d = drag;
+      // Fix Round 2 (Sol Finding 3): the flip settle below reads the
+      // glide back from glideEl.style.transform — the last PAINTED
+      // pose. With rAF-coalesced painting, a paint can still be
+      // pending at release, which would freeze a one-move-stale
+      // glide into the settle's inputs (the release formulas
+      // themselves are unchanged). Flush the current pose
+      // synchronously first, so the painted glide equals the
+      // current drag geometry at release — the baseline's release
+      // inputs. Only an activated flip drag can hold a pending
+      // paint; every other kind returns before the glide read.
+      if (dragPaintRaf && d.active && d.kind === "flip") poseDragAt(d);
+      drag = null;
+      cancelDragPaint();
       bookWrap.classList.remove("grabbing");
       if (d.active) manualNav();
       if (!d.active) {
@@ -5813,14 +6164,14 @@
         var sflick = d.slideTarget === 1 ? vel < -0.45 : vel > 0.45;
         if (prog > 0.4 || sflick) {
           focus = d.slideTarget;
-          tweenCam(d.camTo, REDUCED ? 120 : 260);
+          tweenCam(d.camTo, REDUCED ? 120 : 260, null, drainPending);
           counter.textContent = label();
           if (typeof updateTextPanel === "function") updateTextPanel();
           if (typeof refreshCompareChrome === "function") refreshCompareChrome();
           if (typeof refreshMarkChrome === "function") refreshMarkChrome();
           if (typeof maybeRespeak === "function") maybeRespeak();
         } else {
-          tweenCam(d.camFrom, REDUCED ? 120 : 260);
+          tweenCam(d.camFrom, REDUCED ? 120 : 260, null, drainPending);
         }
         return;
       }
@@ -5846,8 +6197,8 @@
       var target = d.dir === "next" ? (complete ? -180 : 0) : (complete ? 0 : -180);
       var dur = Math.max(140, FLIP_MS * leafDurMul * Math.abs(target - th) / 180);
       var gEnd = complete ? d.g1 : d.g0;
-      if (complete) tweenCam(camTargetFor(stateAfter(d.dir), landFocus), dur, easeInOutSine);
-      animateLeaf(th, target, gNow, gEnd, d.dir === "next" ? 1 : -1, dur, function () {
+      if (complete) tweenCam(camTargetFor(stateAfter(d.dir), landFocus), dur, easeOriginal);
+      animateSheetTurn(th, target, gNow, gEnd, d.dir === "next" ? 1 : -1, dur, function () {
         if (complete) { commitTurn(d.dir); focus = landFocus; }
         render();
       }, null);
@@ -9398,11 +9749,24 @@
         ]
       },
       "the-night-i-met-santa": {
+        /* v13.63: the seeded grades are treatments of single pages
+           (p6, p7, p16, p17), and Santa's re-pairing (see santaPages)
+           moved those pages into different spreads than the old
+           offset claimed — each grade now sits under the spread its
+           page actually belongs to. A one-page alternate is safe:
+           every surface resolves the spread's other page from the
+           book's own art. */
         3: [
-          { caption: "Sample version \u2014 warm grade", pages: { 5: "versions/santa/s03-b-p6.jpg", 6: "versions/santa/s03-b-p7.jpg" } }
+          { caption: "Sample version \u2014 warm grade", pages: { 6: "versions/santa/s03-b-p6.jpg" } }
+        ],
+        4: [
+          { caption: "Sample version \u2014 warm grade", pages: { 7: "versions/santa/s03-b-p7.jpg" } }
         ],
         8: [
-          { caption: "Sample version \u2014 dusk grade", pages: { 15: "versions/santa/s08-b-p16.jpg", 16: "versions/santa/s08-b-p17.jpg" } }
+          { caption: "Sample version \u2014 dusk grade", pages: { 16: "versions/santa/s08-b-p16.jpg" } }
+        ],
+        9: [
+          { caption: "Sample version \u2014 dusk grade", pages: { 17: "versions/santa/s08-b-p17.jpg" } }
         ]
       },
       "lighthouse": {
@@ -12111,6 +12475,13 @@
         flipped = (!coverOn && N >= 4) ? 1 : 0;
         focus = 0;
         animating = false;
+        // Fix Round 2 (Sol Finding 4): a freshly loaded book lands
+        // here — the same book-switch teardown as openShelfBook:
+        // no drag paint queued in the outgoing book may fire into
+        // this one.
+        cancelDragPaint();
+        drag = null;
+        bookWrap.classList.remove("grabbing");
         hideLeaf();
         render();
         fit();
@@ -13217,6 +13588,26 @@
       for (var i = 1; i <= n; i++) out.push("shelf/" + slug + "/" + pad2(i) + ".jpg");
       return out;
     }
+    /* Santa's page list (v13.63): the book's art was painted as wide
+       SPREAD images and split into square halves for the reader —
+       each consecutive file pair (03,04), (05,06), … is ONE painting
+       (the floor, walls and figures run unbroken across the seam).
+       The generic pairing (cover, then (02,03), (04,05), …) is offset
+       by one page against those paintings, so every spread showed
+       the right half of one painting beside the left half of the
+       next. The list below restores the paintings: an endpaper page
+       (00, the book's solid dark-red endpaper, same art as 02) sits
+       right after the cover so the halves pair off (03,04), (05,06),
+       … (33,34) exactly as painted, and the solid inside-back
+       endpaper (35, pixel-identical to 02) steps aside so the count
+       stays even at 36 with the back cover (36) last, alone. The
+       book's text list in the catalog entry is shifted to match. */
+    function santaPages() {
+      var out = ["shelf/santa/01.jpg", "shelf/santa/00.jpg"];
+      for (var i = 2; i <= 34; i++) out.push("shelf/santa/" + pad2(i) + ".jpg");
+      out.push("shelf/santa/36.jpg");
+      return out;
+    }
     var CATALOG = [
       { id: "builtin", title: BOOK.title, cover: BOOK.pages[0], source: "built-in", pages: null,
         text: [
@@ -13333,8 +13724,9 @@
           "Tomorrow, her captain promised, the wind would be fair — and the little red boat would sail at last."],
         info: { author: "BookVizion Studio", format: "Square (1:1)", status: "test", links: [],
           about: "A small red sailboat bobs at the harbor wall among the flags and gulls, dreaming of the morning it will sail out to sea." } },
-      { id: "the-night-i-met-santa", title: "The Night I Met Santa", cover: "shelf/santa/01.jpg", source: "built-in", pages: shelfPagesN("santa", 36), textBaked: true,
+      { id: "the-night-i-met-santa", title: "The Night I Met Santa", cover: "shelf/santa/01.jpg", source: "built-in", pages: santaPages(), textBaked: true,
         text: [
+          null,
           null,
           null,
           "Copyright © 2026 Jack Farrell All rights reserved. No part of this book may be reproduced or transmitted in any form or by any means, electronic or mechanical, including photocopying, recording, or by any information storage and retrieval system, without permission in writing from the publisher or author. This is a work of fiction. Names, characters, places, and incidents either are the product of the author’s imagination or are used fictitiously, and any resemblance to actual persons, living or dead, is entirely coincidental. First illustrated edition, 2026. Book design by Jon Farrell. www.jon-beatz.com",
@@ -13368,7 +13760,6 @@
           "to my family and loved ones — for keeping this poem, for believing in Christmas, and for sitting still long enough to hear a story about the night I met Santa. May you always find a little wonder downstairs when the house gets quiet. God bless.",
           null,
           "Christmas Eve comes every year, but some nights stay with you forever. This was one of them. May the magic of this night stay close long after the season has gone.",
-          null,
           null,
           null
         ],
@@ -14525,8 +14916,8 @@
     /* Build stamp — bump on every build. The iteration is the v13
        line (13.x), opened by the Ravyn backdrop + plank test round:
        bump the last number once per review round, not per micro-fix. */
-    var BUILD_ITERATION = "13.58";
-    var BUILD_STAMP = "2026-11-11 18:13";
+    var BUILD_ITERATION = "13.65";
+    var BUILD_STAMP = "2026-11-12 13:55";
     var shelfFootStampEl = document.getElementById("shelfFootStamp");
     var shelfFootCountEl = document.getElementById("shelfFootCount");
     function syncShelfFoot() {
@@ -15516,8 +15907,16 @@
       folderGen++;
       turnGen++;
       animating = false;
-      pendingDir = null;
+      pendingQueue.length = 0; slideGen++; navStartPending = false;
       pendingBook = false;
+      // Fix Round 2 (Sol Finding 4): neutralize the drag exactly as
+      // setReadingMode does. A paint queued through queueDragPaint
+      // checks only drag identity and active, so without this it
+      // could fire after the switch and pose the leaf against the
+      // incoming book's geometry, restoring stale shade with it.
+      cancelDragPaint();
+      drag = null;
+      bookWrap.classList.remove("grabbing");
       hideLeaf();
       // (Editor, panel, sheet and the rest of the outgoing book's
       // overlays were closed by the teardown at the head of this
